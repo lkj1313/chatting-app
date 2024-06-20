@@ -1,0 +1,40 @@
+@import "./component/homeComponent/sliderComponents.scss";
+@import "./component/loginpage/loginpage.scss";
+@import "./component/homeComponent/layoutComponent.scss";
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+html,
+body {
+  height: 100%;
+  width: 100vw;
+}
+
+$container-max-widths: (
+  sm: 540px,
+  md: 720px,
+  lg: 960px,
+  xl: 1140px,
+  xxl: 1320px,
+);
+
+// 슬라이드바 켜졌을때 overlay 회색변화
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1000; /* 슬라이드바 아래에 위치 */
+  visibility: hidden;
+  opacity: 0;
+  transition: visibility 0.3s, opacity 0.3s;
+}
+
+.overlay.show {
+  visibility: visible;
+  opacity: 1;
+}
