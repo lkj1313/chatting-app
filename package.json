@@ -12,6 +12,7 @@
     "@reduxjs/toolkit": "^2.2.5",
     "bootstrap": "^5.3.3",
     "cookies-next": "^4.2.1",
+    "dotenv": "^16.4.5",
     "firebase": "^10.12.2",
     "firebase-admin": "^12.1.1",
     "next": "14.2.4",
