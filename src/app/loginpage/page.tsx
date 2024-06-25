@@ -2,6 +2,17 @@
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { auth } from "../../../firebase";
+import {
+  signInWithEmailAndPassword,
+  signInWithCustomToken,
+} from "firebase/auth";
+import { useDispatch } from "react-redux";
+import { login } from "@/app/store/authSlice";
+
+import { doc, getDoc } from "firebase/firestore";
+import { db } from "../../../firebase";
+import { setCookie } from "cookies-next";
 
 interface Errors {
   email?: string;
@@ -16,6 +27,7 @@ export default function LoginPage() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [showCard, setShowCard] = useState<boolean>(false);
   const router = useRouter();
+  const dispatch = useDispatch();
 
   const validateEmail = (value: string) => {
     const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
@@ -66,14 +78,56 @@ export default function LoginPage() {
     if (!emailError && !passwordError) {
       setIsLoading(true);
       try {
+        const userCredential = await signInWithEmailAndPassword(
+          auth,
+          email,
+          password
+        );
+        const user = userCredential.user;
+
+        const idToken = await user.getIdToken();
+
+        // 토큰을 백엔드로 보내서 추가 처리
         const response = await fetch("/api/login", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email, password }),
+          body: JSON.stringify({ idToken }),
         });
-        router.push("/");
 
-        if (!response.ok) {
+        if (response.ok) {
+          const data = await response.json();
+          const customToken = data.customToken;
+
+          // 커스텀 토큰으로 Firebase Auth에 로그인
+          const customUserCredential = await signInWithCustomToken(
+            auth,
+            customToken
+          );
+          const idTokenResult = await customUserCredential.user.getIdToken();
+
+          setCookie("authToken", idTokenResult, {
+            maxAge: 60 * 60 * 24, // 1일 동안 유효
+            httpOnly: false,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "strict",
+          });
+
+          const docRef = doc(db, "users", user.uid);
+          const docSnap = await getDoc(docRef);
+          if (docSnap.exists()) {
+            const userData = docSnap.data();
+            dispatch(
+              login({
+                uid: user.uid,
+                email: userData.email,
+                nickname: userData.nickname,
+                profileImgURL: userData.profileImg,
+              })
+            );
+          }
+
+          router.push("/");
+        } else {
           throw new Error("Login failed");
         }
       } catch (error: any) {

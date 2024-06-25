@@ -1,10 +1,25 @@
-// next.config.mjs
-import withImages from "next-images";
+import dotenv from "dotenv";
+import NodePolyfillPlugin from "node-polyfill-webpack-plugin";
+
+dotenv.config();
 
 /** @type {import('next').NextConfig} */
-const nextConfig = withImages({
-  reactStrictMode: true,
-  // 필요에 따라 추가 설정
-});
+const nextConfig = {
+  webpack: (config, { isServer }) => {
+    config.experiments = {
+      syncWebAssembly: true,
+      layers: true,
+    };
+
+    config.module.rules.push({
+      test: /\.wasm$/,
+      type: "webassembly/sync",
+    });
+
+    config.plugins.push(new NodePolyfillPlugin());
+
+    return config;
+  },
+};
 
 export default nextConfig;

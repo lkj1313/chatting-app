@@ -4,12 +4,14 @@ interface ContainerState {
   containerWidth: number;
   leftWidth: number;
   sidebarOpen: boolean;
+  headerHeight: number;
 }
 
 const initialState: ContainerState = {
   containerWidth: 0,
   leftWidth: 0,
   sidebarOpen: false,
+  headerHeight: 0, // 추가된 상태
 };
 
 const containerSlice = createSlice({
@@ -25,9 +27,17 @@ const containerSlice = createSlice({
     setSidebarOpen: (state, action: PayloadAction<boolean>) => {
       state.sidebarOpen = action.payload;
     },
+    setHeaderHeight(state, action: PayloadAction<number>) {
+      state.headerHeight = action.payload;
+    },
   },
 });
 
-export const { setContainerWidth, setLeftWidth, setSidebarOpen } =
-  containerSlice.actions;
+export const {
+  setContainerWidth,
+  setLeftWidth,
+  setSidebarOpen,
+  setHeaderHeight,
+
+} = containerSlice.actions;
 export default containerSlice.reducer;

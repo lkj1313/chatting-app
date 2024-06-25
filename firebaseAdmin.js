@@ -1,17 +1,21 @@
 import admin from "firebase-admin";
-import dotenv from "dotenv";
+require("dotenv").config();
 
-dotenv.config();
+const projectId = process.env.FIREBASE_PROJECT_ID;
+const clientEmail = process.env.FIREBASE_CLIENT_EMAIL;
+const privateKey = process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, "\n");
 
 if (!admin.apps.length) {
   admin.initializeApp({
     credential: admin.credential.cert({
-      projectId: process.env.projectId,
-      clientEmail: process.env.clientEmail,
-      privateKey: procee.env.privateKey,
+      projectId,
+      clientEmail,
+      privateKey,
     }),
   });
 }
 
 const adminAuth = admin.auth();
-export { adminAuth };
+const db = admin.firestore();
+
+export { adminAuth, db };

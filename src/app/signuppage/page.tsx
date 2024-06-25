@@ -85,8 +85,10 @@ const Page = () => {
           password
         );
         const user = userCredential.user;
+
         // 기본프사 이미지 경로
-        const defaultProfilePictureUrl = "/profile.jpg";
+        const defaultProfilePictureUrl =
+          "https://firebasestorage.googleapis.com/v0/b/chatting-app-33e4e.appspot.com/o/profile.jpg?alt=media";
         // Firestore에 사용자 정보 저장
         await setDoc(doc(db, "users", user.uid), {
           email: user.email,
