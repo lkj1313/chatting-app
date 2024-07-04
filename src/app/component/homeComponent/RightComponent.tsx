@@ -1,4 +1,11 @@
+import ChatRoomComponent from "@/app/component/homeComponent/ChatRoomComponent";
+import { useSelector } from "react-redux";
+import { RootState } from "@/app/store/store";
+
 const RightComponent = () => {
+  const chatRoomId = useSelector(
+    (state: RootState) => state.chatRoom.chatRoomId
+  );
   return (
     <div
       className="p-0 col"
@@ -12,11 +19,15 @@ const RightComponent = () => {
       <div
         style={{
           height: "100%",
-          padding: "10px",
+
           boxSizing: "border-box",
         }}
       >
-        Right Componentaaaaaa
+        {chatRoomId ? (
+          <ChatRoomComponent chatRoomId={chatRoomId} />
+        ) : (
+          <div>대화방을 선택해주세요</div>
+        )}
       </div>
     </div>
   );

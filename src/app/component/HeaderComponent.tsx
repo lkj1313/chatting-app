@@ -4,7 +4,7 @@ const NavbarComponent = () => {
   return (
     <nav
       className="navbar navbar-expand-lg navbar-dark bg-dark"
-      style={{ height: "7%" }}
+      style={{ height: "50px" }}
     >
       <div className="container-fluid">
         <div className="me-3">

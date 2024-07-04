@@ -9,7 +9,7 @@ import {
 import LeftComponent from "./LeftComponent";
 import RightComponent from "./RightComponent";
 
-import { setSidebarOpen } from "@/app/store/containerSlice";
+import { openSidebar, closeSidebar, closeModal } from "@/app/store/uiSlice";
 import { RootState } from "@/app/store/store";
 
 import HeaderComponent from "../HeaderComponent";
@@ -20,9 +20,8 @@ const LayoutContainer: React.FC = () => {
 
   const [fadeIn, setFadeIn] = useState(false); // 추가된 상태
   const dispatch = useDispatch();
-  const sidebarOpen = useSelector(
-    (state: RootState) => state.container.sidebarOpen
-  );
+  const sidebarOpen = useSelector((state: RootState) => state.ui.sidebarOpen);
+  const showModal = useSelector((state: RootState) => state.ui.showModal);
   const leftWidth = useSelector(
     (state: RootState) => state.container.leftWidth
   );
@@ -65,10 +64,11 @@ const LayoutContainer: React.FC = () => {
   if (leftWidth === 0) {
     return <div ref={containerRef} style={{ height: "100vh" }} />;
   }
+
   return (
     <div
       ref={containerRef}
-      className={`container ${fadeIn ? "fade-in" : ""}`} // 수정된 JSX 클래스 추가
+      className={`container-fluid ${fadeIn ? "fade-in" : ""} `} // 수정된 JSX 클래스 추가
       style={{
         height: "100%",
         position: "relative",
@@ -76,15 +76,25 @@ const LayoutContainer: React.FC = () => {
         padding: "0",
         display: "flex",
         flexDirection: "column",
+        backgroundImage: "url('backgroundImg.jpg ')",
+        backgroundSize: "cover", // 크기에 맞게 이미지 조정
+        backgroundRepeat: "no-repeat",
+        backgroundPosition: "center",
       }}
     >
+      {" "}
       <HeaderComponent />
-
-      <div style={{ display: "flex", flexDirection: "row", height: "100%" }}>
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "row",
+          height: "calc(100% - 50px)",
+        }}
+      >
         {sidebarOpen && (
           <div
             className="overlay show"
-            onClick={() => dispatch(setSidebarOpen(false))}
+            onClick={() => dispatch(closeSidebar())}
           />
         )}
 

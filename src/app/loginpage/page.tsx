@@ -3,15 +3,17 @@ import Link from "next/link";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { auth } from "../../../firebase";
+import { db } from "../../../firebase";
 import {
   signInWithEmailAndPassword,
   signInWithCustomToken,
 } from "firebase/auth";
+
 import { useDispatch } from "react-redux";
 import { login } from "@/app/store/authSlice";
 
 import { doc, getDoc } from "firebase/firestore";
-import { db } from "../../../firebase";
+
 import { setCookie } from "cookies-next";
 
 interface Errors {
@@ -83,9 +85,13 @@ export default function LoginPage() {
           email,
           password
         );
+        console.log("로그인 완료");
         const user = userCredential.user;
 
         const idToken = await user.getIdToken();
+        console.log(idToken);
+        const aa = JSON.stringify({ idToken });
+        console.log(aa);
 
         // 토큰을 백엔드로 보내서 추가 처리
         const response = await fetch("/api/login", {
@@ -96,7 +102,9 @@ export default function LoginPage() {
 
         if (response.ok) {
           const data = await response.json();
+          console.log(data);
           const customToken = data.customToken;
+          console.log("Received Custom Token:", customToken);
 
           // 커스텀 토큰으로 Firebase Auth에 로그인
           const customUserCredential = await signInWithCustomToken(
@@ -104,6 +112,7 @@ export default function LoginPage() {
             customToken
           );
           const idTokenResult = await customUserCredential.user.getIdToken();
+          console.log("New ID Token:", idTokenResult);
 
           setCookie("authToken", idTokenResult, {
             maxAge: 60 * 60 * 24, // 1일 동안 유효
@@ -128,7 +137,8 @@ export default function LoginPage() {
 
           router.push("/");
         } else {
-          throw new Error("Login failed");
+          const errorData = await response.json();
+          throw new Error("커스텀 토큰으로 로그인하는 중 오류가 발생했습니다.");
         }
       } catch (error: any) {
         console.error("Error signing in: ", error);
@@ -141,6 +151,7 @@ export default function LoginPage() {
       }
     }
   };
+
   useEffect(() => {
     setShowCard(true);
   }, []);
@@ -218,3 +229,6 @@ export default function LoginPage() {
     </div>
   );
 }
+LoginPage.getLayout = function getLayout(page: React.ReactNode) {
+  return null;
+};

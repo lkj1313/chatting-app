@@ -3,14 +3,14 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 interface ContainerState {
   containerWidth: number;
   leftWidth: number;
-  sidebarOpen: boolean;
+
   headerHeight: number;
 }
 
 const initialState: ContainerState = {
   containerWidth: 0,
   leftWidth: 0,
-  sidebarOpen: false,
+
   headerHeight: 0, // 추가된 상태
 };
 
@@ -24,9 +24,7 @@ const containerSlice = createSlice({
     setLeftWidth: (state, action: PayloadAction<number>) => {
       state.leftWidth = action.payload;
     },
-    setSidebarOpen: (state, action: PayloadAction<boolean>) => {
-      state.sidebarOpen = action.payload;
-    },
+
     setHeaderHeight(state, action: PayloadAction<number>) {
       state.headerHeight = action.payload;
     },
@@ -36,8 +34,7 @@ const containerSlice = createSlice({
 export const {
   setContainerWidth,
   setLeftWidth,
-  setSidebarOpen,
-  setHeaderHeight,
 
+  setHeaderHeight,
 } = containerSlice.actions;
 export default containerSlice.reducer;

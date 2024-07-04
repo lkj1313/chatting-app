@@ -13,19 +13,16 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    // ID 토큰을 검증하여 디코딩된 토큰 정보를 얻음
     const decodedToken = await adminAuth.verifyIdToken(idToken);
     console.log("Decoded Token:", decodedToken);
-    const uid = decodedToken.uid;
-    const customToken = await adminAuth.createCustomToken(uid);
-    return NextResponse.json(
-      { message: "Login successful", customToken },
-      { status: 200 }
-    );
+
+    return NextResponse.json({ message: "Token is valid" }, { status: 200 });
   } catch (error: any) {
     console.error("Error verifying ID token:", error.message);
     return NextResponse.json(
-      { message: "Login failed", error: error.message },
-      { status: 500 }
+      { message: "Invalid token", error: error.message },
+      { status: 401 }
     );
   }
 }

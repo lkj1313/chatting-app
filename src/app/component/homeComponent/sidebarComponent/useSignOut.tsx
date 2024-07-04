@@ -15,10 +15,7 @@ const useSignOut = () => {
   const router = useRouter();
   const handleSignOut = async () => {
     try {
-      toast.info("Logging out...", {
-        position: "top-center",
-        autoClose: 2000,
-      });
+      toast.info("Logging out...", { autoClose: 500 });
       // Firebase Auth에서 로그아웃
       await firebaseSignOut(auth);
 

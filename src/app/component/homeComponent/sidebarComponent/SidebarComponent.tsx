@@ -1,14 +1,22 @@
 "use client";
 import React from "react";
 import { useEffect, useState } from "react";
-import { getCookie } from "cookies-next";
-import { login } from "@/app/store/authSlice";
-import { useSelector, useDispatch } from "react-redux";
-import { RootState } from "@/app/store/store";
+
+import useSignOut from "./useSignOut";
+
+import { openModal, closeModal, closeSidebar } from "@/app/store/uiSlice";
+
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "../../../../../firebase"; // Firestore 초기화
+import { login } from "@/app/store/authSlice";
+
+import { getCookie } from "cookies-next";
+
+import { useSelector, useDispatch } from "react-redux";
+import { RootState } from "@/app/store/store";
+
 import { Dropdown } from "react-bootstrap";
-import useSignOut from "./useSignOut";
+
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -17,9 +25,8 @@ const Sidebar: React.FC = () => {
   const dispatch = useDispatch();
   const [isClient, setIsClient] = useState(false);
 
-  const sidebarOpen = useSelector(
-    (state: RootState) => state.container.sidebarOpen
-  );
+  const sidebarOpen = useSelector((state: RootState) => state.ui.sidebarOpen);
+  const showModal = useSelector((state: RootState) => state.ui.showModal);
 
   const user = useSelector((state: RootState) => state.auth.user);
 
@@ -75,81 +82,97 @@ const Sidebar: React.FC = () => {
       console.error("Error fetching user data:", error);
     }
   };
+  const handleOverlayClick = () => {
+    dispatch(closeSidebar());
+  };
+  const closeModalClick = () => {
+    dispatch(closeModal());
+  };
   return (
-    <div
-      className={`d-flex flex-column flex-shrink-0  p-3 bg-body-tertiary ${`sidebar ${
-        sidebarOpen ? "show" : ""
-      }`}`}
-      style={{
-        width: "200px",
-        height: "100%",
-        border: "1px solid black",
-        boxSizing: "border-box",
-      }}
-    >
-      <Dropdown>
-        {" "}
-        <div className="d-flex align-items-center">
-          <Dropdown.Toggle
-            variant="none"
-            id="dropdown-basic"
-            style={{ border: "none" }}
-          >
-            <img
-              src={`${user.profileImgURL}`}
-              alt="profileImg"
-              width="40"
-              height="40"
-              className="rounded-circle me-2"
-            />
-          </Dropdown.Toggle>
-          <strong>{user.nickname}</strong>
-        </div>
-        <Dropdown.Menu>
-          <Dropdown.Item href="#/action-1">Profile</Dropdown.Item>
-          <Dropdown.Divider />
-          <Dropdown.Item onClick={handleSignOut}>Log Out</Dropdown.Item>
-        </Dropdown.Menu>
-      </Dropdown>
+    <div>
+      {sidebarOpen && (
+        <div
+          className={`sidebarOverlay ${sidebarOpen ? "overlayShow" : ""}`}
+          onClick={handleOverlayClick}
+        ></div>
+      )}
 
-      <hr />
-      <ul className="nav nav-pills flex-column  p-0">
-        <li className="nav-item">
-          <a href="#" className="nav-link link-body-emphasis">
-            <svg className="bi pe-none me-2" width="16" height="16">
-              <use xlinkHref="#speedometer2" />
-            </svg>
-            대화방 만들기
-          </a>
-        </li>
-        <li className="nav-item">
-          <a href="#" className="nav-link link-body-emphasis">
-            <svg className="bi pe-none me-2" width="16" height="16">
-              <use xlinkHref="#table" />
-            </svg>
-            Orders
-          </a>
-        </li>
-        <li className="nav-item">
-          <a href="#" className="nav-link link-body-emphasis">
-            <svg className="bi pe-none me-2" width="16" height="16">
-              <use xlinkHref="#grid" />
-            </svg>
-            Products
-          </a>
-        </li>
-        <li className="nav-item">
-          <a href="#" className="nav-link link-body-emphasis">
-            <svg className="bi pe-none me-2" width="16" height="16">
-              <use xlinkHref="#people-circle" />
-            </svg>
-            Customers
-          </a>
-        </li>
-      </ul>
-
-      <hr />
-      <ToastContainer />
+      <div
+        className={`d-flex flex-column flex-shrink-0  p-3 bg-body-tertiary ${`sidebar ${
+          sidebarOpen ? "show" : ""
+        }`}`}
+        style={{
+          width: "200px",
+          height: "100%",
+          border: "1px solid black",
+          boxSizing: "border-box",
+        }}
+      >
+        <Dropdown>
+          {" "}
+          <div className="d-flex align-items-center">
+            <Dropdown.Toggle
+              variant="none"
+              id="dropdown-basic"
+              style={{ border: "none" }}
+            >
+              <img
+                src={`${user.profileImgURL}`}
+                alt="profileImg"
+                width="40"
+                height="40"
+                className="rounded-circle me-2"
+              />
+            </Dropdown.Toggle>
+            <strong>{user.nickname}</strong>
+          </div>
+          <Dropdown.Menu>
+            <Dropdown.Item href="#/action-1">Profile</Dropdown.Item>
+            <Dropdown.Divider />
+            <Dropdown.Item onClick={handleSignOut}>Log Out</Dropdown.Item>
+          </Dropdown.Menu>
+        </Dropdown>
+        <hr />
+        <ul className="nav nav-pills flex-column  p-0">
+          <li className="nav-item">
+            <button
+              onClick={() => dispatch(openModal())}
+              className="nav-link link-body-emphasis"
+            >
+              <svg className="bi pe-none me-2" width="16" height="16">
+                <use xlinkHref="#speedometer2" />
+              </svg>
+              대화방 만들기
+            </button>
+          </li>
+          <li className="nav-item">
+            <a href="#" className="nav-link link-body-emphasis">
+              <svg className="bi pe-none me-2" width="16" height="16">
+                <use xlinkHref="#table" />
+              </svg>
+              Orders
+            </a>
+          </li>
+          <li className="nav-item">
+            <a href="#" className="nav-link link-body-emphasis">
+              <svg className="bi pe-none me-2" width="16" height="16">
+                <use xlinkHref="#grid" />
+              </svg>
+              Products
+            </a>
+          </li>
+          <li className="nav-item">
+            <a href="#" className="nav-link link-body-emphasis">
+              <svg className="bi pe-none me-2" width="16" height="16">
+                <use xlinkHref="#people-circle" />
+              </svg>
+              Customers
+            </a>
+          </li>
+        </ul>
+        <hr />
+        <ToastContainer />
+      </div>
     </div>
   );
 };

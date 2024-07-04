@@ -1,0 +1,16 @@
+@keyframes slideDown {
+  0% {
+    transform: translateY(-100%);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+.card-box {
+  opacity: 0;
+  animation: slideDown 1s ease-in-out forwards;
+}
+
+.card-box.show {
+  opacity: 1;
+}/*# sourceMappingURL=loginpage.css.map */

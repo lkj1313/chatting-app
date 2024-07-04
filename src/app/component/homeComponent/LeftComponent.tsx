@@ -1,14 +1,25 @@
 "use client";
 import React from "react";
 import { useState, useEffect } from "react";
-import { useDispatch } from "react-redux";
-
-import { setSidebarOpen } from "@/app/store/containerSlice";
+import { useDispatch, useSelector } from "react-redux";
+import CreateChatRoomModal from "./sidebarComponent/chatroom/CreateChatRoomModal";
+import { openSidebar } from "@/app/store/uiSlice";
 import Sidebar from "@/app/component/homeComponent/sidebarComponent/SidebarComponent";
+import { db } from "../../../../firebase";
+import { collection, getDocs } from "firebase/firestore";
+import { RootState } from "@/app/store/store";
+import { setChatRoomId } from "@/app/store/chatRoomSlice";
 
+interface ChatRoom {
+  chatRoomId: string;
+  channelName: string;
+  chatRoomImg: string;
+}
 const LeftComponent: React.FC = () => {
   const [width, setWidth] = useState("8%"); // 초기 너비를 8%로 설정
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+  const [chatRooms, setChatRooms] = useState<ChatRoom[]>([]);
+
   const dispatch = useDispatch();
 
   const toggleWidth = () => {
@@ -42,6 +53,31 @@ const LeftComponent: React.FC = () => {
       window.removeEventListener("resize", handleResize);
     };
   }, []);
+
+  useEffect(() => {
+    fetchChatRooms();
+  }, []);
+
+  const fetchChatRooms = async () => {
+    // Firestore에서 "chatRooms" 컬렉션의 모든 문서를 가져옵니다.
+    const querySnapshot = await getDocs(collection(db, "chatRooms"));
+
+    // 빈 배열을 생성하여 가져온 채팅방 데이터를 저장할 준비를 합니다.
+    const rooms: ChatRoom[] = [];
+
+    // 쿼리 스냅샷의 각 문서를 순회합니다.
+    querySnapshot.forEach((doc) => {
+      // 각 문서의 데이터를 추출하여 chatRoomId와 함께 rooms 배열에 추가합니다.
+      rooms.push({ chatRoomId: doc.id, ...doc.data() } as ChatRoom);
+    });
+
+    // rooms 배열을 상태로 설정하여 컴포넌트가 재렌더링되도록 합니다.
+    setChatRooms(rooms);
+    console.log(chatRooms);
+  };
+  const handleChatRoomClick = (chatRoomId: string) => {
+    dispatch(setChatRoomId(chatRoomId));
+  };
   return (
     <div
       style={{
@@ -57,21 +93,38 @@ const LeftComponent: React.FC = () => {
       }}
     >
       <Sidebar />
-      <div
-        style={{
-          marginTop: "20px",
-          width: "100%",
-          display: "flex",
-          justifyContent: "flex-start",
-        }}
-      >
+      <div className="buttonContainer">
         <button
           className="hamburger"
-          onClick={() => dispatch(setSidebarOpen(true))}
+          onClick={() => dispatch(openSidebar())} // 사이드바 열기 액션 디스패치
         >
           <img style={{ width: "40px" }} src="/Hamburger_icon.png" />
         </button>
       </div>
+      <>
+        {chatRooms.map((room) => (
+          <div key={room.chatRoomId} className="chatRoomButtonContainer">
+            <button
+              className="chatRoomButton"
+              onClick={() => handleChatRoomClick(room.chatRoomId)}
+            >
+              {room.chatRoomImg ? (
+                <img src={room.chatRoomImg} alt={room.channelName} />
+              ) : (
+                <span
+                  style={{
+                    color: "black",
+                    fontSize: "16px",
+                    textAlign: "center",
+                  }}
+                >
+                  {room.channelName[0]} {/* 채팅방 이름의 첫 글자를 표시 */}
+                </span>
+              )}
+            </button>
+          </div>
+        ))}
+      </>
       <div
         className="resizable-handle"
         onClick={toggleWidth}
@@ -85,6 +138,7 @@ const LeftComponent: React.FC = () => {
           backgroundColor: "#007bff",
         }}
       />
+      <CreateChatRoomModal />
     </div>
   );
 };

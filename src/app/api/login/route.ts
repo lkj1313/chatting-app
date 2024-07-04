@@ -4,23 +4,22 @@ import { adminAuth } from "../../../../firebaseAdmin"; // 초기화한 Firebase 
 export async function POST(request: NextRequest) {
   try {
     const { idToken } = await request.json();
-    console.log(idToken);
+
     if (!idToken) {
       throw new Error("Missing ID token");
     }
 
     const decodedToken = await adminAuth.verifyIdToken(idToken);
+    console.log("decodetoken", decodedToken);
     const uid = decodedToken.uid;
 
     // Custom Token 생성
     const customToken = await adminAuth.createCustomToken(uid);
-
-    const response = NextResponse.json({
+    console.log("Generated Custom Token:", customToken);
+    return NextResponse.json({
       message: "Login successful",
       customToken,
     });
-
-    return response;
   } catch (error: any) {
     console.error("Error verifying ID token:", error.message);
     return NextResponse.json(

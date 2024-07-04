@@ -17,6 +17,7 @@ export async function middleware(request: NextRequest) {
     });
 
     if (response.ok) {
+      console.log("Token verification successful.");
       return NextResponse.next();
     } else {
       const { message } = await response.json();
