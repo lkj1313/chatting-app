@@ -37,3 +37,4 @@ next-env.d.ts
 
 # Ignore service account key file
 serviceAccountKey.json
+.vercel
