@@ -1,11 +1,24 @@
 import admin from "firebase-admin";
 import dotenv from "dotenv";
+import process from "process";
 
 // .env 파일에서 환경 변수를 로드합니다.
 dotenv.config();
 
-// Vercel 환경 변수를 우선 사용하고, 로컬 환경에서는 .env 파일의 변수를 사용합니다.
-const serviceAccount = JSON.parse(process.env.SERVICE_ACCOUNT_KEY);
+// 환경 변수를 읽어옵니다.
+const serviceAccountKey = process.env.SERVICE_ACCOUNT_KEY;
+
+if (!serviceAccountKey) {
+  throw new Error("SERVICE_ACCOUNT_KEY 환경 변수가 설정되지 않았습니다.");
+}
+
+// JSON 문자열을 객체로 변환합니다.
+const serviceAccount = JSON.parse(serviceAccountKey);
+
+// PEM 형식의 키에서 줄바꿈 문자를 올바르게 처리합니다.
+if (serviceAccount.private_key) {
+  serviceAccount.private_key = serviceAccount.private_key.replace(/\\n/g, "\n");
+}
 
 // Firebase 초기화
 if (!admin.apps.length) {
