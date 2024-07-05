@@ -1,3 +1,5 @@
+//login route
+
 import { NextRequest, NextResponse } from "next/server";
 import { adminAuth } from "../../../../firebaseAdmin"; // 초기화한 Firebase Admin SDK를 가져옵니다.
 

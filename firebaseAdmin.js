@@ -19,9 +19,6 @@ const authProviderX509CertUrl =
 const clientX509CertUrl = process.env.FIREBASE_CLIENT_X509_CERT_URL;
 const universeDomain = process.env.FIREBASE_UNIVERSE_DOMAIN;
 
-console.log("Private Key:", process.env.FIREBASE_PRIVATE_KEY);
-console.log("Private Key Processed:", privateKey);
-
 // JSON 파일에서 키를 읽어와 비교하는 함수
 const compareKeysAndInitializeApp = () => {
   // 절대 경로로 변경
@@ -34,6 +31,7 @@ const compareKeysAndInitializeApp = () => {
     privateKeyFromJson = serviceAccount.private_key;
 
     console.log("Private Key from JSON:", privateKeyFromJson);
+    console.log(" privateKey", privateKey);
 
     // 두 키를 비교합니다.
     if (privateKey === privateKeyFromJson) {

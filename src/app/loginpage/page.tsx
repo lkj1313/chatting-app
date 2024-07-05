@@ -85,13 +85,11 @@ export default function LoginPage() {
           email,
           password
         );
-        console.log("로그인 완료");
+
         const user = userCredential.user;
 
         const idToken = await user.getIdToken();
-        console.log(idToken);
-        const aa = JSON.stringify({ idToken });
-        console.log(aa);
+        console.log("idToken", idToken);
 
         // 토큰을 백엔드로 보내서 추가 처리
         const response = await fetch("/api/login", {
@@ -102,7 +100,6 @@ export default function LoginPage() {
 
         if (response.ok) {
           const data = await response.json();
-          console.log(data);
           const customToken = data.customToken;
           console.log("Received Custom Token:", customToken);
 
@@ -113,12 +110,14 @@ export default function LoginPage() {
           );
           const idTokenResult = await customUserCredential.user.getIdToken();
           console.log("New ID Token:", idTokenResult);
-
+          console.log("Current Environment:", process.env.NODE_ENV);
+          // 쿠키 설정 부분
           setCookie("authToken", idTokenResult, {
-            maxAge: 60 * 60 * 24, // 1일 동안 유효
+            maxAge: 60 * 60 * 24, // 1일
             httpOnly: false,
-            secure: process.env.NODE_ENV === "production",
+            secure: process.env.NODE_ENV === "development",
             sameSite: "strict",
+            path: "/",
           });
 
           const docRef = doc(db, "users", user.uid);
