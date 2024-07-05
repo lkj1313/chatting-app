@@ -2,8 +2,8 @@
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { auth } from "../../../firebase";
-import { db } from "../../../firebase";
+
+import { db, auth } from "../../../firebase";
 import {
   signInWithEmailAndPassword,
   signInWithCustomToken,
@@ -80,6 +80,7 @@ export default function LoginPage() {
     if (!emailError && !passwordError) {
       setIsLoading(true);
       try {
+        console.log("Attempting to sign in with email and password...");
         const userCredential = await signInWithEmailAndPassword(
           auth,
           email,
@@ -92,6 +93,7 @@ export default function LoginPage() {
         console.log("idToken", idToken);
 
         // 토큰을 백엔드로 보내서 추가 처리
+        console.log("Sending ID token to the backend...");
         const response = await fetch("/api/login", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -100,6 +102,8 @@ export default function LoginPage() {
 
         if (response.ok) {
           const data = await response.json();
+          const message = data.message;
+
           const customToken = data.customToken;
           console.log("Received Custom Token:", customToken);
 
@@ -113,9 +117,9 @@ export default function LoginPage() {
           console.log("Current Environment:", process.env.NODE_ENV);
           // 쿠키 설정 부분
           setCookie("authToken", idTokenResult, {
-            maxAge: 60 * 60 * 24, // 1일
+            maxAge: 60 * 60 * 15, // 1일
             httpOnly: false,
-            secure: process.env.NODE_ENV === "development",
+            secure: process.env.NODE_ENV === "production", // 프로덕션 환경에서만 secure 설정
             sameSite: "strict",
             path: "/",
           });
@@ -141,10 +145,22 @@ export default function LoginPage() {
         }
       } catch (error: any) {
         console.error("Error signing in: ", error);
-        setErrors((prevErrors) => ({
-          ...prevErrors,
-          form: "로그인 중 오류가 발생했습니다. 다시 시도해주세요.",
-        }));
+        if (error.code === "auth/wrong-password") {
+          setErrors((prevErrors) => ({
+            ...prevErrors,
+            form: "비밀번호가 틀렸습니다.",
+          }));
+        } else if (error.code === "auth/user-not-found") {
+          setErrors((prevErrors) => ({
+            ...prevErrors,
+            form: "아이디가 틀렸습니다.",
+          }));
+        } else {
+          setErrors((prevErrors) => ({
+            ...prevErrors,
+            form: "로그인 중 오류가 발생했습니다. 다시 시도해주세요.",
+          }));
+        }
       } finally {
         setIsLoading(false);
       }

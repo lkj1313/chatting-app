@@ -1,31 +1,31 @@
-//login route
-
+// app/login/route.ts
 import { NextRequest, NextResponse } from "next/server";
-import { adminAuth } from "../../../../firebaseAdmin"; // 초기화한 Firebase Admin SDK를 가져옵니다.
+import { adminAuth } from "../../../../firebaseAdmin"; // Firebase 초기화 파일에서 import
+import { getAuth } from "firebase-admin/auth";
 
-export async function POST(request: NextRequest) {
+export async function POST(req: NextRequest) {
   try {
-    const { idToken } = await request.json();
+    const { idToken } = await req.json();
+    console.log("Received ID Token:", idToken);
 
-    if (!idToken) {
-      throw new Error("Missing ID token");
-    }
-
-    const decodedToken = await adminAuth.verifyIdToken(idToken);
-    console.log("decodetoken", decodedToken);
+    const decodedToken = await getAuth().verifyIdToken(idToken);
     const uid = decodedToken.uid;
-
-    // Custom Token 생성
+    console.log("Decoded UID:", uid);
+    // 커스텀 토큰 생성
     const customToken = await adminAuth.createCustomToken(uid);
     console.log("Generated Custom Token:", customToken);
+
     return NextResponse.json({
       message: "Login successful",
       customToken,
     });
   } catch (error: any) {
-    console.error("Error verifying ID token:", error.message);
+    console.error("Error creating custom token:", error);
     return NextResponse.json(
-      { message: "Login failed", error: error.message },
+      {
+        message: "Internal Server Error",
+        error: error.message,
+      },
       { status: 500 }
     );
   }

@@ -30,8 +30,9 @@ const compareKeysAndInitializeApp = () => {
     const serviceAccount = JSON.parse(data);
     privateKeyFromJson = serviceAccount.private_key;
 
+    // 환경 변수와 JSON 파일에서 읽어온 키 값을 출력
     console.log("Private Key from JSON:", privateKeyFromJson);
-    console.log(" privateKey", privateKey);
+    console.log("Private Key from ENV:", privateKey);
 
     // 두 키를 비교합니다.
     if (privateKey === privateKeyFromJson) {
