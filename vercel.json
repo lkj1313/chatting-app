@@ -2,14 +2,52 @@
   "version": 2,
   "builds": [
     {
-      "src": "next.config.mjs",
+      "src": "app/api/auth/route.ts",
+      "use": "@vercel/node"
+    },
+    {
+      "src": "app/api/login/route.ts",
+      "use": "@vercel/node"
+    },
+    {
+      "src": "app/api/logout/route.ts",
+      "use": "@vercel/node"
+    },
+    {
+      "src": "app/api/userdataget/route.ts",
+      "use": "@vercel/node"
+    },
+    {
+      "src": "package.json",
       "use": "@vercel/next"
     }
   ],
   "routes": [
     {
+      "src": "/api/auth/(.*)",
+      "dest": "app/api/auth/route.ts"
+    },
+    {
+      "src": "/api/login/(.*)",
+      "dest": "app/api/login/route.ts"
+    },
+    {
+      "src": "/api/logout/(.*)",
+      "dest": "app/api/logout/route.ts"
+    },
+    {
+      "src": "/api/userdataget/(.*)",
+      "dest": "app/api/userdataget/route.ts"
+    },
+    {
       "src": "/(.*)",
       "dest": "/"
+    }
+  ],
+  "middlewares": [
+    {
+      "src": "/api/.*",
+      "dest": "app/middleware.js"
     }
   ]
 }
