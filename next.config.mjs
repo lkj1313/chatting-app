@@ -5,7 +5,7 @@ dotenv.config();
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  webpack: (config, { isServer }) => {
+  webpack: (config) => {
     config.experiments = {
       syncWebAssembly: true,
       layers: true,

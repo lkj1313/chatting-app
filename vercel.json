@@ -47,5 +47,11 @@
       "src": "/(.*)",
       "dest": "/"
     }
+  ],
+  "middleware": [
+    {
+      "src": "/(.*)",
+      "dest": "/src/middleware.ts"
+    }
   ]
 }
