@@ -4,10 +4,8 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 
 import { db, auth } from "../../../firebase";
-import {
-  signInWithEmailAndPassword,
-  signInWithCustomToken,
-} from "firebase/auth";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { signInWithCustomToken } from "firebase/auth";
 
 import { useDispatch } from "react-redux";
 import { login } from "@/app/store/authSlice";
@@ -65,7 +63,36 @@ export default function LoginPage() {
       password: validatePassword(value),
     }));
   };
+  const signInWithCustomTokenHandler = async (customToken: string) => {
+    try {
+      const customUserCredential = await signInWithCustomToken(
+        auth,
+        customToken
+      );
+      const idTokenResult = await customUserCredential.user.getIdToken();
+      console.log("New ID Token:", idTokenResult);
+      console.log("Current Environment:", process.env.NODE_ENV);
 
+      // 쿠키 설정 부분
+      setCookie("authToken", idTokenResult, {
+        maxAge: 60 * 60 * 24, // 1일
+        httpOnly: false,
+        secure: process.env.NODE_ENV === "production", // 프로덕션 환경에서만 secure 설정
+        sameSite: "strict",
+        path: "/",
+      });
+    } catch (error: any) {
+      if (error.code === "auth/invalid-custom-token") {
+        console.error(
+          "Invalid custom token. Attempting to refresh the token..."
+        );
+      } else if (error.code === "auth/user-token-expired") {
+        console.error("User token expired. Attempting to refresh the token...");
+      } else {
+        console.error("Authentication error:", error);
+      }
+    }
+  };
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
@@ -86,14 +113,10 @@ export default function LoginPage() {
           email,
           password
         );
-
         const user = userCredential.user;
-
         const idToken = await user.getIdToken();
         console.log("idToken", idToken);
 
-        // 토큰을 백엔드로 보내서 추가 처리
-        console.log("Sending ID token to the backend...");
         const response = await fetch("/api/login", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -102,27 +125,10 @@ export default function LoginPage() {
 
         if (response.ok) {
           const data = await response.json();
-          const message = data.message;
-
           const customToken = data.customToken;
           console.log("Received Custom Token:", customToken);
 
-          // 커스텀 토큰으로 Firebase Auth에 로그인
-          const customUserCredential = await signInWithCustomToken(
-            auth,
-            customToken
-          );
-          const idTokenResult = await customUserCredential.user.getIdToken();
-          console.log("New ID Token:", idTokenResult);
-          console.log("Current Environment:", process.env.NODE_ENV);
-          // 쿠키 설정 부분
-          setCookie("authToken", idTokenResult, {
-            maxAge: 60 * 60 * 15, // 1일
-            httpOnly: false,
-            secure: process.env.NODE_ENV === "production", // 프로덕션 환경에서만 secure 설정
-            sameSite: "strict",
-            path: "/",
-          });
+          await signInWithCustomTokenHandler(customToken);
 
           const docRef = doc(db, "users", user.uid);
           const docSnap = await getDoc(docRef);
