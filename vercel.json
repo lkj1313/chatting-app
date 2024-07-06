@@ -9,19 +9,19 @@
   "routes": [
     {
       "src": "/api/auth/(.*)",
-      "dest": "/api/auth/route.ts"
+      "dest": "/src/app/api/auth/route.ts"
     },
     {
       "src": "/api/login/(.*)",
-      "dest": "/api/login/route.ts"
+      "dest": "/src/app/api/login/route.ts"
     },
     {
       "src": "/api/logout/(.*)",
-      "dest": "/api/logout/route.ts"
+      "dest": "/src/app/api/logout/route.ts"
     },
     {
       "src": "/api/userdataget/(.*)",
-      "dest": "/api/userdataget/route.ts"
+      "dest": "/src/app/api/userdataget/route.ts"
     },
     {
       "src": "/(.*)",
