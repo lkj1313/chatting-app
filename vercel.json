@@ -2,22 +2,6 @@
   "version": 2,
   "builds": [
     {
-      "src": "src/app/api/auth/route.ts",
-      "use": "@vercel/node"
-    },
-    {
-      "src": "src/app/api/login/route.ts",
-      "use": "@vercel/node"
-    },
-    {
-      "src": "src/app/api/logout/route.ts",
-      "use": "@vercel/node"
-    },
-    {
-      "src": "src/app/api/userdataget/route.ts",
-      "use": "@vercel/node"
-    },
-    {
       "src": "package.json",
       "use": "@vercel/next"
     }
@@ -25,19 +9,19 @@
   "routes": [
     {
       "src": "/api/auth/(.*)",
-      "dest": "/src/app/api/auth/route.ts"
+      "dest": "/api/auth/route.ts"
     },
     {
       "src": "/api/login/(.*)",
-      "dest": "/src/app/api/login/route.ts"
+      "dest": "/api/login/route.ts"
     },
     {
       "src": "/api/logout/(.*)",
-      "dest": "/src/app/api/logout/route.ts"
+      "dest": "/api/logout/route.ts"
     },
     {
       "src": "/api/userdataget/(.*)",
-      "dest": "/src/app/api/userdataget/route.ts"
+      "dest": "/api/userdataget/route.ts"
     },
     {
       "src": "/(.*)",
