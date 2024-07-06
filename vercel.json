@@ -18,30 +18,30 @@
       "use": "@vercel/node"
     },
     {
-      "src": "src/middleware",
+      "src": "src/middleware.ts",
       "use": "@vercel/node"
     },
     {
-      "src": "/package.json",
+      "src": "package.json",
       "use": "@vercel/next"
     }
   ],
   "routes": [
     {
       "src": "/api/auth/(.*)",
-      "dest": "app/api/auth/route.ts"
+      "dest": "src/app/api/auth/route.ts"
     },
     {
       "src": "/api/login/(.*)",
-      "dest": "app/api/login/route.ts"
+      "dest": "src/app/api/login/route.ts"
     },
     {
       "src": "/api/logout/(.*)",
-      "dest": "app/api/logout/route.ts"
+      "dest": "src/app/api/logout/route.ts"
     },
     {
       "src": "/api/userdataget/(.*)",
-      "dest": "app/api/userdataget/route.ts"
+      "dest": "src/app/api/userdataget/route.ts"
     },
     {
       "src": "/(.*)",
