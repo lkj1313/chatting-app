@@ -6,7 +6,6 @@ import { ToastContainer, Bounce } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 import ReduxProvider from "./component/reduxProvider/ReduxProvider";
-import LayoutContainer from "./component/homeComponent/LayOutComponent";
 
 const inter = Inter({ subsets: ["latin"] });
 

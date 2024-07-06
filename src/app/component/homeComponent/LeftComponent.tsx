@@ -7,7 +7,7 @@ import { openSidebar } from "@/app/store/uiSlice";
 import Sidebar from "@/app/component/homeComponent/sidebarComponent/SidebarComponent";
 import { db } from "../../../../firebase";
 import { collection, getDocs } from "firebase/firestore";
-import { RootState } from "@/app/store/store";
+
 import { setChatRoomId } from "@/app/store/chatRoomSlice";
 
 interface ChatRoom {

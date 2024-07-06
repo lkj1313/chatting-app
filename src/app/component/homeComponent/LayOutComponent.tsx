@@ -9,7 +9,7 @@ import {
 import LeftComponent from "./LeftComponent";
 import RightComponent from "./RightComponent";
 
-import { openSidebar, closeSidebar, closeModal } from "@/app/store/uiSlice";
+import { closeSidebar } from "@/app/store/uiSlice";
 import { RootState } from "@/app/store/store";
 
 import HeaderComponent from "../HeaderComponent";

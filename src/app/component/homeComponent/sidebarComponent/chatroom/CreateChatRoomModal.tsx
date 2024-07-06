@@ -10,7 +10,7 @@ import {
 } from "@/app/store/chatRoomSlice";
 import { closeModal } from "@/app/store/uiSlice";
 import { RootState, AppDispatch } from "@/app/store/store";
-import { Bounce, toast, ToastContainer } from "react-toastify";
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 const CreateChatRoomModal: React.FC = () => {

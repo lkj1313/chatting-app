@@ -1,7 +1,6 @@
 // app/login/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import { adminAuth } from "../../../../firebaseAdmin"; // Firebase 초기화 파일에서 import
-import { getAuth } from "firebase-admin/auth";
 
 export async function POST(req: NextRequest) {
   try {
