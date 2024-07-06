@@ -43,11 +43,5 @@
       "src": "/(.*)",
       "dest": "/"
     }
-  ],
-  "middlewares": [
-    {
-      "src": "/api/.*",
-      "dest": "app/middleware.js"
-    }
   ]
 }
