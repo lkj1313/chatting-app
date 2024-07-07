@@ -401,7 +401,7 @@ const ChatRoomComponent: React.FC<ChatRoomComponentProps> = ({
 
                 <div style={{ display: "flex", alignItems: "center" }}>
                   <div>
-                    {chatRoom && chatRoom.chatRoomImg && (
+                    {chatRoom && chatRoom.chatRoomImg ? (
                       <img
                         src={chatRoom.chatRoomImg}
                         alt="Chat Room Image"
@@ -412,6 +412,31 @@ const ChatRoomComponent: React.FC<ChatRoomComponentProps> = ({
                           marginRight: "30px",
                         }}
                       />
+                    ) : (
+                      <div
+                        style={{
+                          width: "100px",
+                          height: "100px",
+                          borderRadius: "50px",
+                          backgroundColor: "#ccc",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          color: "#fff",
+                          fontSize: "30px",
+                          textAlign: "center",
+                          marginRight: "30px",
+                        }}
+                      >
+                        <p
+                          style={{
+                            margin: "0",
+                            userSelect: "none",
+                          }}
+                        >
+                          {chatRoom.channelName[0]}
+                        </p>
+                      </div>
                     )}
                   </div>
                   <div>
@@ -423,7 +448,7 @@ const ChatRoomComponent: React.FC<ChatRoomComponentProps> = ({
                         alignItems: "center",
                       }}
                     >
-                      <p
+                      <span
                         style={{
                           fontSize: "20px",
                           display: "flex",
@@ -431,8 +456,8 @@ const ChatRoomComponent: React.FC<ChatRoomComponentProps> = ({
                           margin: "0",
                         }}
                       >
-                        channelName : &nbsp;
-                      </p>{" "}
+                        channelName: &nbsp;
+                      </span>{" "}
                       {chatRoom.channelName}
                     </p>
                     <p
@@ -443,7 +468,7 @@ const ChatRoomComponent: React.FC<ChatRoomComponentProps> = ({
                         alignItems: "center",
                       }}
                     >
-                      <p
+                      <span
                         style={{
                           fontSize: "20px",
                           display: "flex",
@@ -451,8 +476,8 @@ const ChatRoomComponent: React.FC<ChatRoomComponentProps> = ({
                           margin: "0",
                         }}
                       >
-                        description : &nbsp;
-                      </p>{" "}
+                        description: &nbsp;
+                      </span>{" "}
                       {chatRoom.description}
                     </p>
                   </div>
@@ -460,7 +485,6 @@ const ChatRoomComponent: React.FC<ChatRoomComponentProps> = ({
               </div>
             </Modal.Title>
           </Modal.Header>
-          {/* <Modal.Body></Modal.Body> */}
           <Modal.Footer>
             <Button variant="secondary" onClick={closeInfoModal}>
               Close
