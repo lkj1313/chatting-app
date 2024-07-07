@@ -17,7 +17,6 @@ import { ref, uploadBytes, getDownloadURL } from "firebase/storage"; // 스토�
 import Picker from "@emoji-mart/react";
 import data from "@emoji-mart/data";
 import { Modal, Button } from "react-bootstrap";
-import { channel } from "diagnostics_channel";
 
 interface ChatRoomComponentProps {
   chatRoomId: string;
@@ -218,15 +217,27 @@ const ChatRoomComponent: React.FC<ChatRoomComponentProps> = ({
                   marginRight: "20px", // 원과 텍스트 사이 간격 추가
                 }}
               >
-                <p
-                  style={{
-                    margin: "0",
-                    fontSize: "30px",
-                    userSelect: "none",
-                  }}
-                >
-                  {chatRoom.channelName[0]}
-                </p>
+                {chatRoom && chatRoom.channelName ? (
+                  <p
+                    style={{
+                      margin: "0",
+                      fontSize: "30px",
+                      userSelect: "none",
+                    }}
+                  >
+                    {chatRoom.channelName[0]}
+                  </p>
+                ) : (
+                  <p
+                    style={{
+                      margin: "0",
+                      fontSize: "30px",
+                      userSelect: "none",
+                    }}
+                  >
+                    N/A
+                  </p>
+                )}
               </div>
             )}
             <div style={{ display: "flex" }}>
@@ -428,14 +439,25 @@ const ChatRoomComponent: React.FC<ChatRoomComponentProps> = ({
                           marginRight: "30px",
                         }}
                       >
-                        <p
-                          style={{
-                            margin: "0",
-                            userSelect: "none",
-                          }}
-                        >
-                          {chatRoom.channelName[0]}
-                        </p>
+                        {chatRoom && chatRoom.channelName ? (
+                          <p
+                            style={{
+                              margin: "0",
+                              userSelect: "none",
+                            }}
+                          >
+                            {chatRoom.channelName[0]}
+                          </p>
+                        ) : (
+                          <p
+                            style={{
+                              margin: "0",
+                              userSelect: "none",
+                            }}
+                          >
+                            N/A
+                          </p>
+                        )}
                       </div>
                     )}
                   </div>
@@ -458,7 +480,7 @@ const ChatRoomComponent: React.FC<ChatRoomComponentProps> = ({
                       >
                         channelName: &nbsp;
                       </span>{" "}
-                      {chatRoom.channelName}
+                      {chatRoom?.channelName || "N/A"}
                     </p>
                     <p
                       style={{
@@ -478,7 +500,7 @@ const ChatRoomComponent: React.FC<ChatRoomComponentProps> = ({
                       >
                         description: &nbsp;
                       </span>{" "}
-                      {chatRoom.description}
+                      {chatRoom?.description || "N/A"}
                     </p>
                   </div>
                 </div>
