@@ -2,24 +2,21 @@
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-
 import { db, auth } from "../../../firebase";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { signInWithCustomToken } from "firebase/auth";
-
+import { doc, getDoc } from "firebase/firestore";
 import { useDispatch } from "react-redux";
 import { login } from "@/app/store/authSlice";
-
-import { doc, getDoc } from "firebase/firestore";
-
 import { setCookie } from "cookies-next";
+import { toast } from "react-toastify";
 
 interface Errors {
   email?: string;
   password?: string;
   form?: string;
 }
-
+type TypeOptions = "info" | "success" | "warning" | "error";
 export default function LoginPage() {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
@@ -63,6 +60,22 @@ export default function LoginPage() {
       password: validatePassword(value),
     }));
   };
+
+  const getErrorMessage = (code: string): string => {
+    switch (code) {
+      case "auth/invalid-credential":
+        return "이메일 혹은 비밀번호가 일치하지 않습니다.";
+      case "auth/network-request-failed":
+        return "네트워크 연결에 실패 하였습니다.";
+      case "auth/invalid-email":
+        return "잘못된 이메일 형식입니다.";
+      case "auth/internal-error":
+        return "잘못된 요청입니다.";
+      default:
+        return "로그인에 실패 하였습니다.";
+    }
+  };
+
   const signInWithCustomTokenHandler = async (customToken: string) => {
     try {
       const customUserCredential = await signInWithCustomToken(
@@ -93,6 +106,18 @@ export default function LoginPage() {
       }
     }
   };
+
+  const notify = (
+    message: string,
+    type: TypeOptions = "info",
+    autoClose: number | false = false
+  ) => {
+    return toast(message, {
+      type: type,
+      autoClose: autoClose,
+      position: "top-center",
+    });
+  };
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
@@ -106,6 +131,7 @@ export default function LoginPage() {
 
     if (!emailError && !passwordError) {
       setIsLoading(true);
+
       try {
         console.log("Attempting to sign in with email and password...");
         const userCredential = await signInWithEmailAndPassword(
@@ -124,6 +150,7 @@ export default function LoginPage() {
         });
 
         if (response.ok) {
+             const toastId = notify("로그인을 시도중입니다!", "info", false);
           const data = await response.json();
           const customToken = data.customToken;
           console.log("Received Custom Token:", customToken);
@@ -144,35 +171,34 @@ export default function LoginPage() {
             );
           }
 
-          router.push("/");
+          setTimeout(() => {
+            toast.update(toastId, {
+              render: "로그인 성공!",
+              type: "success",
+              autoClose: 1000,
+            });
+            router.push("/");
+          }, 2000);
         } else {
           const errorData = await response.json();
           throw new Error("커스텀 토큰으로 로그인하는 중 오류가 발생했습니다.");
         }
       } catch (error: any) {
-        console.error("Error signing in: ", error);
-        if (error.code === "auth/wrong-password") {
-          setErrors((prevErrors) => ({
-            ...prevErrors,
-            form: "비밀번호가 틀렸습니다.",
-          }));
-        } else if (error.code === "auth/user-not-found") {
-          setErrors((prevErrors) => ({
-            ...prevErrors,
-            form: "아이디가 틀렸습니다.",
-          }));
-        } else {
-          setErrors((prevErrors) => ({
-            ...prevErrors,
-            form: "로그인 중 오류가 발생했습니다. 다시 시도해주세요.",
-          }));
-        }
+        console.error("Error signing in:", error);
+        console.error("Error code:", error.code);
+        console.error("Error message:", error.message);
+
+        const errorMessage = getErrorMessage(error.code);
+
+        setErrors((prevErrors) => ({
+          ...prevErrors,
+          form: errorMessage,
+        }));
       } finally {
         setIsLoading(false);
       }
     }
   };
-
   useEffect(() => {
     setShowCard(true);
   }, []);
@@ -184,7 +210,7 @@ export default function LoginPage() {
           showCard ? "show" : ""
         }`}
         style={{
-          width: "100%",
+          width: "80%",
           maxWidth: "500px",
           borderRadius: "5%",
           display: "flex",
@@ -253,3 +279,4 @@ export default function LoginPage() {
 LoginPage.getLayout = function getLayout(page: React.ReactNode) {
   return null;
 };
+import "react-toastify/dist/ReactToastify.css";

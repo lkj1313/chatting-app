@@ -4,15 +4,20 @@ import { useRouter } from "next/navigation";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
 import { auth, db } from "../../../firebase";
+import { toast } from "react-toastify";
+
 interface FirebaseError extends Error {
   code: string;
 }
+
 const Page = () => {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
+  const [confirmPassword, setConfirmPassword] = useState<string>("");
   const [nickname, setNickname] = useState<string>("");
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const router = useRouter();
+
   const validateEmail = (value: string) => {
     const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     if (!emailPattern.test(value)) {
@@ -37,6 +42,16 @@ const Page = () => {
     return "";
   };
 
+  const validateConfirmPassword = (
+    password: string,
+    confirmPassword: string
+  ) => {
+    if (password !== confirmPassword) {
+      return "비밀번호가 일치하지 않습니다.";
+    }
+    return "";
+  };
+
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setEmail(value);
@@ -55,6 +70,17 @@ const Page = () => {
     }));
   };
 
+  const handleConfirmPasswordChange = (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const value = e.target.value;
+    setConfirmPassword(value);
+    setErrors((prevErrors) => ({
+      ...prevErrors,
+      confirmPassword: validateConfirmPassword(password, value),
+    }));
+  };
+
   const handleNicknameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setNickname(value);
@@ -69,15 +95,29 @@ const Page = () => {
 
     const emailError = validateEmail(email);
     const passwordError = validatePassword(password);
+    const confirmPasswordError = validateConfirmPassword(
+      password,
+      confirmPassword
+    );
     const nicknameError = validateNickname(nickname);
 
     setErrors({
       email: emailError,
       password: passwordError,
+      confirmPassword: confirmPasswordError,
       nickname: nicknameError,
     });
 
-    if (!emailError && !passwordError && !nicknameError) {
+    if (
+      !emailError &&
+      !passwordError &&
+      !confirmPasswordError &&
+      !nicknameError
+    ) {
+      const toastId1 = toast("회원가입을 진행중입니다!", {
+        type: "info",
+        autoClose: false,
+      });
       try {
         const userCredential = await createUserWithEmailAndPassword(
           auth,
@@ -97,10 +137,14 @@ const Page = () => {
           createdAt: new Date(),
         });
 
-        console.log("Form submitted successfully!");
-        // 여기서 추가적으로 원하는 동작을 수행할 수 있습니다.
-        alert("회원가입이 완료되었습니다, 로그인 해주세요!");
-        router.push("loginpage");
+        setTimeout(() => {
+          toast.update(toastId1, {
+            render: "회원가입 성공!",
+            type: "success",
+            autoClose: 1000,
+          });
+          router.push("/loginpage");
+        }, 2000);
       } catch (error) {
         const firebaseError = error as FirebaseError;
         if (firebaseError.code === "auth/email-already-in-use") {
@@ -123,7 +167,7 @@ const Page = () => {
     <div className="d-flex justify-content-center align-items-center vh-100 ml-1 mr-1">
       <div
         className="card p-4 shadow-sm container"
-        style={{ width: "100%", maxWidth: "500px", borderRadius: "5%" }}
+        style={{ width: "80%", maxWidth: "500px", borderRadius: "5%" }}
       >
         <div className="card-body">
           <h5 className="card-title text-center mb-4">Signup</h5>
@@ -160,6 +204,22 @@ const Page = () => {
               )}
             </div>
             <div className="mb-3">
+              <label htmlFor="confirmPassword" className="form-label">
+                Confirm Password
+              </label>
+              <input
+                type="password"
+                className="form-control"
+                id="confirmPassword"
+                value={confirmPassword}
+                onChange={handleConfirmPasswordChange}
+                required
+              />
+              {errors.confirmPassword && (
+                <p className="text-danger">{errors.confirmPassword}</p>
+              )}
+            </div>
+            <div className="mb-3">
               <label htmlFor="nickname" className="form-label">
                 Nickname
               </label>
@@ -175,10 +235,10 @@ const Page = () => {
                 <p className="text-danger">{errors.nickname}</p>
               )}
             </div>
+            {errors.form && <p className="text-danger mt-3">{errors.form}</p>}
             <button type="submit" className="btn btn-primary w-100">
               Signup
             </button>
-            {errors.form && <p className="text-danger mt-3">{errors.form}</p>}
           </form>
         </div>
       </div>
