@@ -2,9 +2,9 @@
 import React from "react";
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import CreateChatRoomModal from "./sidebarComponent/chatroom/CreateChatRoomModal";
+import CreateChatRoomModal from "../chatroom/CreateChatRoomModal";
 import { openSidebar } from "@/app/store/uiSlice";
-import Sidebar from "@/app/component/homeComponent/sidebarComponent/SidebarComponent";
+import Sidebar from "@/app/component/sidebarComponent/SidebarComponent";
 import { db } from "../../../../firebase";
 import { collection, getDocs } from "firebase/firestore";
 import { setChatRoomId } from "@/app/store/chatRoomSlice";

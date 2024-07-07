@@ -16,6 +16,9 @@ import {
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage"; // 스토리지 관련 함수 추가
 import Picker from "@emoji-mart/react";
 import data from "@emoji-mart/data";
+import { Modal, Button } from "react-bootstrap";
+import { channel } from "diagnostics_channel";
+
 interface ChatRoomComponentProps {
   chatRoomId: string;
 }
@@ -45,6 +48,10 @@ const ChatRoomComponent: React.FC<ChatRoomComponentProps> = ({
   const pickerRef = useRef<HTMLDivElement>(null); // 타입을 명시적으로 지정
   const [loading, setLoading] = useState(false);
   const [imageUrl, setImageUrl] = useState<string | null>(null);
+  const [modalImage, setModalImage] = useState<string | null>(null);
+  const [showImageChattingModal, setImageChattingShowModal] = useState(false);
+  const [showInfoModal, setShowInfoModal] = useState(false);
+
   useEffect(() => {
     if (chatRoomId) {
       dispatch(fetchChatRoomById(chatRoomId));
@@ -160,14 +167,38 @@ const ChatRoomComponent: React.FC<ChatRoomComponentProps> = ({
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
+
+  const handleImageClick = (url: string) => {
+    setModalImage(url);
+    setImageChattingShowModal(true);
+  };
+
+  const closeImgeModal = () => {
+    //채팅이미지모달
+    setImageChattingShowModal(false);
+    setModalImage(null);
+  };
+
+  const openInfoModal = () => setShowInfoModal(true);
+  const closeInfoModal = () => setShowInfoModal(false);
   return (
     <div className="chat_wrap">
-      <header className="chatRoomHeader">
+      <header className="chatRoomHeader" onClick={openInfoModal}>
         {chatRoom ? (
-          <>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+            }}
+          >
             {chatRoom.chatRoomImg ? (
               <img
-                style={{ width: "50px", height: "50px", borderRadius: "25px" }}
+                style={{
+                  width: "50px",
+                  height: "50px",
+                  borderRadius: "25px",
+                  marginRight: "20px",
+                }}
                 src={chatRoom.chatRoomImg}
                 alt="Chat Room Image"
               />
@@ -184,17 +215,44 @@ const ChatRoomComponent: React.FC<ChatRoomComponentProps> = ({
                   color: "#fff",
                   fontSize: "12px",
                   textAlign: "center",
+                  marginRight: "20px", // 원과 텍스트 사이 간격 추가
                 }}
               >
                 <p
-                  style={{ margin: "0", fontSize: "30px", userSelect: "none" }}
+                  style={{
+                    margin: "0",
+                    fontSize: "30px",
+                    userSelect: "none",
+                  }}
                 >
                   {chatRoom.channelName[0]}
-                </p>{" "}
-                {/* 채팅방 이름의 첫 글자를 표시 */}
+                </p>
               </div>
             )}
-          </>
+            <div style={{ display: "flex" }}>
+              <p
+                style={{
+                  margin: "0",
+                  fontSize: "20px",
+                  userSelect: "none",
+                  display: "flex",
+                  alignItems: "center",
+                }}
+              >
+                {" "}
+                channelName : &nbsp;
+              </p>
+              <p
+                style={{
+                  margin: "0",
+                  fontSize: "30px",
+                  userSelect: "none",
+                }}
+              >
+                {chatRoom.channelName}
+              </p>
+            </div>
+          </div>
         ) : (
           <p>Loading...</p>
         )}
@@ -228,7 +286,12 @@ const ChatRoomComponent: React.FC<ChatRoomComponentProps> = ({
                   <img
                     src={msg.imageUrl}
                     alt="Uploaded"
-                    style={{ maxWidth: "100%", marginTop: "0" }}
+                    style={{
+                      maxWidth: "100%",
+                      marginTop: "0",
+                      cursor: "pointer",
+                    }}
+                    onClick={() => handleImageClick(msg.imageUrl!)}
                   />
                 )}
               </div>
@@ -242,7 +305,7 @@ const ChatRoomComponent: React.FC<ChatRoomComponentProps> = ({
       </div>
 
       <footer className="footer">
-        <>
+        <div className="uploadButtonDiv">
           <button
             className="uploadButton"
             onClick={() => fileInputRef.current?.click()}
@@ -251,13 +314,13 @@ const ChatRoomComponent: React.FC<ChatRoomComponentProps> = ({
               <div className="loadingSpinner"></div>
             ) : (
               <img
-                style={{ height: "100%" }}
+                style={{ height: "100%", width: "100%" }}
                 src="/uploadButton.png"
                 alt="Upload"
               />
             )}
           </button>
-        </>
+        </div>
         {showPicker && (
           <div
             ref={pickerRef}
@@ -293,14 +356,118 @@ const ChatRoomComponent: React.FC<ChatRoomComponentProps> = ({
           style={{ display: "none" }}
           onChange={handleImageUpload}
         />{" "}
-        <button
-          className="emojiButton"
-          style={{}}
-          onClick={() => setShowPicker(!showPicker)}
-        >
-          😊
-        </button>
+        <div className="emojiButtonDiv" style={{}}>
+          <button
+            className="emojiButton"
+            style={{}}
+            onClick={() => setShowPicker(!showPicker)}
+          >
+            <span>😊</span>
+          </button>
+        </div>
       </footer>
+
+      <Modal show={showImageChattingModal} onHide={closeImgeModal}>
+        <Modal.Body>
+          {modalImage && (
+            <img src={modalImage} alt="Modal" style={{ width: "100%" }} />
+          )}
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={closeImgeModal}>
+            Close
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
+      <Modal show={showInfoModal} onHide={closeInfoModal}>
+        <div
+          style={{
+            width: "100%",
+            display: "flex",
+            flexDirection: "column",
+            alignContent: "flex-start",
+            border: "none",
+          }}
+        >
+          <Modal.Header style={{ border: "none" }}>
+            <Modal.Title>
+              <div>
+                <div>
+                  <p style={{ fontSize: "20px", marginBottom: "20px" }}>
+                    채널정보
+                  </p>
+                </div>
+
+                <div style={{ display: "flex", alignItems: "center" }}>
+                  <div>
+                    {chatRoom && chatRoom.chatRoomImg && (
+                      <img
+                        src={chatRoom.chatRoomImg}
+                        alt="Chat Room Image"
+                        style={{
+                          width: "100px",
+                          height: "100px",
+                          borderRadius: "50px",
+                          marginRight: "30px",
+                        }}
+                      />
+                    )}
+                  </div>
+                  <div>
+                    <p
+                      style={{
+                        margin: "0",
+                        fontSize: "30px",
+                        display: "flex",
+                        alignItems: "center",
+                      }}
+                    >
+                      <p
+                        style={{
+                          fontSize: "20px",
+                          display: "flex",
+                          alignItems: "center",
+                          margin: "0",
+                        }}
+                      >
+                        channelName : &nbsp;
+                      </p>{" "}
+                      {chatRoom.channelName}
+                    </p>
+                    <p
+                      style={{
+                        margin: "0",
+                        fontSize: "30px",
+                        display: "flex",
+                        alignItems: "center",
+                      }}
+                    >
+                      <p
+                        style={{
+                          fontSize: "20px",
+                          display: "flex",
+                          alignItems: "center",
+                          margin: "0",
+                        }}
+                      >
+                        description : &nbsp;
+                      </p>{" "}
+                      {chatRoom.description}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </Modal.Title>
+          </Modal.Header>
+          {/* <Modal.Body></Modal.Body> */}
+          <Modal.Footer>
+            <Button variant="secondary" onClick={closeInfoModal}>
+              Close
+            </Button>
+          </Modal.Footer>
+        </div>
+      </Modal>
     </div>
   );
 };

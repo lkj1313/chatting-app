@@ -6,7 +6,7 @@ import { v4 as uuidv4 } from "uuid";
 
 interface ChatRoomState {
   chatRoomImg: string | null;
-  channelName: string;
+  channelName: string | null;
   description: string;
   chatRoomId: string | null;
   status: "idle" | "loading" | "succeeded" | "failed";

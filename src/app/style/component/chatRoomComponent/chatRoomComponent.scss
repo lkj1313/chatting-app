@@ -1,4 +1,3 @@
-/* styles.css */
 .chat_wrap {
   border: 1px solid #999;
   width: 100%;
@@ -18,6 +17,7 @@
   text-align: left;
   display: flex;
   align-items: center;
+  cursor: pointer;
 }
 
 .chat_wrap .inner {
@@ -92,28 +92,7 @@
 .chat_wrap .item.on .box {
   margin: 0;
 }
-.footer {
-  height: 50px;
-  margin: 0;
-  padding: 2px;
-  background-color: #fff; /* 배경색 추가 */
-  display: flex;
-  align-items: center;
-}
-.chatInput[type="text"] {
-  border: 0;
-  width: 90%;
-  height: 100%;
-  background: #ddd;
-  border-radius: 5px;
-  padding-left: 5px;
-  box-sizing: border-box;
 
-  margin: 0 10px;
-}
-.chatInput[type="text"]::placeholder {
-  color: #999;
-}
 .message-container {
   display: flex;
   align-items: flex-start;
@@ -159,31 +138,80 @@
   text-align: right;
 }
 
-.emojiButton {
-  height: 100%;
-  width: 50px;
+// footer
+
+.footer {
+  width: 100%;
+  height: 50px;
+  margin: 0;
+  padding: 2px;
+  background-color: #fff; /* 배경색 추가 */
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 30px;
+}
+
+.chatInput[type="text"] {
+  border: 0;
+  flex: 1;
+  height: 100%;
+  background: #ddd;
+  border-radius: 5px;
+  padding-left: 5px;
+  box-sizing: border-box;
+  margin: 0;
+}
+.chatInput[type="text"]::placeholder {
+  color: #999;
+}
+
+.uploadButtonDiv {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  height: 100%;
+  max-width: 60px;
+  transition: background-color 0.5s ease;
+}
+.uploadButton {
+  height: 100%;
+  width: 100%;
+  max-width: 60px;
+  border: none;
+  position: relative;
+  overflow: hidden;
+}
+.uploadButtonDiv:hover {
+  background-color: rgb(230, 225, 225);
+}
+.emojiButtonDiv {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  height: 100%;
+  max-width: 50px;
+}
+.emojiButton {
+  height: 100%;
+  width: 100%;
+  max-width: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   border: none;
   background-color: white;
-  margin: 0;
-  padding: 0;
   transition: background-color 0.5s ease;
+}
+.emojiButton span {
+  height: 100%;
+  width: 100%;
+  font-size: 30px;
 }
 
 .emojiButton:hover {
   background-color: rgb(230, 225, 225);
 }
 
-.uploadButton {
-  height: 90%;
-  border: none;
-  position: relative;
-  overflow: hidden;
-  background-color: white;
-}
 .loadingSpinner {
   border: 8px solid #f3f3f3; /* Light grey */
   border-top: 8px solid #3498db; /* Blue */

@@ -114,7 +114,7 @@ const Page = () => {
       !confirmPasswordError &&
       !nicknameError
     ) {
-      const toastId1 = toast("회원가입을 진행중입니다!", {
+      const toastId2 = toast("회원가입을 진행중입니다!", {
         type: "info",
         autoClose: false,
       });
@@ -138,7 +138,7 @@ const Page = () => {
         });
 
         setTimeout(() => {
-          toast.update(toastId1, {
+          toast.update(toastId2, {
             render: "회원가입 성공!",
             type: "success",
             autoClose: 1000,

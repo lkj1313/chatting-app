@@ -1,4 +1,4 @@
-import ChatRoomComponent from "@/app/component/homeComponent/ChatRoomComponent";
+import ChatRoomComponent from "@/app/component/chatroom/ChatRoomComponent";
 import { useSelector } from "react-redux";
 import { RootState } from "@/app/store/store";
 
