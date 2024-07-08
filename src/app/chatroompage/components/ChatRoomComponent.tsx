@@ -244,10 +244,11 @@ const ChatRoomComponent: React.FC<ChatRoomComponentProps> = ({
               <p
                 style={{
                   margin: "0",
-                  fontSize: "20px",
+                  fontSize: "13px",
                   userSelect: "none",
                   display: "flex",
                   alignItems: "center",
+                  flexGrow: 1, // 가용 공간을 균등하게 나누기 위해 설정
                 }}
               >
                 {" "}
@@ -256,8 +257,11 @@ const ChatRoomComponent: React.FC<ChatRoomComponentProps> = ({
               <p
                 style={{
                   margin: "0",
-                  fontSize: "30px",
+                  fontSize: "13px",
                   userSelect: "none",
+                  flexGrow: 1, // 가용 공간을 균등하게 나누기 위해 설정
+                  overflow: "hidden", // 넘치는 텍스트 숨기기
+                  textOverflow: "ellipsis", // 넘치는 텍스트를 ...로 표시
                 }}
               >
                 {chatRoom.channelName}
@@ -402,32 +406,32 @@ const ChatRoomComponent: React.FC<ChatRoomComponentProps> = ({
           }}
         >
           <Modal.Header style={{ border: "none" }}>
-            <Modal.Title>
+            <div style={{ width: "100%" }}>
               <div>
-                <div>
-                  <p style={{ fontSize: "20px", marginBottom: "20px" }}>
-                    채널정보
-                  </p>
-                </div>
+                <p style={{ fontSize: "20px", marginBottom: "20px" }}>
+                  채널정보
+                </p>
+              </div>
 
-                <div style={{ display: "flex", alignItems: "center" }}>
-                  <div>
-                    {chatRoom && chatRoom.chatRoomImg ? (
+              <div className="container" style={{ width: "100%" }}>
+                <div className="row">
+                  <div className="col-5">
+                    {chatRoom && chatRoom.chatRoomImg ? ( //이미지가있을시 이미지
                       <img
                         src={chatRoom.chatRoomImg}
                         alt="Chat Room Image"
                         style={{
-                          width: "100px",
+                          width: "100%",
                           height: "100px",
                           borderRadius: "50px",
-                          marginRight: "30px",
                         }}
                       />
                     ) : (
-                      <div
+                      <div // 이미지가없을시 둥근원
+                        className="col-5"
                         style={{
-                          width: "100px",
-                          height: "100px",
+                          width: "100%",
+                          height: "100%",
                           borderRadius: "50px",
                           backgroundColor: "#ccc",
                           display: "flex",
@@ -444,6 +448,7 @@ const ChatRoomComponent: React.FC<ChatRoomComponentProps> = ({
                             style={{
                               margin: "0",
                               userSelect: "none",
+                              width: "100%",
                             }}
                           >
                             {chatRoom.channelName[0]}
@@ -461,51 +466,76 @@ const ChatRoomComponent: React.FC<ChatRoomComponentProps> = ({
                       </div>
                     )}
                   </div>
-                  <div>
-                    <p
-                      style={{
-                        margin: "0",
-                        fontSize: "30px",
-                        display: "flex",
-                        alignItems: "center",
-                      }}
+
+                  {/* 채널명, 채널정보 DIV*/}
+                  <div className="col-7">
+                    <div
+                      className="container d-flex flex-column"
+                      style={{ width: "100%", height: "100%" }}
                     >
-                      <span
+                      <div
+                        className="row flex-grow-1 d-flex align-items-center justify-content-center"
                         style={{
-                          fontSize: "20px",
-                          display: "flex",
-                          alignItems: "center",
-                          margin: "0",
+                          border: "1px solid black",
+                          width: "100%",
+                          height: "50%",
                         }}
                       >
-                        channelName: &nbsp;
-                      </span>{" "}
-                      {chatRoom?.channelName || "N/A"}
-                    </p>
-                    <p
-                      style={{
-                        margin: "0",
-                        fontSize: "30px",
-                        display: "flex",
-                        alignItems: "center",
-                      }}
-                    >
-                      <span
-                        style={{
-                          fontSize: "20px",
-                          display: "flex",
-                          alignItems: "center",
-                          margin: "0",
-                        }}
+                        <div className="col-12">
+                          <p
+                            style={{
+                              margin: 0,
+                              fontSize: "10px",
+                              display: "flex",
+                              alignItems: "center",
+                            }}
+                          >
+                            <span
+                              style={{
+                                fontSize: "10px",
+                                display: "flex",
+                                alignItems: "center",
+                                margin: 0,
+                              }}
+                            >
+                              channelName: &nbsp;
+                            </span>
+                            {chatRoom?.channelName || "N/A"}
+                          </p>
+                        </div>
+                      </div>
+                      <div
+                        className="row flex-grow-1 d-flex align-items-center justify-content-center"
+                        style={{ width: "100%", height: "50%" }}
                       >
-                        description: &nbsp;
-                      </span>{" "}
-                      {chatRoom?.description || "N/A"}
-                    </p>
+                        <div className="col-12">
+                          <p
+                            style={{
+                              margin: "0",
+                              fontSize: "30px",
+                              display: "flex",
+                              alignItems: "center",
+                            }}
+                          >
+                            <span
+                              style={{
+                                fontSize: "20px",
+                                display: "flex",
+                                alignItems: "center",
+                                margin: "0",
+                              }}
+                            >
+                              description: &nbsp;
+                            </span>{" "}
+                            {chatRoom?.description || "N/A"}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
-            </Modal.Title>
+            </div>
           </Modal.Header>
           <Modal.Footer>
             <Button variant="secondary" onClick={closeInfoModal}>

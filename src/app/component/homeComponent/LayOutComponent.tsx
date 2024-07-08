@@ -6,7 +6,7 @@ import {
   setLeftWidth,
   setHeaderHeight,
 } from "@/app/store/containerSlice";
-import LeftComponent from "./LeftComponent";
+// import LeftComponent from "./LeftComponent";
 import RightComponent from "./RightComponent";
 
 import { closeSidebar } from "@/app/store/uiSlice";
@@ -66,9 +66,9 @@ const LayoutContainer: React.FC = () => {
   }
 
   return (
-    <div
+    <div // 제일상단 div
       ref={containerRef}
-      className={`container-fluid ${fadeIn ? "fade-in" : ""} `} // 수정된 JSX 클래스 추가
+      className={`container ${fadeIn ? "fade-in" : ""} `} // 수정된 JSX 클래스 추가
       style={{
         height: "100%",
         position: "relative",
@@ -83,7 +83,6 @@ const LayoutContainer: React.FC = () => {
       }}
     >
       {" "}
-      <HeaderComponent />
       <div
         style={{
           display: "flex",
@@ -98,7 +97,7 @@ const LayoutContainer: React.FC = () => {
           />
         )}
 
-        <LeftComponent />
+        {/* <LeftComponent /> */}
         <RightComponent />
       </div>
     </div>

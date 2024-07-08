@@ -125,7 +125,7 @@ const CreateChatRoomModal: React.FC = () => {
                     width: "100px",
                     height: "100px",
                     borderRadius: "50px",
-                    backgroundColor: "#3CAEFF",
+
                     cursor: "pointer",
                   }}
                   onClick={handleButtonClick}
@@ -135,6 +135,7 @@ const CreateChatRoomModal: React.FC = () => {
                       width: "100px",
                       height: "100px",
                       borderRadius: "50px",
+                      objectFit: "cover",
                     }}
                     src={localChatRoomImg || "/camera.png"}
                     alt="Upload"

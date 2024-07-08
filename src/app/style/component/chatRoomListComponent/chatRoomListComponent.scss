@@ -1,0 +1,22 @@
+.chatBox {
+  width: 100%;
+
+  box-sizing: border-box;
+  border-bottom: 1px solid black;
+}
+
+.chatBox:last-child {
+  margin-bottom: 0;
+}
+
+.container {
+  padding-bottom: 10px; /* 부모 요소에 패딩 추가 */
+}
+
+.chatRow {
+  transition: background-color 0.3s ease;
+}
+
+.chatRow:hover {
+  background-color: grey;
+}

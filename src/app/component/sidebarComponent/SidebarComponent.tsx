@@ -236,30 +236,6 @@ const Sidebar: React.FC = () => {
               대화방 만들기
             </button>
           </li>
-          <li className="nav-item">
-            <a href="#" className="nav-link link-body-emphasis">
-              <svg className="bi pe-none me-2" width="16" height="16">
-                <use xlinkHref="#table" />
-              </svg>
-              Orders
-            </a>
-          </li>
-          <li className="nav-item">
-            <a href="#" className="nav-link link-body-emphasis">
-              <svg className="bi pe-none me-2" width="16" height="16">
-                <use xlinkHref="#grid" />
-              </svg>
-              Products
-            </a>
-          </li>
-          <li className="nav-item">
-            <a href="#" className="nav-link link-body-emphasis">
-              <svg className="bi pe-none me-2" width="16" height="16">
-                <use xlinkHref="#people-circle" />
-              </svg>
-              Customers
-            </a>
-          </li>
         </ul>
         <hr />
         <ToastContainer />{" "}

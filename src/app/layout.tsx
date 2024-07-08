@@ -25,16 +25,18 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <ReduxProvider>{children}</ReduxProvider>
-        <ToastContainer
-          position="top-center"
-          limit={1}
-          transition={Bounce}
-          closeOnClick
-          hideProgressBar={false}
-          draggable
-          pauseOnHover={false}
-        />
+        <ReduxProvider>
+          {children}
+          <ToastContainer
+            position="top-center"
+            limit={1}
+            transition={Bounce}
+            closeOnClick
+            hideProgressBar={false}
+            draggable
+            pauseOnHover={false}
+          />
+        </ReduxProvider>
       </body>
     </html>
   );
