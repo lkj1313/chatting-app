@@ -8,7 +8,7 @@ import Sidebar from "@/app/component/layoutComponent/components/SidebarComponent
 import HeaderComponent from "../HeaderComponent";
 import ChatRoomList from "@/app/component/layoutComponent/components/ChatRoomList";
 
-const LayoutContainer: React.FC = () => {
+const LayoutComponent: React.FC = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const headerRef = useRef<HTMLDivElement>(null);
 
@@ -64,4 +64,4 @@ const LayoutContainer: React.FC = () => {
   );
 };
 
-export default LayoutContainer;
+export default LayoutComponent;

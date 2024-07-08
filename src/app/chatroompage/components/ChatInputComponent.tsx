@@ -49,7 +49,7 @@ const ChatInputComponent: React.FC<ChatInputProps> = ({
 
   return (
     <footer className="footer">
-      <div className="uploadButtonDiv">
+      <div className="uploadButtonDiv container">
         <button
           className="uploadButton"
           onClick={() => fileInputRef.current?.click()}
