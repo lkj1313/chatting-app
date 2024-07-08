@@ -1,8 +1,7 @@
 "use client";
-import Sidebar from "@/app/component/layoutComponent/components/SidebarComponent";
-import HeaderComponent from "../HeaderComponent";
-
-import MainComponent from "./components/MainComponent";
+import HeaderComponent from "./HeaderComponent";
+import MainComponent from "./MainComponent";
+import Sidebar from "./SidebarComponent";
 
 const LayoutComponent: React.FC = () => {
   return (

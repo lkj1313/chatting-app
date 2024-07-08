@@ -2,7 +2,7 @@
 import { useRouter } from "next/navigation";
 import { useDispatch } from "react-redux";
 import { signOut as firebaseSignOut } from "firebase/auth";
-import { auth } from "../../../../../firebase";
+import { auth } from "../../../../firebase";
 import { logout } from "@/app/store/authSlice";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
