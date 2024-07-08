@@ -20,8 +20,11 @@ import ChatInputComponent from "@/app/chatroompage/components/ChatInputComponent
 import MessageListComponent from "@/app/chatroompage/components/MessageListComponent";
 import ChatRoomInfoModal from "@/app/chatroompage/components/InfoModal";
 import ImageModal from "@/app/chatroompage/components/ImageModal";
+import { useParams } from "next/navigation";
 
-const ChatRoomPage = ({ params }: { params: { id: string } }) => {
+const ChatRoomPage = () => {
+  const { id } = useParams();
+  const chatRoomId = Array.isArray(id) ? id[0] : id; // id가 배열일 경우 첫 번째 요소 사용
   const dispatch = useDispatch<AppDispatch>();
   const [chatRoom, setChatRoom] = useState<any>(null);
   const user = useSelector((state: RootState) => state.auth.user);
@@ -33,10 +36,10 @@ const ChatRoomPage = ({ params }: { params: { id: string } }) => {
   const [showInfoModal, setShowInfoModal] = useState(false);
 
   useEffect(() => {
-    if (params.id) {
-      dispatch(fetchChatRoomById(params.id));
+    if (chatRoomId) {
+      dispatch(fetchChatRoomById(chatRoomId));
 
-      const chatRoomRef = doc(db, "chatRooms", params.id);
+      const chatRoomRef = doc(db, "chatRooms", chatRoomId);
       getDoc(chatRoomRef)
         .then((doc) => {
           if (doc.exists()) {
@@ -49,7 +52,7 @@ const ChatRoomPage = ({ params }: { params: { id: string } }) => {
           console.error("Error getting document:", error);
         });
 
-      const messagesRef = collection(db, "chatRooms", params.id, "messages");
+      const messagesRef = collection(db, "chatRooms", chatRoomId, "messages");
       const q = query(messagesRef, orderBy("time"));
       const unsubscribe = onSnapshot(q, (querySnapshot) => {
         const msgs: Message[] = [];
@@ -70,7 +73,7 @@ const ChatRoomPage = ({ params }: { params: { id: string } }) => {
 
       return () => unsubscribe();
     }
-  }, [params.id, dispatch]);
+  }, [chatRoomId, dispatch]);
 
   const handleSendMessage = async (text: string, imageUrl = "") => {
     if ((text.trim() || imageUrl) && user.uid) {
@@ -83,7 +86,7 @@ const ChatRoomPage = ({ params }: { params: { id: string } }) => {
         imageUrl,
       };
       await addDoc(
-        collection(db, "chatRooms", params.id, "messages"),
+        collection(db, "chatRooms", chatRoomId!, "messages"),
         newMessage
       );
     }
