@@ -4,9 +4,9 @@ import { useDispatch, useSelector } from "react-redux";
 
 import { closeSidebar } from "@/app/store/uiSlice";
 import { RootState } from "@/app/store/store";
-import Sidebar from "../sidebarComponent/SidebarComponent";
+import Sidebar from "@/app/component/layoutComponent/components/SidebarComponent";
 import HeaderComponent from "../HeaderComponent";
-import ChatRoomList from "@/app/component/chatroom/ChatRoomList";
+import ChatRoomList from "@/app/component/layoutComponent/components/ChatRoomList";
 
 const LayoutContainer: React.FC = () => {
   const containerRef = useRef<HTMLDivElement>(null);

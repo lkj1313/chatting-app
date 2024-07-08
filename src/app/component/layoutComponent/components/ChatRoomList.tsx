@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { db } from "../../../../firebase"; // Firebase 초기화 설정에 맞게 firebase.js 파일에서 db 가져오기
+import { db } from "../../../../../firebase"; // Firebase 초기화 설정에 맞게 firebase.js 파일에서 db 가져오기
 import { collection, getDocs } from "firebase/firestore";
 import { useDispatch } from "react-redux";
 import { setChatRoomId } from "@/app/store/chatRoomSlice";

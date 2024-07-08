@@ -7,7 +7,7 @@ import useSignOut from "./useSignOut";
 import { openModal, closeModal, closeSidebar } from "@/app/store/uiSlice";
 
 import { doc, getDoc, updateDoc } from "firebase/firestore";
-import { db } from "../../../../firebase"; // Firestore 초기화
+import { db } from "../../../../../firebase"; // Firestore 초기화
 
 import { login } from "@/app/store/authSlice";
 
