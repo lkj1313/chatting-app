@@ -1,4 +1,5 @@
 // ChatInput.tsx
+"use client";
 import React, { useState, useRef } from "react";
 import Picker from "@emoji-mart/react";
 import data from "@emoji-mart/data";
