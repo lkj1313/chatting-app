@@ -1,11 +1,11 @@
 "use client"; // 클라이언트 컴포넌트로 지정
-import React from "react";
+
 import { useDispatch } from "react-redux";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min";
 import { openSidebar } from "@/app/store/uiSlice";
 
-const NavbarComponent = () => {
+const HeaderComponent = () => {
   const dispatch = useDispatch();
 
   return (
@@ -42,4 +42,4 @@ const NavbarComponent = () => {
   );
 };
 
-export default NavbarComponent;
+export default HeaderComponent;

@@ -65,13 +65,13 @@ const ChatRoomList = () => {
               onClick={() => handleChatBoxClick(room.id)}
             >
               <div
-                className="col-2"
+                className="col-3"
                 style={{
                   display: "flex",
                   alignItems: "center",
                   padding: "0",
                   paddingLeft: "5px",
-                  margin: "0",
+                  margin: "",
                   height: "100%",
                 }}
               >
@@ -91,7 +91,7 @@ const ChatRoomList = () => {
                   )}
                 </button>
               </div>
-              <div className="col-10" style={{ height: "100%", padding: "0" }}>
+              <div className="col-9" style={{ height: "100%", padding: "0" }}>
                 <div className="row" style={{ height: "60%" }}>
                   <p style={{ margin: "0", fontSize: "20px" }}>
                     <strong>{room.channelName}</strong>

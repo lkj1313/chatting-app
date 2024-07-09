@@ -28,9 +28,9 @@ interface User {
   profileImgURL: string;
 }
 
-interface ProfileImageChangerProps {
-  user: User;
-}
+// interface ProfileImageChangerProps {
+//   user: User;
+// }
 
 const Sidebar: React.FC = () => {
   const handleSignOut = useSignOut();
@@ -41,7 +41,7 @@ const Sidebar: React.FC = () => {
   const [newNickname, setNewNickname] = useState("");
 
   const sidebarOpen = useSelector((state: RootState) => state.ui.sidebarOpen);
-  const showModal = useSelector((state: RootState) => state.ui.showModal);
+  // const showModal = useSelector((state: RootState) => state.ui.showModal);
 
   const user = useSelector((state: RootState) => state.auth.user);
   const changeProfileImgInputRef = useRef<HTMLInputElement>(null);
@@ -189,7 +189,7 @@ const Sidebar: React.FC = () => {
       )}
 
       <div //사이드바 div
-        className={`d-flex flex-column flex-shrink-0  p-3 bg-body-tertiary ${`sidebar ${
+        className={`d-flex flex-column flex-shrink-0 p-3 bg-body-tertiary ${`sidebar ${
           sidebarOpen ? "show" : ""
         }`}`}
         style={{

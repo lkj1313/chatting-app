@@ -14,12 +14,12 @@ import {
   getDoc,
 } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import { Message } from "@/app/component/chatRommPage/type";
-import ChatRoomHeader from "@/app/component/chatRommPage/ChatRoomHeader";
-import ChatInputComponent from "@/app/component/chatRommPage/ChatInputComponent";
-import MessageListComponent from "@/app/component/chatRommPage/MessageListComponent";
-import ChatRoomInfoModal from "@/app/component/chatRommPage/InfoModal";
-import ImageModal from "@/app/component/chatRommPage/ImageModal";
+import { Message } from "@/app/component/chatRommPageComponent/type";
+import ChatRoomHeader from "@/app/component/chatRommPageComponent/ChatRoomHeader";
+import ChatInputComponent from "@/app/component/chatRommPageComponent/ChatInputComponent";
+import MessageListComponent from "@/app/component/chatRommPageComponent/MessageListComponent";
+import ChatRoomInfoModal from "@/app/component/chatRommPageComponent/InfoModal";
+import ImageModal from "@/app/component/chatRommPageComponent/ImageModal";
 import { useParams } from "next/navigation";
 
 const ChatRoomPage = () => {
