@@ -1,4 +1,3 @@
-"use client";
 import React from "react";
 import { useEffect, useState, useRef } from "react";
 
@@ -20,6 +19,7 @@ import { Dropdown, Modal, Button } from "react-bootstrap";
 
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import CreateChatRoomModal from "./CreateChatRoomModal";
 
 const Sidebar: React.FC = () => {
   const handleSignOut = useSignOut();
@@ -178,15 +178,9 @@ const Sidebar: React.FC = () => {
       )}
 
       <div //사이드바 div
-        className={`d-flex flex-column flex-shrink-0 p-3 bg-body-tertiary ${`sidebar ${
+        className={`d-flex flex-column flex-shrink-0 p-3  ${`sidebar ${
           sidebarOpen ? "show" : ""
         }`}`}
-        style={{
-          width: "200px",
-          height: "100%",
-          border: "1px solid black",
-          boxSizing: "border-box",
-        }}
       >
         <Dropdown>
           {" "}
@@ -227,6 +221,7 @@ const Sidebar: React.FC = () => {
           </li>
         </ul>
         <hr />
+        <CreateChatRoomModal />
         <ToastContainer />{" "}
         <Modal show={showProfileModal} onHide={handleCloseProfileModal}>
           <div

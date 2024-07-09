@@ -1,5 +1,6 @@
 "use client";
 import React, { useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
 import {
   setChatRoomImg,
@@ -14,6 +15,7 @@ import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 const CreateChatRoomModal: React.FC = () => {
+  const router = useRouter();
   const dispatch = useDispatch<AppDispatch>();
   const showModal = useSelector((state: RootState) => state.ui.showModal);
   const chatRoomImg = useSelector(
@@ -86,6 +88,7 @@ const CreateChatRoomModal: React.FC = () => {
         const chatRoomId = resultAction.payload;
         dispatch(setChatRoomId(chatRoomId)); // 새로운 채팅방 ID 설정
         dispatch(closeModal());
+        router.push(`/chatroompage/${chatRoomId}`);
       } else {
         console.error("Failed to create chat room");
       }
@@ -105,6 +108,7 @@ const CreateChatRoomModal: React.FC = () => {
       <div
         className={`modalContainer ${showModal ? "show" : ""}`}
         onClick={handleModalContentClick}
+        style={{ maxWidth: "300px" }}
       >
         <div className="modal-content">
           <div className="header">

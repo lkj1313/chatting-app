@@ -2,8 +2,11 @@
   position: absolute;
   padding-right: 0;
   background-color: white;
+  // width: 300px;
+  height: calc(100% + 58px) !important;
   overflow-x: hidden;
   right: 0px;
+  top: -58px;
   transition: visibility 0.4s, opacity 0.5s;
   z-index: 1001; /* 오버레이보다 위에 위치하도록 설정 */
   visibility: hidden;
