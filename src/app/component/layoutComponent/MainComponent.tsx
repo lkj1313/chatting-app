@@ -1,6 +1,5 @@
-// MainContainer.tsx
 "use client";
-import React, { useRef, useEffect, useState } from "react";
+import React, { useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { closeSidebar } from "@/app/store/uiSlice";
 import { RootState } from "@/app/store/store";
@@ -25,7 +24,7 @@ const MainComponent: React.FC = () => {
         margin: "0",
         display: "flex",
         flexDirection: "column",
-        backgroundImage: "url('backgroundImg.jpg ')",
+        backgroundImage: "url('backgroundImg.jpg')",
         backgroundSize: "cover", // 크기에 맞게 이미지 조정
         backgroundRepeat: "no-repeat",
         backgroundPosition: "center",

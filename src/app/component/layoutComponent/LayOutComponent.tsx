@@ -1,13 +1,15 @@
 "use client";
+import React from "react";
+import { Container } from "react-bootstrap";
 import HeaderComponent from "./HeaderComponent";
 import MainComponent from "./MainComponent";
 
 const LayoutComponent: React.FC = () => {
   return (
-    <div className="container">
+    <Container>
       <HeaderComponent />
       <MainComponent />
-    </div>
+    </Container>
   );
 };
 

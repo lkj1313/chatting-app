@@ -7,10 +7,7 @@ import { logout } from "@/app/store/authSlice";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-import { useState } from "react";
-
 const useSignOut = () => {
-  const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
   const router = useRouter();
   const handleSignOut = async () => {

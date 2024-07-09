@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { db } from "../../../../firebase"; // Firebase 초기화 설정에 맞게 firebase.js 파일에서 db 가져오기
+import { db } from "../../../../firebase";
 import { collection, getDocs } from "firebase/firestore";
 import { useDispatch } from "react-redux";
 import { setChatRoomId } from "@/app/store/chatRoomSlice";
@@ -12,7 +12,8 @@ interface ChatRoom {
   description: string;
   chatRoomImg: string;
 }
-const ChatRoomList = () => {
+
+const ChatRoomList: React.FC = () => {
   const dispatch = useDispatch();
   const router = useRouter();
   const [chatRooms, setChatRooms] = useState<ChatRoom[]>([]);
@@ -38,7 +39,7 @@ const ChatRoomList = () => {
 
   const handleChatBoxClick = (id: string) => {
     router.push(`/chatroompage/${id}`);
-    dispatch(setChatRoomId(id)); // 새로운 채팅방 ID 설정
+    dispatch(setChatRoomId(id));
   };
 
   return (
@@ -47,12 +48,8 @@ const ChatRoomList = () => {
       style={{ width: "100%", height: "100%", padding: "0", margin: "0" }}
     >
       {chatRooms.map((room) => (
-        <div className="chatBox chatRow">
-          <div
-            className="container"
-            style={{ height: "70px", padding: "0px" }}
-            key={room.id}
-          >
+        <div className="chatBox chatRow" key={room.id}>
+          <div className="container" style={{ height: "70px", padding: "0px" }}>
             <div
               className="row"
               style={{
@@ -71,7 +68,6 @@ const ChatRoomList = () => {
                   alignItems: "center",
                   padding: "0",
                   paddingLeft: "5px",
-                  margin: "",
                   height: "100%",
                 }}
               >
@@ -86,7 +82,7 @@ const ChatRoomList = () => {
                         textAlign: "center",
                       }}
                     >
-                      {room.channelName[0]} {/* 채팅방 이름의 첫 글자를 표시 */}
+                      {room.channelName[0]}
                     </span>
                   )}
                 </button>

@@ -83,8 +83,6 @@ export default function LoginPage() {
         customToken
       );
       const idTokenResult = await customUserCredential.user.getIdToken();
-      console.log("New ID Token:", idTokenResult);
-      console.log("Current Environment:", process.env.NODE_ENV);
 
       // 쿠키 설정 부분
       setCookie("authToken", idTokenResult, {
@@ -141,7 +139,6 @@ export default function LoginPage() {
         );
         const user = userCredential.user;
         const idToken = await user.getIdToken();
-        console.log("idToken", idToken);
 
         const response = await fetch("/api/login", {
           method: "POST",
@@ -150,7 +147,7 @@ export default function LoginPage() {
         });
 
         if (response.ok) {
-             const toastId = notify("로그인을 시도중입니다!", "info", false);
+          const toastId = notify("로그인을 시도중입니다!", "info", false);
           const data = await response.json();
           const customToken = data.customToken;
           console.log("Received Custom Token:", customToken);

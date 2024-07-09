@@ -2,7 +2,7 @@
 
 import { useDispatch } from "react-redux";
 import "bootstrap/dist/css/bootstrap.min.css";
-import "bootstrap/dist/js/bootstrap.bundle.min";
+
 import { openSidebar } from "@/app/store/uiSlice";
 
 const HeaderComponent = () => {

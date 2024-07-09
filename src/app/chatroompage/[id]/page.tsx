@@ -24,6 +24,7 @@ import { useParams } from "next/navigation";
 
 const ChatRoomPage = () => {
   const { id } = useParams();
+  console.log(id);
   const chatRoomId = Array.isArray(id) ? id[0] : id; // id가 배열일 경우 첫 번째 요소 사용
   const dispatch = useDispatch<AppDispatch>();
   const [chatRoom, setChatRoom] = useState<any>(null);
@@ -73,7 +74,7 @@ const ChatRoomPage = () => {
 
       return () => unsubscribe();
     }
-  }, [chatRoomId, dispatch]);
+  }, [chatRoomId, dispatch, userProfileImg]);
 
   const handleSendMessage = async (text: string, imageUrl = "") => {
     if ((text.trim() || imageUrl) && user.uid) {

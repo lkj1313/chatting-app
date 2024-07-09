@@ -21,17 +21,6 @@ import { Dropdown, Modal, Button } from "react-bootstrap";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-interface User {
-  uid: string;
-  email: string;
-  nickname: string;
-  profileImgURL: string;
-}
-
-// interface ProfileImageChangerProps {
-//   user: User;
-// }
-
 const Sidebar: React.FC = () => {
   const handleSignOut = useSignOut();
   const dispatch = useDispatch();

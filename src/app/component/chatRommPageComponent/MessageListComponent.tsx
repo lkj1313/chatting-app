@@ -1,5 +1,5 @@
 "use client";
-// MessageList.tsx
+
 import React, { useRef, useEffect } from "react";
 import { Message } from "./type";
 
