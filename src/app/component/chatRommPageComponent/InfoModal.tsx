@@ -11,22 +11,30 @@ interface InfoModalProps {
 const InfoModal: React.FC<InfoModalProps> = ({ show, chatRoom, onClose }) => {
   return (
     <Modal show={show} onHide={onClose}>
-      <Modal.Header style={{ border: "none" }}>
+      <Modal.Header style={{ border: "none", padding: "0" }}>
         <div style={{ width: "100%" }}>
           <div>
             <p style={{ fontSize: "20px", marginBottom: "20px" }}>채널정보</p>
           </div>
           <div className="container" style={{ width: "100%" }}>
-            <div className="row">
-              <div className="col-5">
+            <div className="row" style={{ display: "flex" }}>
+              <div
+                className="col-12"
+                style={{
+                  display: "flex",
+                  justifyContent: "center",
+                  maxHeight: "300px",
+                  marginBottom: "10px",
+                }}
+              >
                 {chatRoom?.chatRoomImg ? (
                   <img
                     src={chatRoom.chatRoomImg}
                     alt="Chat Room Image"
                     style={{
                       width: "100%",
-                      height: "100px",
-                      borderRadius: "50px",
+                      height: "100%",
+                      borderRadius: "50%",
                     }}
                   />
                 ) : (
@@ -49,52 +57,48 @@ const InfoModal: React.FC<InfoModalProps> = ({ show, chatRoom, onClose }) => {
                     {chatRoom?.channelName?.[0] || "N/A"}
                   </div>
                 )}
-              </div>
-              <div className="col-7">
+              </div>{" "}
+              {/* channelname */}
+              <div
+                className="row"
+                style={{ display: "flex", marginBottom: "5px" }}
+              >
                 <div
-                  className="container d-flex flex-column"
-                  style={{ width: "100%", height: "100%" }}
+                  className="col-12"
+                  style={{
+                    padding: "0",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
                 >
-                  <div
-                    className="row flex-grow-1 d-flex align-items-center justify-content-center"
+                  <p
                     style={{
-                      border: "1px solid black",
-                      width: "100%",
-                      height: "50%",
+                      margin: 0,
+                      fontSize: "20px",
+                      display: "flex",
+                      alignItems: "center",
                     }}
                   >
-                    <div className="col-12">
-                      <p
-                        style={{
-                          margin: 0,
-                          fontSize: "10px",
-                          display: "flex",
-                          alignItems: "center",
-                        }}
-                      >
-                        <span
-                          style={{
-                            fontSize: "10px",
-                            display: "flex",
-                            alignItems: "center",
-                            margin: 0,
-                          }}
-                        >
-                          channelName: &nbsp;
-                        </span>
-                        {chatRoom?.channelName || "N/A"}
-                      </p>
-                    </div>
-                  </div>
+                    {chatRoom?.channelName
+                      ? `channelName: ${chatRoom.channelName}`
+                      : "N/A"}
+                  </p>
+                </div>
+                <div className="row">
                   <div
-                    className="row flex-grow-1 d-flex align-items-center justify-content-center"
-                    style={{ width: "100%", height: "50%" }}
+                    className="col-12"
+                    style={{
+                      display: "flex",
+                      justifyContent: "center",
+                      padding: "0",
+                    }}
                   >
-                    <div className="col-12">
+                    {chatRoom?.description ? (
                       <p
                         style={{
                           margin: "0",
-                          fontSize: "30px",
+                          fontSize: "15px",
                           display: "flex",
                           alignItems: "center",
                         }}
@@ -108,10 +112,10 @@ const InfoModal: React.FC<InfoModalProps> = ({ show, chatRoom, onClose }) => {
                           }}
                         >
                           description: &nbsp;
-                        </span>{" "}
-                        {chatRoom?.description || "N/A"}
+                        </span>
+                        {chatRoom.description}
                       </p>
-                    </div>
+                    ) : null}
                   </div>
                 </div>
               </div>
