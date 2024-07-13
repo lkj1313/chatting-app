@@ -1,0 +1,94 @@
+.chatInput[type="text"] {
+  border: 0;
+
+  height: 100%;
+  background: #ddd;
+  border-radius: 5px;
+  padding-left: 5px;
+  box-sizing: border-box;
+  margin: 0;
+}
+.chatInput[type="text"]::placeholder {
+  color: #999;
+}
+
+// .uploadButtonDiv {
+//   display: flex;
+//   justify-content: flex-start;
+//   align-items: center;
+//   height: 100%;
+//   max-width: 60px;
+//   transition: background-color 0.5s ease;
+// }
+// .uploadButton {
+//   height: 100%;
+//   width: 100%;
+//   max-width: 60px;
+//   border: none;
+//   position: relative;
+//   overflow: hidden;
+// }
+// .uploadButtonDiv:hover {
+//   background-color: rgb(230, 225, 225);
+// }
+// .emojiButtonDiv {
+//   display: flex;
+//   justify-content: flex-end;
+//   align-items: center;
+//   height: 100%;
+//   width: 100%;
+// }
+// .emojiButton {
+//   height: 100%;
+//   width: 100%;
+
+//   display: flex;
+//   align-items: center;
+//   justify-content: center;
+//   border: none;
+//   background-color: white;
+//   transition: background-color 0.5s ease;
+// }
+// .emojiButton span {
+//   height: 100%;
+//   width: 100%;
+//   font-size: 30px;
+// }
+
+// .emojiButton:hover {
+//   background-color: rgb(230, 225, 225);
+// }
+.uploadButtonDiv,
+.emojiButtonDiv {
+  margin: 0;
+  transition: background-color 0.5s ease;
+}
+.uploadButtonDiv:hover,
+.emojiButtonDiv:hover {
+  background-color: rgb(150, 150, 150);
+}
+.loadingSpinner {
+  border: 8px solid #f3f3f3; /* Light grey */
+  border-top: 8px solid #3498db; /* Blue */
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.chat_restricted {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: rgb(95, 145, 165);
+}

@@ -16,8 +16,12 @@ body {
 @import "./component/layoutComponent/layoutComponent.scss";
 @import "./component/modalComponent/modalComponent.scss";
 @import "./component/sidebarComponent/sidebarComponent.scss";
-@import "./component/chatRoomComponent/chatRoomComponent.scss";
 @import "./component/leftComponent/leftComponent.scss";
 @import "./component/headerComponent/headerComponent.scss";
 @import "./component/chatRoomListComponent/chatRoomListComponent.scss";
-@import "./component/chatRoomHeaderComponent/chatRoomHeaderComponent.scss";
+
+
+// chatroompage
+@import "./component/chatRoomPageComponent/footerComponent.scss";
+@import "./component/chatRoomPageComponent/headerComponent.scss";
+@import "./component/chatRoomPageComponent/mainComponent.scss";

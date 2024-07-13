@@ -13,6 +13,8 @@ import { closeModal, closeSidebar } from "@/app/store/uiSlice";
 import { RootState, AppDispatch } from "@/app/store/store";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { doc, updateDoc, arrayUnion } from "firebase/firestore";
+import { db } from "../../../../firebase";
 
 const CreateChatRoomModal: React.FC = () => {
   const router = useRouter();
@@ -87,8 +89,15 @@ const CreateChatRoomModal: React.FC = () => {
       if (saveChatRoom.fulfilled.match(resultAction)) {
         const chatRoomId = resultAction.payload;
         dispatch(setChatRoomId(chatRoomId)); // 새로운 채팅방 ID 설정
+
+        // 대화방 생성 후 참가자 목록에 추가
+        const chatRoomRef = doc(db, "chatRooms", chatRoomId);
+        await updateDoc(chatRoomRef, {
+          participants: arrayUnion(user.uid),
+        });
+
         dispatch(closeModal());
-         dispatch(closeSidebar()); // 사이드바 닫기
+        dispatch(closeSidebar()); // 사이드바 닫기
         router.push(`/chatroompage/${chatRoomId}`);
       } else {
         console.error("Failed to create chat room");

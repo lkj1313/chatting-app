@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useRef, useEffect } from "react";
 import { Message } from "./type";
 
@@ -7,12 +5,14 @@ interface MessageListProps {
   messages: Message[];
   userId: string;
   handleImageClick: (url: string) => void;
+  totalParticipants: number; // 총 구독자 수 추가
 }
 
 const MessageListComponent: React.FC<MessageListProps> = ({
   messages,
   userId,
   handleImageClick,
+  totalParticipants,
 }) => {
   const messageEndRef = useRef<HTMLDivElement>(null);
 
@@ -59,8 +59,23 @@ const MessageListComponent: React.FC<MessageListProps> = ({
                 />
               )}
             </div>
-            <div className="time">
+            <div
+              className={`time ${
+                msg.userId === userId ? "my-time" : "their-time"
+              }`}
+            >
               {new Date(msg.time).toLocaleTimeString()}
+            </div>
+            <div
+              className={`read-by ${
+                msg.userId === userId ? "my-read" : "their-read"
+              }`}
+            >
+              {msg.readBy.length < totalParticipants && (
+                <div className="unread-count">
+                  <span>{totalParticipants - msg.readBy.length} unread</span>
+                </div>
+              )}
             </div>
           </div>
         </div>

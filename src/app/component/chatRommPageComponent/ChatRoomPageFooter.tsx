@@ -3,7 +3,7 @@ import React, { useState, useRef, useEffect } from "react";
 import Picker from "@emoji-mart/react";
 import data from "@emoji-mart/data";
 
-interface ChatInputProps {
+interface ChatRoomPageFooter {
   handleSendMessage: (text: string, imageUrl?: string) => void;
   handleImageUpload: (event: React.ChangeEvent<HTMLInputElement>) => void;
   loading: boolean;
@@ -11,7 +11,7 @@ interface ChatInputProps {
   enterChatRoom: () => Promise<void>;
 }
 
-const ChatInputComponent: React.FC<ChatInputProps> = ({
+const ChatRoomPageFooter: React.FC<ChatRoomPageFooter> = ({
   handleSendMessage,
   handleImageUpload,
   loading,
@@ -179,4 +179,4 @@ const ChatInputComponent: React.FC<ChatInputProps> = ({
   );
 };
 
-export default ChatInputComponent;
+export default ChatRoomPageFooter;

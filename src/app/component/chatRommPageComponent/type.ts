@@ -7,4 +7,5 @@ export interface Message {
   userName: string;
   profileImg: string;
   imageUrl?: string;
+  readBy: string[];
 }

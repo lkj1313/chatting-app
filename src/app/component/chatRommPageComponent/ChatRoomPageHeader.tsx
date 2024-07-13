@@ -2,12 +2,12 @@
 
 import { useRouter } from "next/navigation";
 
-interface ChatRoomHeaderProps {
+interface ChatRoomPageHeaderProps {
   chatRoom: any;
   openInfoModal: () => void;
 }
 
-const ChatRoomHeader: React.FC<ChatRoomHeaderProps> = ({
+const ChatRoomPageHeader: React.FC<ChatRoomPageHeaderProps> = ({
   chatRoom,
   openInfoModal,
 }) => {
@@ -69,7 +69,7 @@ const ChatRoomHeader: React.FC<ChatRoomHeaderProps> = ({
               <p
                 style={{
                   margin: "0",
-                  fontSize: "15px",
+                  fontSize: "18px",
                   userSelect: "none",
                 }}
               >
@@ -78,7 +78,7 @@ const ChatRoomHeader: React.FC<ChatRoomHeaderProps> = ({
               <p
                 style={{
                   margin: "0",
-                  fontSize: "10px",
+                  fontSize: "13px",
                   userSelect: "none",
                   overflow: "hidden",
                   textOverflow: "ellipsis",
@@ -96,4 +96,4 @@ const ChatRoomHeader: React.FC<ChatRoomHeaderProps> = ({
   );
 };
 
-export default ChatRoomHeader;
+export default ChatRoomPageHeader;
