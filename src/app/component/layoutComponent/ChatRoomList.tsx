@@ -1,16 +1,19 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { db } from "../../../../firebase";
-import { collection, getDocs } from "firebase/firestore";
+import { collection, getDocs, query, orderBy, limit } from "firebase/firestore";
 import { useDispatch } from "react-redux";
 import { setChatRoomId } from "@/app/store/chatRoomSlice";
 import { useRouter } from "next/navigation";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 interface ChatRoom {
   id: string;
   channelName: string;
   description: string;
   chatRoomImg: string;
+  latestMessage?: string;
 }
 
 const ChatRoomList: React.FC = () => {
@@ -22,12 +25,26 @@ const ChatRoomList: React.FC = () => {
     const fetchChatRooms = async () => {
       try {
         const chatRoomDocs = await getDocs(collection(db, "chatRooms"));
-        const chatRoomList = chatRoomDocs.docs.map((doc) => ({
-          id: doc.id,
-          channelName: doc.data().channelName,
-          description: doc.data().description,
-          chatRoomImg: doc.data().chatRoomImg,
-        }));
+        const chatRoomList: ChatRoom[] = await Promise.all(
+          chatRoomDocs.docs.map(async (doc) => {
+            const latestMessageQuery = query(
+              collection(db, "chatRooms", doc.id, "messages"),
+              orderBy("time", "desc"),
+              limit(1)
+            );
+            const latestMessageSnapshot = await getDocs(latestMessageQuery);
+            const latestMessage =
+              latestMessageSnapshot.docs[0]?.data().text || "No messages yet";
+
+            return {
+              id: doc.id,
+              channelName: doc.data().channelName,
+              description: doc.data().description,
+              chatRoomImg: doc.data().chatRoomImg,
+              latestMessage,
+            };
+          })
+        );
         setChatRooms(chatRoomList);
       } catch (error) {
         console.error("Error fetching chat rooms: ", error);
@@ -36,10 +53,17 @@ const ChatRoomList: React.FC = () => {
 
     fetchChatRooms();
   }, []);
-
   const handleChatBoxClick = (id: string) => {
-    router.push(`/chatroompage/${id}`);
-    dispatch(setChatRoomId(id));
+    toast.info("Entering chat room...", {
+      autoClose: 1000,
+      position: "top-center",
+    });
+
+    // Delay the navigation and state update slightly to allow the toast to show
+    setTimeout(() => {
+      router.push(`/chatroompage/${id}`);
+      dispatch(setChatRoomId(id));
+    }, 1000); // Adjust the delay to match the toast duration
   };
 
   return (
@@ -108,7 +132,7 @@ const ChatRoomList: React.FC = () => {
                     </p>
                   </div>
                   <div className="row" style={{ height: "40%" }}>
-                    <p>{room.description}</p>
+                    <p>{room.latestMessage}</p>
                   </div>
                 </div>
               </div>

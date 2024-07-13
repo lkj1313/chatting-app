@@ -223,7 +223,7 @@ const Sidebar: React.FC = () => {
         </ul>
         <hr />
         <CreateChatRoomModal />
-        <ToastContainer />{" "}
+
         <Modal show={showProfileModal} onHide={handleCloseProfileModal}>
           <div
             style={{

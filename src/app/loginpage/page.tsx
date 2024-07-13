@@ -147,7 +147,7 @@ export default function LoginPage() {
         });
 
         if (response.ok) {
-          const toastId = notify("로그인을 시도중입니다!", "info", false);
+          const toastId = notify("Attempting to login...", "info", false);
           const data = await response.json();
           const customToken = data.customToken;
           console.log("Received Custom Token:", customToken);

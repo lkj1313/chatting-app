@@ -21,7 +21,7 @@ import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { Message } from "@/app/component/chatRommPageComponent/type";
 import ChatRoomPageHeader from "@/app/component/chatRommPageComponent/ChatRoomPageHeader";
 import ChatRoomPageFooter from "@/app/component/chatRommPageComponent/ChatRoomPageFooter";
-import MessageListComponent from "@/app/component/chatRommPageComponent/MessageListComponent";
+import ChatRoomPageMain from "@/app/component/chatRommPageComponent/ChatRoomPageMain";
 import ChatRoomInfoModal from "@/app/component/chatRommPageComponent/InfoModal";
 import ImageModal from "@/app/component/chatRommPageComponent/ImageModal";
 import { useParams } from "next/navigation";
@@ -194,7 +194,7 @@ const ChatRoomPage = () => {
     <div className="chat_wrap">
       <ChatRoomPageHeader chatRoom={chatRoom} openInfoModal={openInfoModal} />
 
-      <MessageListComponent
+      <ChatRoomPageMain
         messages={messages}
         userId={user.uid!}
         handleImageClick={handleImageClick}

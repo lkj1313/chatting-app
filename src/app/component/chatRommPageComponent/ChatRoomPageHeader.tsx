@@ -84,7 +84,7 @@ const ChatRoomPageHeader: React.FC<ChatRoomPageHeaderProps> = ({
                   textOverflow: "ellipsis",
                 }}
               >
-                구독자수 : {chatRoom?.participants?.length}
+                구독자수 : {chatRoom?.participants?.length}명
               </p>
             </div>
           </div>

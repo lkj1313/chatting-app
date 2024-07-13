@@ -8,7 +8,7 @@ interface MessageListProps {
   totalParticipants: number; // 총 구독자 수 추가
 }
 
-const MessageListComponent: React.FC<MessageListProps> = ({
+const ChatRoomPageMain: React.FC<MessageListProps> = ({
   messages,
   userId,
   handleImageClick,
@@ -85,4 +85,4 @@ const MessageListComponent: React.FC<MessageListProps> = ({
   );
 };
 
-export default MessageListComponent;
+export default ChatRoomPageMain;
