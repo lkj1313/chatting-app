@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import Picker from "@emoji-mart/react";
 import data from "@emoji-mart/data";
 
@@ -7,12 +7,17 @@ interface ChatInputProps {
   handleSendMessage: (text: string, imageUrl?: string) => void;
   handleImageUpload: (event: React.ChangeEvent<HTMLInputElement>) => void;
   loading: boolean;
+  isParticipant: boolean;
+  enterChatRoom: () => Promise<void>;
 }
 
 const ChatInputComponent: React.FC<ChatInputProps> = ({
   handleSendMessage,
   handleImageUpload,
   loading,
+  isParticipant,
+
+  enterChatRoom,
 }) => {
   const [inputText, setInputText] = useState<string>("");
   const [showPicker, setShowPicker] = useState(false);
@@ -39,7 +44,7 @@ const ChatInputComponent: React.FC<ChatInputProps> = ({
     }
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     document.addEventListener("mousedown", handleClickOutside);
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
@@ -51,119 +56,125 @@ const ChatInputComponent: React.FC<ChatInputProps> = ({
       className="container-fluid"
       style={{ margin: "0", padding: "0", height: "50px", border: "none" }}
     >
-      <div
-        className="row"
-        style={{
-          display: "flex",
-          alignItems: "center",
-          height: "100%",
-          margin: "0",
-          padding: "0",
-        }}
-      >
+      {isParticipant ? (
         <div
-          className="uploadButtonDiv"
+          className="row"
           style={{
             display: "flex",
             alignItems: "center",
-            justifyContent: "center",
-            width: "50px",
+            height: "100%",
             margin: "0",
             padding: "0",
           }}
         >
-          <button
-            className="uploadButton"
-            onClick={() => fileInputRef.current?.click()}
-            style={{
-              height: "50px",
-              width: "50px",
-              border: "none",
-              marginRight: "7px",
-            }}
-          >
-            {loading ? (
-              <div className="loadingSpinner"></div>
-            ) : (
-              <img
-                style={{ height: "100%", width: "100%" }}
-                src="/uploadButton.png"
-                alt="Upload"
-              />
-            )}
-          </button>
-        </div>
-        {showPicker && (
           <div
-            ref={pickerRef}
+            className="uploadButtonDiv"
             style={{
-              position: "absolute",
-              bottom: "60px",
-              right: "20px",
-              width: "auto",
-              height: "auto",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              width: "50px",
+              margin: "0",
+              padding: "0",
             }}
           >
-            <Picker
-              data={data}
-              onEmojiSelect={handleEmojiSelect}
-              emojiSize={20}
-              perLine={7}
-              theme="light"
-              style={{ width: "250px", height: "300px" }}
-            />
+            <button
+              className="uploadButton"
+              onClick={() => fileInputRef.current?.click()}
+              style={{
+                height: "50px",
+                width: "50px",
+                border: "none",
+                marginRight: "7px",
+              }}
+            >
+              {loading ? (
+                <div className="loadingSpinner"></div>
+              ) : (
+                <img
+                  style={{ height: "100%", width: "100%" }}
+                  src="/uploadButton.png"
+                  alt="Upload"
+                />
+              )}
+            </button>
           </div>
-        )}
-        <input
-          style={{
-            flex: 1,
-            height: "100%",
-            margin: "0",
-            padding: "10px",
-            fontSize: "15px",
-          }}
-          className="chatInput"
-          type="text"
-          value={inputText}
-          onChange={(e) => setInputText(e.target.value)}
-          onKeyPress={handleKeyPress}
-          placeholder="내용 입력"
-        />
-        <input
-          type="file"
-          ref={fileInputRef}
-          style={{ display: "none" }}
-          onChange={handleImageUpload}
-        />
-        <div
-          className="emojiButtonDiv"
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            height: "100%",
-            width: "50px",
-            margin: "0",
-            padding: "0",
-          }}
-        >
-          <button
-            className="emojiButton"
+          {showPicker && (
+            <div
+              ref={pickerRef}
+              style={{
+                position: "absolute",
+                bottom: "60px",
+                right: "20px",
+                width: "auto",
+                height: "auto",
+              }}
+            >
+              <Picker
+                data={data}
+                onEmojiSelect={handleEmojiSelect}
+                emojiSize={20}
+                perLine={7}
+                theme="light"
+                style={{ width: "250px", height: "300px" }}
+              />
+            </div>
+          )}
+          <input
             style={{
+              flex: 1,
+              height: "100%",
+              margin: "0",
+              padding: "10px",
+              fontSize: "15px",
+            }}
+            className="chatInput"
+            type="text"
+            value={inputText}
+            onChange={(e) => setInputText(e.target.value)}
+            onKeyPress={handleKeyPress}
+            placeholder="내용 입력"
+          />
+          <input
+            type="file"
+            ref={fileInputRef}
+            style={{ display: "none" }}
+            onChange={handleImageUpload}
+          />
+          <div
+            className="emojiButtonDiv"
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
               height: "100%",
               width: "50px",
               margin: "0",
               padding: "0",
-              border: "none",
-              fontSize: "20px",
-              backgroundColor: "transparent",
             }}
-            onClick={() => setShowPicker(!showPicker)}
           >
-            😊
-          </button>
+            <button
+              className="emojiButton"
+              style={{
+                height: "100%",
+                width: "50px",
+                margin: "0",
+                padding: "0",
+                border: "none",
+                fontSize: "20px",
+                backgroundColor: "transparent",
+              }}
+              onClick={() => setShowPicker(!showPicker)}
+            >
+              😊
+            </button>
+          </div>
         </div>
-      </div>
+      ) : (
+        <div className="chat_restricted" role="button" onClick={enterChatRoom}>
+          대화방 들어가기
+        </div>
+      )}
     </footer>
   );
 };

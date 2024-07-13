@@ -168,6 +168,7 @@ const Sidebar: React.FC = () => {
   const handleNicknameClick = () => {
     setIsEditingNickname(true);
   };
+
   return (
     <div>
       {sidebarOpen && ( //sidebar열릴시 배경 overlay

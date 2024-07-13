@@ -21,18 +21,7 @@ const ChatRoomHeader: React.FC<ChatRoomHeaderProps> = ({
     <header className="chatRoomHeader">
       {chatRoom ? (
         <div style={{ display: "flex", alignItems: "center" }}>
-          <button
-            style={{
-              width: "40px",
-              height: "40px",
-              margin: "15px",
-              borderRadius: "20px",
-              border: "none",
-              backgroundColor: "transparent",
-              padding: "0",
-            }}
-            onClick={handleBack}
-          >
+          <button className="backButton" onClick={handleBack}>
             <img
               style={{
                 width: "30px",
@@ -80,22 +69,22 @@ const ChatRoomHeader: React.FC<ChatRoomHeaderProps> = ({
               <p
                 style={{
                   margin: "0",
-                  fontSize: "13px",
+                  fontSize: "15px",
                   userSelect: "none",
                 }}
               >
-                channelName:
+                {chatRoom?.channelName}
               </p>
               <p
                 style={{
                   margin: "0",
-                  fontSize: "13px",
+                  fontSize: "10px",
                   userSelect: "none",
                   overflow: "hidden",
                   textOverflow: "ellipsis",
                 }}
               >
-                {chatRoom?.channelName || "N/A"}
+                구독자수 : {chatRoom?.participants?.length}
               </p>
             </div>
           </div>

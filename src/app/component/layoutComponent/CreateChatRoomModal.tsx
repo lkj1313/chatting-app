@@ -9,7 +9,7 @@ import {
   saveChatRoom,
   setChatRoomId,
 } from "@/app/store/chatRoomSlice";
-import { closeModal } from "@/app/store/uiSlice";
+import { closeModal, closeSidebar } from "@/app/store/uiSlice";
 import { RootState, AppDispatch } from "@/app/store/store";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -88,6 +88,7 @@ const CreateChatRoomModal: React.FC = () => {
         const chatRoomId = resultAction.payload;
         dispatch(setChatRoomId(chatRoomId)); // 새로운 채팅방 ID 설정
         dispatch(closeModal());
+         dispatch(closeSidebar()); // 사이드바 닫기
         router.push(`/chatroompage/${chatRoomId}`);
       } else {
         console.error("Failed to create chat room");

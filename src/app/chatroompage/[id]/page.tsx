@@ -12,6 +12,8 @@ import {
   onSnapshot,
   doc,
   getDoc,
+  updateDoc,
+  arrayUnion,
 } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { Message } from "@/app/component/chatRommPageComponent/type";
@@ -24,10 +26,11 @@ import { useParams } from "next/navigation";
 
 const ChatRoomPage = () => {
   const { id } = useParams();
-  console.log(id);
   const chatRoomId = Array.isArray(id) ? id[0] : id; // id가 배열일 경우 첫 번째 요소 사용
   const dispatch = useDispatch<AppDispatch>();
   const [chatRoom, setChatRoom] = useState<any>(null);
+  const [isParticipant, setIsParticipant] = useState<boolean>(false);
+  const [hasEntered, setHasEntered] = useState<boolean>(false);
   const user = useSelector((state: RootState) => state.auth.user);
   const userProfileImg = user.profileImgURL;
   const [messages, setMessages] = useState<Message[]>([]);
@@ -37,14 +40,17 @@ const ChatRoomPage = () => {
   const [showInfoModal, setShowInfoModal] = useState(false);
 
   useEffect(() => {
-    if (chatRoomId) {
-      dispatch(fetchChatRoomById(chatRoomId));
-
+    if (chatRoomId && user.uid) {
       const chatRoomRef = doc(db, "chatRooms", chatRoomId);
       getDoc(chatRoomRef)
         .then((doc) => {
           if (doc.exists()) {
             setChatRoom(doc.data());
+            if (doc.data().participants.includes(user.uid)) {
+              setIsParticipant(true);
+            } else {
+              setIsParticipant(false);
+            }
           } else {
             console.error("No such document!");
           }
@@ -52,6 +58,12 @@ const ChatRoomPage = () => {
         .catch((error) => {
           console.error("Error getting document:", error);
         });
+    }
+  }, [chatRoomId, user.uid]);
+
+  useEffect(() => {
+    if (chatRoomId) {
+      dispatch(fetchChatRoomById(chatRoomId));
 
       const messagesRef = collection(db, "chatRooms", chatRoomId, "messages");
       const q = query(messagesRef, orderBy("time"));
@@ -125,6 +137,19 @@ const ChatRoomPage = () => {
   const openInfoModal = () => setShowInfoModal(true);
   const closeInfoModal = () => setShowInfoModal(false);
 
+  const enterChatRoom = async () => {
+    try {
+      const chatRoomRef = doc(db, "chatRooms", chatRoomId);
+      await updateDoc(chatRoomRef, {
+        participants: arrayUnion(user.uid),
+      });
+      setIsParticipant(true);
+      setHasEntered(true);
+    } catch (error) {
+      console.error("Error adding user to participants: ", error);
+    }
+  };
+
   return (
     <div className="chat_wrap">
       <ChatRoomHeader chatRoom={chatRoom} openInfoModal={openInfoModal} />
@@ -139,6 +164,8 @@ const ChatRoomPage = () => {
         handleSendMessage={handleSendMessage}
         handleImageUpload={handleImageUpload}
         loading={loading}
+        isParticipant={isParticipant}
+        enterChatRoom={enterChatRoom}
       />
 
       <ImageModal

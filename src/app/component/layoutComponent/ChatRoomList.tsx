@@ -47,60 +47,77 @@ const ChatRoomList: React.FC = () => {
       className="container"
       style={{ width: "100%", height: "100%", padding: "0", margin: "0" }}
     >
-      {chatRooms.map((room) => (
-        <div className="chatBox chatRow" key={room.id}>
-          <div className="container" style={{ height: "70px", padding: "0px" }}>
+      {chatRooms.length > 0 ? (
+        chatRooms.map((room) => (
+          <div className="chatBox chatRow" key={room.id}>
             <div
-              className="row"
-              style={{
-                display: "flex",
-                flexDirection: "row",
-                margin: "0",
-                height: "100%",
-                cursor: "pointer",
-              }}
-              onClick={() => handleChatBoxClick(room.id)}
+              className="container"
+              style={{ height: "70px", padding: "0px" }}
             >
               <div
-                className="col-3"
+                className="row"
                 style={{
                   display: "flex",
-                  alignItems: "center",
-                  padding: "0",
-                  paddingLeft: "5px",
+                  flexDirection: "row",
+                  margin: "0",
                   height: "100%",
+                  cursor: "pointer",
                 }}
+                onClick={() => handleChatBoxClick(room.id)}
               >
-                <button className="chatRoomButton">
-                  {room.chatRoomImg ? (
-                    <img src={room.chatRoomImg} alt={room.channelName} />
-                  ) : (
-                    <span
-                      style={{
-                        color: "black",
-                        fontSize: "16px",
-                        textAlign: "center",
-                      }}
-                    >
-                      {room.channelName[0]}
-                    </span>
-                  )}
-                </button>
-              </div>
-              <div className="col-9" style={{ height: "100%", padding: "0" }}>
-                <div className="row" style={{ height: "60%" }}>
-                  <p style={{ margin: "0", fontSize: "20px" }}>
-                    <strong>{room.channelName}</strong>
-                  </p>
+                <div
+                  className="col-3"
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    padding: "0",
+                    paddingLeft: "5px",
+                    height: "100%",
+                  }}
+                >
+                  <button className="chatRoomButton">
+                    {room.chatRoomImg ? (
+                      <img src={room.chatRoomImg} alt={room.channelName} />
+                    ) : room.channelName ? (
+                      <span
+                        style={{
+                          color: "black",
+                          fontSize: "16px",
+                          textAlign: "center",
+                        }}
+                      >
+                        {room.channelName[0]}
+                      </span>
+                    ) : (
+                      <span
+                        style={{
+                          color: "black",
+                          fontSize: "16px",
+                          textAlign: "center",
+                        }}
+                      >
+                        N/A
+                      </span>
+                    )}
+                  </button>
                 </div>
-                <div className="row" style={{ height: "40%" }}>
-                  <p>{room.description}</p>
+                <div className="col-9" style={{ height: "100%", padding: "0" }}>
+                  <div className="row" style={{ height: "60%" }}>
+                    <p style={{ margin: "0", fontSize: "20px" }}>
+                      <strong>{room.channelName}</strong>
+                    </p>
+                  </div>
+                  <div className="row" style={{ height: "40%" }}>
+                    <p>{room.description}</p>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
-      ))}
+        ))
+      ) : (
+        <p>No chat rooms available</p>
+      )}
     </div>
   );
 };

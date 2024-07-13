@@ -6,7 +6,7 @@ import MainComponent from "./MainComponent";
 
 const LayoutComponent: React.FC = () => {
   return (
-    <Container>
+    <Container style={{ padding: "0" }}>
       <HeaderComponent />
       <MainComponent />
     </Container>

@@ -237,3 +237,11 @@
     transform: rotate(360deg);
   }
 }
+
+.chat_restricted {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: rgb(95, 145, 165);
+}

@@ -32,18 +32,18 @@ const InfoModal: React.FC<InfoModalProps> = ({ show, chatRoom, onClose }) => {
                     src={chatRoom.chatRoomImg}
                     alt="Chat Room Image"
                     style={{
-                      width: "100%",
-                      height: "100%",
-                      borderRadius: "50%",
+                      width: "150px",
+                      height: "150px",
+                      borderRadius: "75px",
                     }}
                   />
                 ) : (
                   <div
                     className="col-5"
                     style={{
-                      width: "100%",
-                      height: "100%",
-                      borderRadius: "50px",
+                      width: "150px",
+                      height: "150px",
+                      borderRadius: "75px",
                       backgroundColor: "#ccc",
                       display: "flex",
                       alignItems: "center",
