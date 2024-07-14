@@ -1,22 +1,40 @@
-.sidebar {
-  position: absolute;
-  padding-right: 0;
-  background-color: white;
-  // width: 300px;
-  height: calc(100% + 58px) !important;
-  overflow-x: hidden;
-  right: 0px;
-  top: -58px;
-  transition: visibility 0.4s, opacity 0.5s;
-  z-index: 1001; /* 오버레이보다 위에 위치하도록 설정 */
+.sidebarOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 100vh;
+  width: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1000; /* 슬라이드바 아래에 위치 */
   visibility: hidden;
   opacity: 0;
-  border: none;
+  transition: visibility 0.3s, opacity 0.3s;
 }
 
-.sidebar.show {
+.overlayShow {
   visibility: visible;
   opacity: 1;
+}
+
+.homeSidebar {
+  background-color: white;
+  padding: 10px;
+
+  position: absolute;
+  height: 100vh;
+  width: 300px;
+  left: -400px; /* 초기 위치를 화면 밖으로 설정 */
+  top: 0px;
+  z-index: 1010;
+  opacity: 0;
+  transition: left 1s ease, opacity 1s ease;
+  border: none;
+}
+.show {
+  opacity: 1;
+  left: 0px; /* 보여질 때의 위치 설정 */
 }
 
 .hamburger {
@@ -42,35 +60,25 @@
   background-color: skyblue !important;
 }
 
-@keyframes fadeOut {
-  from {
-    opacity: 1;
-  }
-  to {
-    opacity: 0;
-  }
+.hamburger {
+  font-size: 30px;
+  cursor: pointer;
+  background: none;
+  border: none;
 }
 
-.fade-out {
-  animation: fadeOut 0.5s forwards;
-}
-
-.sidebarOverlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  height: 100vh;
+.nav-item {
   width: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
-  z-index: 1000; /* 슬라이드바 아래에 위치 */
-  visibility: hidden;
-  opacity: 0;
-  transition: visibility 0.3s, opacity 0.3s;
+  height: 50px; /* 높이를 동일하게 설정 */
 }
 
-.overlayShow {
-  visibility: visible;
-  opacity: 1;
+.nav-link {
+  padding-left: 0;
+  width: 100%;
+  text-align: left;
+  height: 50px; /* 높이를 동일하게 설정 */
+}
+
+.nav-link:hover {
+  background-color: skyblue !important;
 }

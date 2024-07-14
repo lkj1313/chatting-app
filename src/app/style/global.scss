@@ -34,8 +34,9 @@ body {
 @import "./component/leftComponent/leftComponent.scss";
 // first page
 @import "./component/FirstPageComponent/headerComponent.scss";
-@import "./component/FirstPageComponent/chatRoomListComponent/chatRoomListComponent.scss";
 @import "./component/FirstPageComponent/mainComponent.scss";
+@import "./component/FirstPageComponent/footer.scss";
+@import "./component/FirstPageComponent/chatRoomListComponent/chatRoomListComponent.scss";
 @import "./component/FirstPageComponent/createChatRoomModal.scss/createChatRoomModal.scss";
 @import "./component/FirstPageComponent/sidebarComponent/sidebarComponent.scss";
 

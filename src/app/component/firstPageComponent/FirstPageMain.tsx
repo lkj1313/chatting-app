@@ -16,13 +16,6 @@ const FirstPageMain: React.FC = () => {
       ref={containerRef}
       className="firstPageMaincontainer" // 수정된 JSX 클래스 추가
     >
-      {sidebarOpen && (
-        <div
-          className="overlay show"
-          onClick={() => dispatch(closeSidebar())}
-        />
-      )}
-      <Sidebar />
       <ChatRoomList />
     </main>
   );

@@ -116,7 +116,7 @@ const CreateChatRoomModal: React.FC = () => {
         ></div>
       )}
       <div
-        className={`modalContainer ${showModal ? "show" : ""}`}
+        className={`modalContainer ${showModal ? "modalContainerShow" : ""}`}
         onClick={handleModalContentClick}
         style={{ maxWidth: "300px" }}
       >

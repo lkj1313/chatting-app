@@ -170,7 +170,7 @@ const Sidebar: React.FC = () => {
   };
 
   return (
-    <div>
+    <>
       {sidebarOpen && ( //sidebar열릴시 배경 overlay
         <div
           className={`sidebarOverlay ${sidebarOpen ? "overlayShow" : ""}`}
@@ -178,11 +178,7 @@ const Sidebar: React.FC = () => {
         ></div>
       )}
 
-      <div //사이드바 div
-        className={`d-flex flex-column flex-shrink-0 p-3  ${`sidebar ${
-          sidebarOpen ? "show" : ""
-        }`}`}
-      >
+      <div className={`homeSidebar ${sidebarOpen ? "show" : ""}`}>
         <Dropdown>
           {" "}
           <div className="d-flex align-items-center">
@@ -302,7 +298,7 @@ const Sidebar: React.FC = () => {
           </div>
         </Modal>
       </div>
-    </div>
+    </>
   );
 };
 

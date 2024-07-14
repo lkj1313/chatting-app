@@ -1,3 +1,4 @@
+@charset "UTF-8";
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -63,7 +64,7 @@
   position: relative; /* 추가: 파일 입력 요소를 포함하기 위해 */
 }
 
-.icon input[type="file"] {
+.icon input[type=file] {
   position: absolute;
   top: 0;
   left: 0;
@@ -74,7 +75,7 @@
 }
 
 .icon::before {
-  content: "\1F4F7"; /* 카메라 아이콘 */
+  content: "📷"; /* 카메라 아이콘 */
   font-size: 2rem;
   color: white;
 }
@@ -150,6 +151,10 @@
   border-bottom: 2px solid blue;
 }
 
+.channelInput:focus::-moz-placeholder {
+  color: transparent;
+}
+
 .channelInput:focus::placeholder {
   color: transparent;
 }
@@ -168,6 +173,10 @@
   border-bottom: 2px solid blue;
 }
 
-.descriptionInputBox:focus::placeholder {
+.descriptionInputBox:focus::-moz-placeholder {
   color: transparent;
 }
+
+.descriptionInputBox:focus::placeholder {
+  color: transparent;
+}/*# sourceMappingURL=createChatRoomModal.css.map */
