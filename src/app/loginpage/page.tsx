@@ -164,13 +164,13 @@ export default function LoginPage() {
                 profileImgURL: userData.profileImg,
               })
             );
-           toast.update("123", {
-  render: "로그인 완료!",
-  type: "success",
-  autoClose: 200,
-  position: "top-center",
-  transition: Bounce,
-});
+            toast.update("123", {
+              render: "로그인 완료!",
+              type: "success",
+              autoClose: 200,
+              position: "top-center",
+              transition: Bounce,
+            });
             setTimeout(() => {
               router.push("/loadingpage");
             }, 330);
