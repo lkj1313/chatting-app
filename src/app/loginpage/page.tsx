@@ -9,7 +9,7 @@ import { doc, getDoc } from "firebase/firestore";
 import { useDispatch } from "react-redux";
 import { login } from "@/app/store/authSlice";
 import { setCookie } from "cookies-next";
-import { toast } from "react-toastify";
+import { toast, Bounce } from "react-toastify";
 
 interface Errors {
   email?: string;
@@ -105,15 +105,9 @@ export default function LoginPage() {
     }
   };
 
-  const notify = (
-    message: string,
-    type: TypeOptions = "info",
-    autoClose: number | false = false
-  ) => {
-    return toast(message, {
-      type: type,
-      autoClose: autoClose,
-      position: "top-center",
+  const notify = () => {
+    toast("Login attempt...", {
+      toastId: "123",
     });
   };
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -129,9 +123,14 @@ export default function LoginPage() {
 
     if (!emailError && !passwordError) {
       setIsLoading(true);
-
+      const toastId = "loginAttempt"; // 특정 ID 설정
+      toast("Login attempt...", {
+        toastId: "123",
+        type: "info",
+        position: "top-center",
+        transition: Bounce,
+      });
       try {
-        console.log("Attempting to sign in with email and password...");
         const userCredential = await signInWithEmailAndPassword(
           auth,
           email,
@@ -147,7 +146,6 @@ export default function LoginPage() {
         });
 
         if (response.ok) {
-          const toastId = notify("Attempting to login...", "info", false);
           const data = await response.json();
           const customToken = data.customToken;
           console.log("Received Custom Token:", customToken);
@@ -166,16 +164,17 @@ export default function LoginPage() {
                 profileImgURL: userData.profileImg,
               })
             );
+           toast.update("123", {
+  render: "로그인 완료!",
+  type: "success",
+  autoClose: 200,
+  position: "top-center",
+  transition: Bounce,
+});
+            setTimeout(() => {
+              router.push("/loadingpage");
+            }, 330);
           }
-
-          setTimeout(() => {
-            toast.update(toastId, {
-              render: "로그인 성공!",
-              type: "success",
-              autoClose: 1000,
-            });
-            router.push("/");
-          }, 2000);
         } else {
           const errorData = await response.json();
           throw new Error("커스텀 토큰으로 로그인하는 중 오류가 발생했습니다.");

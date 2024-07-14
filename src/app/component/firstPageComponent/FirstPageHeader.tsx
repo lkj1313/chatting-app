@@ -5,7 +5,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 
 import { openSidebar } from "@/app/store/uiSlice";
 
-const HeaderComponent = () => {
+const FirstPageHeader = () => {
   const dispatch = useDispatch();
 
   return (
@@ -42,4 +42,4 @@ const HeaderComponent = () => {
   );
 };
 
-export default HeaderComponent;
+export default FirstPageHeader;

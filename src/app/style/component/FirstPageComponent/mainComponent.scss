@@ -1,0 +1,14 @@
+.firstPageMaincontainer {
+  height: calc(100vh - 50px);
+  position: relative;
+  border: 1px solid gray;
+  width: 100%;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  background-image: url("/backgroundImg.jpg");
+  background-size: cover; /* 크기에 맞게 이미지 조정 */
+  background-repeat: no-repeat;
+  background-position: center;
+}

@@ -1,7 +1,17 @@
-import LayoutComponent from "@/app/component/layoutComponent/LayOutComponent";
+"use client";
+import React from "react";
+import { Container } from "react-bootstrap";
 
-const HomePage = () => {
-  return <LayoutComponent />;
+import FirstPageHeader from "./component/firstPageComponent/FirstPageHeader";
+import FirstPageMain from "./component/firstPageComponent/FirstPageMain";
+
+const LayoutComponent: React.FC = () => {
+  return (
+    <Container style={{ margin: "0", padding: "0", height: "100vh" }}>
+      <FirstPageHeader />
+      <FirstPageMain />
+    </Container>
+  );
 };
 
-export default HomePage;
+export default LayoutComponent;

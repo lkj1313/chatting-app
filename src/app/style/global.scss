@@ -10,18 +10,39 @@ body {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+body {
+  max-width: 500px;
+  margin: 0 auto;
+}
+@media (max-width: 600px) {
+  body {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+  }
 }
 @import "bootstrap/dist/css/bootstrap.min.css";
-@import "./component/loginpage/loginpage.scss";
-@import "./component/layoutComponent/layoutComponent.scss";
-@import "./component/modalComponent/modalComponent.scss";
-@import "./component/sidebarComponent/sidebarComponent.scss";
-@import "./component/leftComponent/leftComponent.scss";
-@import "./component/headerComponent/headerComponent.scss";
-@import "./component/chatRoomListComponent/chatRoomListComponent.scss";
 
+// loginpage
+@import "./component/loginpage/loginpage.scss";
+
+@import "./component/leftComponent/leftComponent.scss";
+// first page
+@import "./component/FirstPageComponent/headerComponent.scss";
+@import "./component/FirstPageComponent/chatRoomListComponent/chatRoomListComponent.scss";
+@import "./component/FirstPageComponent/mainComponent.scss";
+@import "./component/FirstPageComponent/createChatRoomModal.scss/createChatRoomModal.scss";
+@import "./component/FirstPageComponent/sidebarComponent/sidebarComponent.scss";
 
 // chatroompage
 @import "./component/chatRoomPageComponent/footerComponent.scss";
 @import "./component/chatRoomPageComponent/headerComponent.scss";
 @import "./component/chatRoomPageComponent/mainComponent.scss";
+
+//loadingPage
+@import "./component/loadingPage/loadingPage.scss";
