@@ -64,7 +64,8 @@
   transition: background-color 0.5s ease;
 }
 .uploadButtonDiv:hover,
-.emojiButtonDiv:hover {
+.emojiButtonDiv:hover,
+.chatSubmitDiv:hover {
   background-color: rgb(150, 150, 150);
 }
 .loadingSpinner {

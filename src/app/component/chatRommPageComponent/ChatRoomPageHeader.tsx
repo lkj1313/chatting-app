@@ -1,6 +1,8 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import { useState } from "react";
+import Sidebar from "./Sidebar";
 
 interface ChatRoomPageHeaderProps {
   chatRoom: any;
@@ -11,17 +13,30 @@ const ChatRoomPageHeader: React.FC<ChatRoomPageHeaderProps> = ({
   chatRoom,
   openInfoModal,
 }) => {
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const router = useRouter();
 
   const handleBack = (): void => {
     // 뒤로가기
     router.push("/");
   };
+
+  const handleBarButtonClick = (): void => {
+    setSidebarOpen(true);
+  };
+
   return (
-    <header className="chatRoomHeader">
+    <header
+      className="chatRoomHeader"
+      style={{
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+      }}
+    >
       {chatRoom ? (
-        <div style={{ display: "flex", alignItems: "center" }}>
-          <button className="backButton" onClick={handleBack}>
+        <div style={{ display: "flex", alignItems: "center", width: "100%" }}>
+          <div className="backButton" onClick={handleBack} role="button">
             <img
               style={{
                 width: "30px",
@@ -30,10 +45,11 @@ const ChatRoomPageHeader: React.FC<ChatRoomPageHeaderProps> = ({
               src="/backIcon.png"
               alt="backIcon"
             />
-          </button>
+          </div>
+
           <div
             onClick={openInfoModal}
-            style={{ display: "flex", alignItems: "center" }}
+            style={{ display: "flex", alignItems: "center", flexGrow: "1" }}
           >
             {chatRoom.chatRoomImg ? (
               <img
@@ -88,10 +104,39 @@ const ChatRoomPageHeader: React.FC<ChatRoomPageHeaderProps> = ({
               </p>
             </div>
           </div>
+          <div
+            style={{
+              marginLeft: "auto",
+              display: "flex",
+              alignItems: "center",
+            }}
+          >
+            <div
+              className="barButton"
+              style={{
+                backgroundColor: "transparent",
+                border: "none",
+                display: "flex",
+                alignItems: "center",
+              }}
+              onClick={handleBarButtonClick}
+              role="button"
+            >
+              <img
+                style={{
+                  width: "30px",
+                  height: "30px",
+                }}
+                src="/Hamburger_icon.png"
+                alt="barIcon"
+              />
+            </div>
+          </div>
         </div>
       ) : (
         <p>Loading...</p>
       )}
+      <Sidebar sidebarOpen={sidebarOpen} />
     </header>
   );
 };

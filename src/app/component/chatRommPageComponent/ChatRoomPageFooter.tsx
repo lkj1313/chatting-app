@@ -73,6 +73,7 @@ const ChatRoomPageFooter: React.FC<ChatRoomPageFooter> = ({
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
+              height: "100%",
               width: "50px",
               margin: "0",
               padding: "0",
@@ -82,10 +83,11 @@ const ChatRoomPageFooter: React.FC<ChatRoomPageFooter> = ({
               className="uploadButton"
               onClick={() => fileInputRef.current?.click()}
               style={{
-                height: "50px",
-                width: "50px",
+                height: "25px",
+                width: "25px",
                 border: "none",
                 marginRight: "7px",
+                backgroundColor: "transparent",
               }}
             >
               {loading ? (
@@ -93,7 +95,7 @@ const ChatRoomPageFooter: React.FC<ChatRoomPageFooter> = ({
               ) : (
                 <img
                   style={{ height: "100%", width: "100%" }}
-                  src="/uploadButton.png"
+                  src="/camera.png"
                   alt="Upload"
                 />
               )}
@@ -141,8 +143,9 @@ const ChatRoomPageFooter: React.FC<ChatRoomPageFooter> = ({
             style={{ display: "none" }}
             onChange={handleImageUpload}
           />
+
           <div
-            className="emojiButtonDiv"
+            className="emojiButtonDiv "
             style={{
               display: "flex",
               alignItems: "center",
@@ -167,6 +170,39 @@ const ChatRoomPageFooter: React.FC<ChatRoomPageFooter> = ({
               onClick={() => setShowPicker(!showPicker)}
             >
               😊
+            </button>
+          </div>
+          <div
+            className="chatSubmitDiv"
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              height: "100%",
+              width: "50px",
+              margin: "0",
+              padding: "0",
+              cursor: "pointer",
+
+              // borderLeft: "0.5px solid black",
+            }}
+          >
+            <button
+              style={{
+                height: "100%",
+                width: "50px",
+                margin: "0",
+                padding: "0",
+                border: "none",
+                fontSize: "20px",
+                backgroundColor: "transparent",
+              }}
+              onClick={() => {
+                handleSendMessage(inputText);
+                setInputText("");
+              }}
+            >
+              <img src="/favicon.png" style={{ width: "25px" }}></img>
             </button>
           </div>
         </div>
