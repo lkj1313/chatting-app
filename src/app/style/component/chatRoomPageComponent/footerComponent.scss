@@ -11,6 +11,13 @@
 .chatInput[type="text"]::placeholder {
   color: #999;
 }
+.chatInput[type="text"]::placeholder {
+  color: #999;
+}
+
+.chatInput[type="text"]:hover {
+  background-color: white;
+}
 
 // .uploadButtonDiv {
 //   display: flex;
