@@ -16,6 +16,7 @@ const LayoutComponent: React.FC = () => {
         display: "flex",
         flexDirection: "column",
         position: "relative",
+        overflow: "hidden",
       }}
     >
       <FirstPageHeader />
