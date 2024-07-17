@@ -4,20 +4,22 @@
   flex-direction: column;
   background-color: white;
   padding: 20px;
-  position: absolute;
+  position: fixed;
   height: 100vh;
   width: 300px;
   right: -300px; /* 초기 위치를 화면 밖으로 설정 */
   top: 0px;
   z-index: 1010;
   opacity: 0;
-  transition: right 1s ease, opacity 1s ease; /* right 속성에 대한 전환 효과 추가 */
+  visibility: hidden; /* 초기 상태에서 숨김 */
+  transition: right 1s ease, opacity 1s ease, visibility 1s; /* visibility에 대한 전환 효과 추가 */
   cursor: default;
 }
 
 .headerSidebarShow {
   right: 0; /* show 클래스가 추가되면 오른쪽 끝으로 이동 */
   opacity: 1;
+  visibility: visible; /* 보이도록 설정 */
 }
 
 .imageGrid {
