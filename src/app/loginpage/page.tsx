@@ -86,7 +86,7 @@ export default function LoginPage() {
 
       // 쿠키 설정 부분
       setCookie("authToken", idTokenResult, {
-        maxAge: 60 * 60 * 24, // 1일
+        maxAge: 60 * 60 * 1, // 1일
         httpOnly: false,
         secure: process.env.NODE_ENV === "production", // 프로덕션 환경에서만 secure 설정
         sameSite: "strict",
@@ -211,6 +211,8 @@ export default function LoginPage() {
           borderRadius: "5%",
           display: "flex",
           alignItems: "center",
+          position: "relative",
+          top: "-5%",
         }}
       >
         <img

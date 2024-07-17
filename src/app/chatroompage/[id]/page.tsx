@@ -3,6 +3,10 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchChatRoomById } from "@/app/store/chatRoomSlice";
+import {
+  fetchMessagesByChatRoomId,
+  setMessages,
+} from "@/app/store/messagesSlice";
 import { RootState, AppDispatch } from "@/app/store/store";
 import { db, storage } from "../../../../firebase";
 import {
@@ -35,7 +39,9 @@ const ChatRoomPage = () => {
   const [hasEntered, setHasEntered] = useState<boolean>(false); // 사용자가 채팅방에 들어왔는지 여부
   const user = useSelector((state: RootState) => state.auth.user); // Redux에서 사용자 정보 가져오기
   const userProfileImg = user.profileImgURL;
-  const [messages, setMessages] = useState<Message[]>([]); // 메시지 목록 상태
+  const { messages, status, error } = useSelector(
+    (state: RootState) => state.messages
+  ); // Redux에서 메시지 목록 가져오기
   const [loading, setLoading] = useState(false); // 로딩 상태
   const [modalImage, setModalImage] = useState<string | null>(null); // 이미지 모달 상태
   const [showImageChattingModal, setImageChattingShowModal] = useState(false); // 이미지 모달 표시 여부
@@ -67,11 +73,13 @@ const ChatRoomPage = () => {
   // 메시지 목록 가져오기 및 실시간 업데이트
   useEffect(() => {
     if (chatRoomId) {
-      dispatch(fetchChatRoomById(chatRoomId));
+      dispatch(fetchChatRoomById(chatRoomId)); // 채팅방 정보
+      dispatch(fetchMessagesByChatRoomId(chatRoomId)); // 챗방정보
 
       const messagesRef = collection(db, "chatRooms", chatRoomId, "messages");
       const q = query(messagesRef, orderBy("time"));
       const unsubscribe = onSnapshot(q, (querySnapshot) => {
+        // Firestore에서 채팅방의 메시지를 실시간으로 구독
         const msgs: Message[] = [];
         querySnapshot.forEach((doc) => {
           const data = doc.data();
@@ -86,7 +94,7 @@ const ChatRoomPage = () => {
             readBy: data.readBy || [], // Ensure readBy is initialized
           });
         });
-        setMessages(msgs);
+        dispatch(setMessages(msgs));
       });
 
       return () => unsubscribe();

@@ -34,8 +34,16 @@ const ChatRoomPageHeader: React.FC<ChatRoomPageHeaderProps> = ({
         alignItems: "center",
       }}
     >
+      {" "}
+      <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
       {chatRoom ? (
-        <div style={{ display: "flex", alignItems: "center", width: "100%" }}>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            width: "100%",
+          }}
+        >
           <div className="backButton" onClick={handleBack} role="button">
             <img
               style={{
@@ -136,7 +144,6 @@ const ChatRoomPageHeader: React.FC<ChatRoomPageHeaderProps> = ({
       ) : (
         <p>Loading...</p>
       )}
-      <Sidebar sidebarOpen={sidebarOpen} />
     </header>
   );
 };

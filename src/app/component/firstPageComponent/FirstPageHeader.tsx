@@ -34,7 +34,7 @@ const FirstPageHeader = () => {
           <span className="navbar-toggler-icon"></span>
         </Button>
       </Navbar>
-      {sidebarOpen && <Sidebar />} {/* 사이드바 컴포넌트 렌더링 */}
+      <Sidebar /> {/* 사이드바 컴포넌트 렌더링 */}
     </div>
   );
 };

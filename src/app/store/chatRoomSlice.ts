@@ -9,6 +9,7 @@ interface ChatRoomState {
   channelName: string | null;
   description: string;
   chatRoomId: string | null;
+  participants: string[];
   status: "idle" | "loading" | "succeeded" | "failed";
   error: string | null;
   userId: string | null;
@@ -16,14 +17,15 @@ interface ChatRoomState {
 }
 
 const initialState: ChatRoomState = {
-  chatRoomImg: null,
   channelName: "",
-  description: "",
   chatRoomId: null,
-  status: "idle",
-  error: null,
+  chatRoomImg: null,
+  description: "",
+  participants: [],
   userId: null,
   userName: null,
+  status: "idle",
+  error: null,
 };
 
 export const saveChatRoom = createAsyncThunk<
@@ -34,6 +36,7 @@ export const saveChatRoom = createAsyncThunk<
     description: string;
     userId: string;
     userName: string;
+    participants: string[];
   },
   { rejectValue: string }
 >("chatRoom/saveChatRoom", async (chatRoom, { rejectWithValue }) => {
@@ -66,10 +69,22 @@ export const fetchChatRoomById = createAsyncThunk<
   { rejectValue: string }
 >("chatRoom/fetchChatRoomById", async (chatRoomId, { rejectWithValue }) => {
   try {
-    const docRef = doc(db, "chatRooms", chatRoomId);
-    const docSnap = await getDoc(docRef);
-    if (docSnap.exists()) {
-      return { chatRoomId, ...docSnap.data() } as ChatRoomState;
+    const chatRoomRef = doc(db, "chatRooms", chatRoomId);
+    const chatRoomSnap = await getDoc(chatRoomRef);
+
+    if (chatRoomSnap.exists()) {
+      const chatRoomData = chatRoomSnap.data();
+      return {
+        chatRoomImg: chatRoomData.chatRoomImg,
+        channelName: chatRoomData.channelName,
+        description: chatRoomData.description,
+        chatRoomId: chatRoomId,
+        participants: chatRoomData.participants || [],
+        userId: chatRoomData.userId || null,
+        userName: chatRoomData.userName || null,
+        status: "idle",
+        error: null,
+      };
     } else {
       throw new Error("Chat room not found");
     }
@@ -143,6 +158,7 @@ const chatRoomSlice = createSlice({
           state.channelName = action.payload.channelName;
           state.description = action.payload.description;
           state.chatRoomId = action.payload.chatRoomId;
+          state.participants = action.payload.participants; // Ensure participants are updated
           state.userId = action.payload.userId;
           state.userName = action.payload.userName;
           state.error = null;

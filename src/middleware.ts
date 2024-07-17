@@ -7,33 +7,13 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL("/loginpage", request.url));
   }
 
-  try {
-    const response = await fetch(new URL("/api/auth", request.url), {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ idToken: token }),
-    });
-
-    if (response.ok) {
-      console.log("Token verification successful.");
-      return NextResponse.next();
-    } else {
-      const { message } = await response.json();
-      console.error("Token verification failed:", message);
-      const redirectResponse = NextResponse.redirect(
-        new URL("/loginpage", request.url)
-      );
-      redirectResponse.cookies.set("authToken", "", { maxAge: 0 });
-      return redirectResponse;
-    }
-  } catch (error) {
-    console.error("Error verifying ID token:", error);
-    return NextResponse.redirect(new URL("/loginpage", request.url));
-  }
+  // 토큰이 있다면 사용자가 원하는 대로 진행
+  return NextResponse.next();
 }
 
 export const config = {
-  matcher: "/",
+  matcher: [
+    "/", // 루트 경로
+    "/chatroompage/:path*", // chatroompage 경로 및 모든 하위 경로
+  ],
 };

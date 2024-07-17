@@ -4,7 +4,7 @@ import { Modal, Button } from "react-bootstrap";
 
 interface ImageModalProps {
   show: boolean;
-  imageUrl: string | null;
+  imageUrl: string | null | undefined;
   onClose: () => void;
 }
 

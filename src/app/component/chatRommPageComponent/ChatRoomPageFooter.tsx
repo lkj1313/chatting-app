@@ -78,29 +78,15 @@ const ChatRoomPageFooter: React.FC<ChatRoomPageFooter> = ({
               margin: "0",
               padding: "0",
             }}
+            onClick={() => fileInputRef.current?.click()}
           >
-            <button
-              className="uploadButton"
-              onClick={() => fileInputRef.current?.click()}
-              style={{
-                height: "25px",
-                width: "25px",
-                border: "none",
-                marginRight: "7px",
-                backgroundColor: "transparent",
-              }}
-            >
-              {loading ? (
-                <div className="loadingSpinner"></div>
-              ) : (
-                <img
-                  style={{ height: "100%", width: "100%" }}
-                  src="/camera.png"
-                  alt="Upload"
-                />
-              )}
-            </button>
+            <img
+              src="/uploadButton.png"
+              alt="uploadButton"
+              style={{ width: "30px" }}
+            ></img>
           </div>
+          {/* {loading && <div className="loadingSpinner"></div>} */}
           {showPicker && (
             <div
               ref={pickerRef}

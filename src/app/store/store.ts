@@ -3,6 +3,7 @@ import authReducer from "./authSlice";
 import containerReducer from "./containerSlice";
 import uiReducer from "./uiSlice";
 import chatRoomReducer from "./chatRoomSlice";
+import messagesReducer from "./messagesSlice";
 
 const store = configureStore({
   reducer: {
@@ -10,6 +11,7 @@ const store = configureStore({
     container: containerReducer,
     ui: uiReducer,
     chatRoom: chatRoomReducer,
+    messages: messagesReducer,
   },
 });
 
