@@ -36,7 +36,6 @@ export const saveChatRoom = createAsyncThunk<
     description: string;
     userId: string;
     userName: string;
-    participants: string[];
   },
   { rejectValue: string }
 >("chatRoom/saveChatRoom", async (chatRoom, { rejectWithValue }) => {
