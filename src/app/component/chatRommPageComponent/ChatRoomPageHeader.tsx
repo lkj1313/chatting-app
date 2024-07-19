@@ -7,14 +7,15 @@ import Sidebar from "./Sidebar";
 interface ChatRoomPageHeaderProps {
   chatRoom: any;
   openInfoModal: () => void;
-  participantProfileImg: string;
-  participantNickname: string; // 여기 추가
+  participantProfileImg?: string;
+  participantNickname?: string;
 }
 
 const ChatRoomPageHeader: React.FC<ChatRoomPageHeaderProps> = ({
   chatRoom,
   openInfoModal,
   participantProfileImg,
+  participantNickname,
 }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const router = useRouter();
@@ -37,7 +38,6 @@ const ChatRoomPageHeader: React.FC<ChatRoomPageHeaderProps> = ({
         alignItems: "center",
       }}
     >
-      {" "}
       <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
       {chatRoom ? (
         <div
@@ -113,7 +113,9 @@ const ChatRoomPageHeader: React.FC<ChatRoomPageHeaderProps> = ({
                   userSelect: "none",
                 }}
               >
-                {chatRoom?.channelName}
+                {location.pathname.startsWith("/chatroompage")
+                  ? chatRoom?.channelName
+                  : participantNickname}
               </p>
               <p
                 style={{

@@ -227,6 +227,8 @@ const ChatRoomPage = () => {
         show={showInfoModal}
         chatRoom={chatRoom}
         onClose={closeInfoModal}
+        participantProfileImg={null}
+        participantNickname={null}
       />
     </div>
   );
