@@ -24,7 +24,7 @@ const ChatRoomPageMain: React.FC<MessageListProps> = ({
   }, [messages]);
 
   return (
-    <>
+    <div style={{ height: "100%" }}>
       {messages.map((msg) => (
         <div
           key={msg.id}
@@ -82,7 +82,7 @@ const ChatRoomPageMain: React.FC<MessageListProps> = ({
         </div>
       ))}
       <div ref={messageEndRef}></div>
-    </>
+    </div>
   );
 };
 
