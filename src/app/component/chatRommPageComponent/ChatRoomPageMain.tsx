@@ -1,3 +1,4 @@
+"use client";
 import React, { useRef, useEffect } from "react";
 import { Message } from "./type";
 
@@ -23,7 +24,7 @@ const ChatRoomPageMain: React.FC<MessageListProps> = ({
   }, [messages]);
 
   return (
-    <div className="inner">
+    <>
       {messages.map((msg) => (
         <div
           key={msg.id}
@@ -81,7 +82,7 @@ const ChatRoomPageMain: React.FC<MessageListProps> = ({
         </div>
       ))}
       <div ref={messageEndRef}></div>
-    </div>
+    </>
   );
 };
 

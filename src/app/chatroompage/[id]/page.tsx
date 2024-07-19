@@ -201,28 +201,26 @@ const ChatRoomPage = () => {
   return (
     <div className="chat_wrap">
       <ChatRoomPageHeader chatRoom={chatRoom} openInfoModal={openInfoModal} />
-
-      <ChatRoomPageMain
-        messages={messages}
-        userId={user.uid!}
-        handleImageClick={handleImageClick}
-        totalParticipants={chatRoom?.participants.length || 0} // 구독자 수 전달
-      />
-
+      <div className="inner">
+        <ChatRoomPageMain
+          messages={messages}
+          userId={user.uid!}
+          handleImageClick={handleImageClick}
+          totalParticipants={chatRoom?.participants.length || 0} // 구독자 수 전달
+        />
+      </div>
       <ChatRoomPageFooter
         handleSendMessage={handleSendMessage}
         handleImageUpload={handleImageUpload}
         loading={loading}
         isParticipant={isParticipant}
         enterChatRoom={enterChatRoom}
-      />
-
+      />{" "}
       <ImageModal
         show={showImageChattingModal}
         imageUrl={modalImage}
         onClose={closeImgeModal}
       />
-
       <ChatRoomInfoModal
         show={showInfoModal}
         chatRoom={chatRoom}
