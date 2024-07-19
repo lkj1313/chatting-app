@@ -93,7 +93,7 @@ const ChatRoomPageHeader: React.FC<ChatRoomPageHeaderProps> = ({
                   {chatRoom?.channelName?.[0] || "N/A"}
                 </div>
               )
-            ) : (
+            ) : participantProfileImg ? (
               <img
                 style={{
                   width: "50px",
@@ -104,6 +104,24 @@ const ChatRoomPageHeader: React.FC<ChatRoomPageHeaderProps> = ({
                 src={participantProfileImg}
                 alt="Participant Profile Image"
               />
+            ) : (
+              <div
+                style={{
+                  width: "50px",
+                  height: "50px",
+                  borderRadius: "25px",
+                  backgroundColor: "#ccc",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  color: "#fff",
+                  fontSize: "12px",
+                  textAlign: "center",
+                  marginRight: "20px",
+                }}
+              >
+                {participantNickname?.[0] || "N/A"}
+              </div>
             )}
             <div style={{ display: "flex", flexDirection: "column" }}>
               <p
