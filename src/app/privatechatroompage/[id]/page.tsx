@@ -1,11 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchChatRoomById } from "@/app/store/chatRoomSlice";
-import {
-  fetchMessagesByChatRoomId,
-  setMessages,
-} from "@/app/store/messagesSlice";
 import { RootState, AppDispatch } from "@/app/store/store";
 import { db, storage } from "../../../../firebase";
 import {
@@ -28,18 +23,22 @@ import ChatRoomPageMain from "@/app/component/chatRommPageComponent/ChatRoomPage
 import ChatRoomInfoModal from "@/app/component/chatRommPageComponent/InfoModal";
 import ImageModal from "@/app/component/chatRommPageComponent/ImageModal";
 import { useParams } from "next/navigation";
+import {
+  setMessages,
+  fetchPrivateChatMessagesByChatRoomId,
+} from "@/app/store/privateChatRoomMessagesSlice";
 
 const PrivateChatRoomPage = () => {
-  const { id } = useParams(); // URL 파라미터에서 채팅방 ID 가져오기
-  const chatRoomId = Array.isArray(id) ? id[0] : id; // id가 배열일 경우 첫 번째 요소 사용
+  const { id } = useParams<{ id: string }>(); // URL 파라미터에서 채팅방 ID 가져오기
+  const chatRoomId = id ?? ""; // id가 null일 경우 빈 문자열 사용
   const dispatch = useDispatch<AppDispatch>();
   const [chatRoom, setChatRoom] = useState<any>(null); // 채팅방 정보 상태
   const [isParticipant, setIsParticipant] = useState<boolean>(false); // 사용자가 채팅방 참가자인지 여부
   const [hasEntered, setHasEntered] = useState<boolean>(false); // 사용자가 채팅방에 들어왔는지 여부
   const user = useSelector((state: RootState) => state.auth.user); // Redux에서 사용자 정보 가져오기
-  const userProfileImg = user.profileImgURL;
+  const userProfileImg = user?.profileImgURL || "";
   const { messages, status, error } = useSelector(
-    (state: RootState) => state.messages
+    (state: RootState) => state.privateChatRoomMessages
   ); // Redux에서 메시지 목록 가져오기
   const [loading, setLoading] = useState(false); // 로딩 상태
   const [modalImage, setModalImage] = useState<string | null>(null); // 이미지 모달 상태
@@ -48,7 +47,7 @@ const PrivateChatRoomPage = () => {
 
   // 채팅방 정보 가져오기
   useEffect(() => {
-    if (chatRoomId && user.uid) {
+    if (chatRoomId && user?.uid) {
       const chatRoomRef = doc(db, "privateChatRooms", chatRoomId);
       getDoc(chatRoomRef)
         .then((doc) => {
@@ -67,13 +66,12 @@ const PrivateChatRoomPage = () => {
           console.error("Error getting document:", error);
         });
     }
-  }, [chatRoomId, user.uid]);
+  }, [chatRoomId, user?.uid]);
 
   // 메시지 목록 가져오기 및 실시간 업데이트
   useEffect(() => {
     if (chatRoomId) {
-      dispatch(fetchChatRoomById(chatRoomId)); // 채팅방 정보
-      dispatch(fetchMessagesByChatRoomId(chatRoomId)); // 챗방정보
+      dispatch(fetchPrivateChatMessagesByChatRoomId(chatRoomId)); // 개인채팅방 메시지 가져오기
 
       const messagesRef = collection(
         db,
@@ -98,7 +96,7 @@ const PrivateChatRoomPage = () => {
             readBy: data.readBy || [], // Ensure readBy is initialized
           });
         });
-        dispatch(setMessages(msgs));
+        dispatch(setMessages(msgs)); // 올바른 슬라이스로 메시지 설정
       });
 
       return () => unsubscribe();
@@ -107,7 +105,7 @@ const PrivateChatRoomPage = () => {
 
   // 메시지 전송 함수
   const handleSendMessage = async (text: string, imageUrl = "") => {
-    if ((text.trim() || imageUrl) && user.uid) {
+    if ((text.trim() || imageUrl) && user && user.uid) {
       const newMessage = {
         text,
         time: new Date().toISOString(),
@@ -126,7 +124,7 @@ const PrivateChatRoomPage = () => {
 
   // 읽지 않은 메시지 업데이트
   useEffect(() => {
-    if (messages.length > 0 && user.uid) {
+    if (messages.length > 0 && user && user.uid) {
       const unreadMessages = messages.filter(
         (msg) => !msg.readBy.includes(user.uid!)
       );
@@ -203,10 +201,10 @@ const PrivateChatRoomPage = () => {
   };
 
   useEffect(() => {
-    if (user.uid && !isParticipant) {
+    if (user && user.uid && !isParticipant) {
       enterChatRoom(); // 사용자 자동 참가
     }
-  }, [user.uid, isParticipant]);
+  }, [user, user.uid, isParticipant]);
 
   return (
     <div className="chat_wrap">

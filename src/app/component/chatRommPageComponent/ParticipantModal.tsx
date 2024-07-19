@@ -3,7 +3,7 @@ import React from "react";
 import { Modal, Button } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import { useRouter } from "next/navigation";
-import { fetchPrivateChatRoomById } from "@/app/store/privateChatRoomSlice";
+import { initiatePrivateChat } from "@/app/store/privateChatRoomSlice";
 import { RootState, AppDispatch } from "@/app/store/store";
 
 interface ParticipantModalProps {
@@ -28,22 +28,34 @@ const ParticipantModal: React.FC<ParticipantModalProps> = ({
   const router = useRouter();
 
   const handlePrivateChat = async () => {
-    console.log(participant);
+    // participant 정보 로그 출력
+
+    // 현재 유저 정보와 참가자 정보가 유효한지 확인
     if (currentUser && currentUser.uid && participant) {
-      const resultAction = await dispatch(
-        fetchPrivateChatRoomById(participant.id)
-      );
-      if (fetchPrivateChatRoomById.fulfilled.match(resultAction)) {
-        const chatId = resultAction.payload;
-        router.push(`/privatechatroompage/${chatId}`);
-      } else {
-        // 오류 처리
-        console.error(
-          "1:1 채팅을 시작하는 데 실패했습니다:",
-          resultAction.payload
-        );
+      try {
+        // initiatePrivateChat 함수를 호출하여 채팅 방 생성 또는 조회
+        const resultAction = await dispatch(
+          initiatePrivateChat({
+            myId: currentUser.uid,
+            selectedId: participant.id,
+          })
+        ).unwrap();
+
+        // 성공적으로 채팅 방이 생성되거나 조회된 경우
+        if (resultAction) {
+          const chatId = resultAction; // 반환된 채팅 방 ID
+          console.log(chatId);
+          router.push(`/privatechatroompage/${chatId.chatRoomId}`); // 해당 채팅 방으로 이동
+        } else {
+          // 오류 처리: 채팅 방 생성 또는 조회 실패
+          console.error("1:1 채팅을 시작하는 데 실패했습니다.");
+        }
+      } catch (error) {
+        // 오류 처리: 예외 발생 시
+        console.error("1:1 채팅을 시작하는 데 실패했습니다:", error);
       }
     } else {
+      // 오류 처리: 유효하지 않은 현재 유저 정보 또는 참가자 정보
       if (!currentUser || !currentUser.uid) {
         console.error("로그인이 필요합니다.");
       }

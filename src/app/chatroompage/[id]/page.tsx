@@ -6,7 +6,7 @@ import { fetchChatRoomById } from "@/app/store/chatRoomSlice";
 import {
   fetchMessagesByChatRoomId,
   setMessages,
-} from "@/app/store/messagesSlice";
+} from "@/app/store/chatRoomMessagesSlice";
 import { RootState, AppDispatch } from "@/app/store/store";
 import { db, storage } from "../../../../firebase";
 import {
@@ -40,7 +40,7 @@ const ChatRoomPage = () => {
   const user = useSelector((state: RootState) => state.auth.user); // Redux에서 사용자 정보 가져오기
   const userProfileImg = user.profileImgURL;
   const { messages, status, error } = useSelector(
-    (state: RootState) => state.messages
+    (state: RootState) => state.chatRoomMessages
   ); // Redux에서 메시지 목록 가져오기
   const [loading, setLoading] = useState(false); // 로딩 상태
   const [modalImage, setModalImage] = useState<string | null>(null); // 이미지 모달 상태

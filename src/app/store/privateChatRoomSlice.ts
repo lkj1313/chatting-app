@@ -12,26 +12,26 @@ import { RootState } from "./store";
 import { v4 as uuidv4 } from "uuid";
 
 interface PrivateChatRoomState {
-  chatId: string | null;
+  chatRoomId: string | null;
   status: "idle" | "loading" | "succeeded" | "failed";
   error: string | null;
   participants: string[]; // participants 속성 추가
 }
 
 const initialState: PrivateChatRoomState = {
-  chatId: null,
+  chatRoomId: null,
+  participants: [],
   status: "idle",
   error: null,
-  participants: [], // 초기값 설정
 };
 
-export const fetchPrivateChatRoomById = createAsyncThunk<
-  string, // 반환 타입: 비동기 작업이 성공적으로 완료되었을 때 반환되는 값의 타입 (채팅방 ID)
-  string, // 인수 타입: 비동기 작업에 전달되는 인수의 타입 (참가자 ID)
-  { rejectValue: string } // Thunk API 옵션 타입: 실패 시 반환되는 에러 메시지의 타입
+export const initiatePrivateChat = createAsyncThunk<
+  { chatRoomId: string; participants: string[] }, // 반환 타입 수정
+  { myId: string; selectedId: string }, // 함수 인수 타입
+  { rejectValue: string; state: RootState } // 추가 옵션
 >(
-  "privateChatRoom/fetchPrivateChatRoomById", // 여기서 액션 타입을 수정합니다.
-  async (participantId, { rejectWithValue, getState }) => {
+  "privateChatRoom/initiatePrivateChat", // 여기서 액션 타입을 수정합니다.
+  async ({ myId, selectedId }, { rejectWithValue, getState }) => {
     const state = getState() as RootState;
     const currentUser = state.auth.user;
 
@@ -39,32 +39,25 @@ export const fetchPrivateChatRoomById = createAsyncThunk<
       // 기존 채팅 방 조회
       const chatQuery = query(
         collection(db, "privateChatRooms"),
-        where("user1Id", "in", [currentUser.uid, participantId]),
-        where("user2Id", "in", [currentUser.uid, participantId])
+        where("user1Id", "in", [currentUser.uid, selectedId]),
+        where("user2Id", "in", [currentUser.uid, selectedId])
       );
       const chatSnapshot = await getDocs(chatQuery);
 
       if (!chatSnapshot.empty) {
         const chat = chatSnapshot.docs[0];
-        return chat.id;
+        const chatRoomData = chat.data() as PrivateChatRoomState;
+        return { chatRoomId: chat.id, participants: chatRoomData.participants };
       } else {
         // 새로운 채팅 방 생성
-        if (currentUser && currentUser.uid && participantId) {
-          const newChatRoomId = uuidv4(); // 유니크 ID 생성
-          const newChatRoom = {
-            chatRoomId: newChatRoomId,
-            user1Id: currentUser.uid,
-            user2Id: participantId,
-            participants: [currentUser.uid, participantId], // 참가자 필드 추가
-          };
-
-          await setDoc(doc(db, "privateChatRooms", newChatRoomId), newChatRoom);
-          return newChatRoomId;
-        } else {
-          throw new Error(
-            "Both user IDs must be available to create a chat room."
-          );
-        }
+        const newChatRoomId = uuidv4();
+        const newChatRoom = {
+          chatRoomId: newChatRoomId,
+          participants: [myId, selectedId],
+        };
+        const chatRoomRef = doc(db, "privateChatRooms", newChatRoomId);
+        await setDoc(chatRoomRef, newChatRoom);
+        return { chatRoomId: newChatRoomId, participants: [myId, selectedId] };
       }
     } catch (error: any) {
       return rejectWithValue(error.message);
@@ -74,28 +67,38 @@ export const fetchPrivateChatRoomById = createAsyncThunk<
 
 //슬라이스 정의
 const privateChatRoomSlice = createSlice({
-  name: "privateChatRoom", // 여기서 슬라이스 이름을 수정합니다.
+  name: "privateChatRoom",
   initialState,
-  reducers: {},
+  reducers: {
+    setChatRoomId: (state, action: PayloadAction<string | null>) => {
+      state.chatRoomId = action.payload;
+    },
+    clearChatRoomId: (state) => {
+      state.chatRoomId = null;
+    },
+  },
   extraReducers: (builder) => {
     builder
-      .addCase(fetchPrivateChatRoomById.pending, (state) => {
+      .addCase(initiatePrivateChat.pending, (state) => {
         state.status = "loading";
-        state.error = null;
       })
       .addCase(
-        fetchPrivateChatRoomById.fulfilled,
-        (state, action: PayloadAction<string>) => {
+        initiatePrivateChat.fulfilled,
+        (
+          state,
+          action: PayloadAction<{ chatRoomId: string; participants: string[] }>
+        ) => {
           state.status = "succeeded";
-          state.chatId = action.payload;
-          state.error = null;
+          state.chatRoomId = action.payload.chatRoomId;
+          state.participants = action.payload.participants; // 참가자 목록을 상태에 저장
         }
       )
-      .addCase(fetchPrivateChatRoomById.rejected, (state, action) => {
+      .addCase(initiatePrivateChat.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.payload as string;
       });
   },
 });
 
+export const { setChatRoomId, clearChatRoomId } = privateChatRoomSlice.actions;
 export default privateChatRoomSlice.reducer;

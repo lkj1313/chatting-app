@@ -18,7 +18,7 @@ const ChatRoomPageHeader: React.FC<ChatRoomPageHeaderProps> = ({
 
   const handleBack = (): void => {
     // 뒤로가기
-    router.push("/");
+    router.back();
   };
 
   const handleBarButtonClick = (): void => {

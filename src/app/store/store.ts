@@ -3,8 +3,9 @@ import authReducer from "./authSlice";
 import containerReducer from "./containerSlice";
 import uiReducer from "./uiSlice";
 import chatRoomReducer from "./chatRoomSlice";
-import messagesReducer from "./messagesSlice";
-import privateChatRoomReducer from "./privateChatRoomSlice"; // 올바른 이름으로 import
+import chatRoomMessagesReducer from "./chatRoomMessagesSlice";
+import privateChatRoomReducer from "./privateChatRoomSlice";
+import privateChatRoomMessagesReducer from "./privateChatRoomMessagesSlice"; // 새로운 슬라이스 import
 
 // Redux 스토어를 구성합니다.
 const store = configureStore({
@@ -13,8 +14,9 @@ const store = configureStore({
     container: containerReducer,
     ui: uiReducer,
     chatRoom: chatRoomReducer,
-    messages: messagesReducer,
-    privateChatRoom: privateChatRoomReducer, // 올바른 이름으로 설정
+    chatRoomMessages: chatRoomMessagesReducer,
+    privateChatRoom: privateChatRoomReducer,
+    privateChatRoomMessages: privateChatRoomMessagesReducer, // 새로운 슬라이스 추가
   },
 });
 

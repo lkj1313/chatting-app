@@ -30,10 +30,15 @@ export const fetchMessagesByChatRoomId = createAsyncThunk<
   string,
   { rejectValue: string }
 >(
-  "messages/fetchMessagesByChatRoomId",
+  "chatRoomMessages/fetchMessagesByChatRoomId",
   async (chatRoomId, { rejectWithValue }) => {
     try {
-      const messagesRef = collection(db, "chatRooms", chatRoomId, "messages");
+      const messagesRef = collection(
+        db,
+        "privateChatRooms",
+        chatRoomId,
+        "messages"
+      );
       const q = query(messagesRef, orderBy("time"));
       const messagesSnap = await getDocs(q);
       const messages: Message[] = messagesSnap.docs.map((doc) => ({
@@ -53,9 +58,9 @@ export const fetchMessagesByChatRoomId = createAsyncThunk<
   }
 );
 
-const messagesSlice = createSlice({
-  name: "messages", // 슬라이스의 이름
-  initialState, // 슬라이스의 초기상태값
+const chatRoomMessagesSlice = createSlice({
+  name: "chatRoomMessages", // 슬라이스의 이름
+  initialState, // 슬라이스의 초기 상태값
   reducers: {
     setMessages: (state, action: PayloadAction<Message[]>) => {
       state.messages = action.payload;
@@ -81,5 +86,6 @@ const messagesSlice = createSlice({
       });
   },
 });
-export const { setMessages } = messagesSlice.actions;
-export default messagesSlice.reducer;
+
+export const { setMessages } = chatRoomMessagesSlice.actions;
+export default chatRoomMessagesSlice.reducer;
