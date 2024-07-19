@@ -8,6 +8,7 @@ interface ChatRoomPageHeaderProps {
   chatRoom: any;
   openInfoModal: () => void;
   participantProfileImg: string;
+  participantNickname: string; // 여기 추가
 }
 
 const ChatRoomPageHeader: React.FC<ChatRoomPageHeaderProps> = ({

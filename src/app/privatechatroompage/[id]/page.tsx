@@ -49,9 +49,9 @@ const PrivateChatRoomPage = () => {
     useState<string>("");
 
   // 채팅방 정보 가져오기
-  const [participantNickname, setParticipantNickname] = useState<string | null>(
-    null
-  ); // 상대방 닉네임 상태
+
+  const [participantNickname, setParticipantNickname] = useState<string>(""); // 상대방 닉네임 상태
+
   useEffect(() => {
     if (chatRoomId && user?.uid) {
       const chatRoomRef = doc(db, "privateChatRooms", chatRoomId);
@@ -233,6 +233,7 @@ const PrivateChatRoomPage = () => {
         chatRoom={chatRoom}
         openInfoModal={openInfoModal}
         participantProfileImg={participantProfileImg}
+        participantNickname={participantNickname}
       />
 
       <ChatRoomPageMain
