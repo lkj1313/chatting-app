@@ -7,11 +7,13 @@ import Sidebar from "./Sidebar";
 interface ChatRoomPageHeaderProps {
   chatRoom: any;
   openInfoModal: () => void;
+  participantProfileImg: string;
 }
 
 const ChatRoomPageHeader: React.FC<ChatRoomPageHeaderProps> = ({
   chatRoom,
   openInfoModal,
+  participantProfileImg,
 }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const router = useRouter();
@@ -59,7 +61,38 @@ const ChatRoomPageHeader: React.FC<ChatRoomPageHeaderProps> = ({
             onClick={openInfoModal}
             style={{ display: "flex", alignItems: "center", flexGrow: "1" }}
           >
-            {chatRoom.chatRoomImg ? (
+            {location.pathname.startsWith("/chatroompage") ? (
+              chatRoom.chatRoomImg ? (
+                <img
+                  style={{
+                    width: "50px",
+                    height: "50px",
+                    borderRadius: "25px",
+                    marginRight: "20px",
+                  }}
+                  src={chatRoom.chatRoomImg}
+                  alt="Chat Room Image"
+                />
+              ) : (
+                <div
+                  style={{
+                    width: "50px",
+                    height: "50px",
+                    borderRadius: "25px",
+                    backgroundColor: "#ccc",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    color: "#fff",
+                    fontSize: "12px",
+                    textAlign: "center",
+                    marginRight: "20px",
+                  }}
+                >
+                  {chatRoom?.channelName?.[0] || "N/A"}
+                </div>
+              )
+            ) : (
               <img
                 style={{
                   width: "50px",
@@ -67,27 +100,9 @@ const ChatRoomPageHeader: React.FC<ChatRoomPageHeaderProps> = ({
                   borderRadius: "25px",
                   marginRight: "20px",
                 }}
-                src={chatRoom.chatRoomImg}
-                alt="Chat Room Image"
+                src={participantProfileImg}
+                alt="Participant Profile Image"
               />
-            ) : (
-              <div
-                style={{
-                  width: "50px",
-                  height: "50px",
-                  borderRadius: "25px",
-                  backgroundColor: "#ccc",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  color: "#fff",
-                  fontSize: "12px",
-                  textAlign: "center",
-                  marginRight: "20px",
-                }}
-              >
-                {chatRoom?.channelName?.[0] || "N/A"}
-              </div>
             )}
             <div style={{ display: "flex", flexDirection: "column" }}>
               <p
@@ -126,6 +141,7 @@ const ChatRoomPageHeader: React.FC<ChatRoomPageHeaderProps> = ({
                 border: "none",
                 display: "flex",
                 alignItems: "center",
+                marginLeft: "10px",
               }}
               onClick={handleBarButtonClick}
               role="button"

@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState, AppDispatch } from "@/app/store/store";
 import { db, storage } from "../../../../firebase";
+
 import {
   collection,
   addDoc,
@@ -44,17 +45,37 @@ const PrivateChatRoomPage = () => {
   const [modalImage, setModalImage] = useState<string | null>(null); // 이미지 모달 상태
   const [showImageChattingModal, setImageChattingShowModal] = useState(false); // 이미지 모달 표시 여부
   const [showInfoModal, setShowInfoModal] = useState(false); // 정보 모달 표시 여부
+  const [participantProfileImg, setParticipantProfileImg] =
+    useState<string>("");
 
   // 채팅방 정보 가져오기
+  const [participantNickname, setParticipantNickname] = useState<string | null>(
+    null
+  ); // 상대방 닉네임 상태
   useEffect(() => {
     if (chatRoomId && user?.uid) {
       const chatRoomRef = doc(db, "privateChatRooms", chatRoomId);
       getDoc(chatRoomRef)
-        .then((doc) => {
-          if (doc.exists()) {
-            setChatRoom(doc.data());
-            if (doc.data().participants.includes(user.uid)) {
+        .then(async (chatRoomDoc) => {
+          // 변수 이름을 chatRoomDoc으로 변경
+          if (chatRoomDoc.exists()) {
+            setChatRoom(chatRoomDoc.data());
+            const chatRoomData = chatRoomDoc.data();
+            if (chatRoomData.participants.includes(user.uid)) {
               setIsParticipant(true);
+              const participantId = chatRoomData.participants.find(
+                (id: string) => id !== user.uid
+              );
+              if (participantId) {
+                const participantRef = doc(db, "users", participantId);
+                const participantSnap = await getDoc(participantRef);
+                if (participantSnap.exists()) {
+                  setParticipantProfileImg(
+                    participantSnap.data().profileImg || ""
+                  );
+                  setParticipantNickname(participantSnap.data().nickname || "");
+                }
+              }
             } else {
               setIsParticipant(false);
             }
@@ -208,7 +229,11 @@ const PrivateChatRoomPage = () => {
 
   return (
     <div className="chat_wrap">
-      <ChatRoomPageHeader chatRoom={chatRoom} openInfoModal={openInfoModal} />
+      <ChatRoomPageHeader
+        chatRoom={chatRoom}
+        openInfoModal={openInfoModal}
+        participantProfileImg={participantProfileImg}
+      />
 
       <ChatRoomPageMain
         messages={messages}
@@ -234,6 +259,8 @@ const PrivateChatRoomPage = () => {
       <ChatRoomInfoModal
         show={showInfoModal}
         chatRoom={chatRoom}
+        participantProfileImg={participantProfileImg || ""}
+        participantNickname={participantNickname || ""}
         onClose={closeInfoModal}
       />
     </div>

@@ -5,17 +5,24 @@ import { Modal, Button } from "react-bootstrap";
 interface InfoModalProps {
   show: boolean;
   chatRoom: any;
+  participantProfileImg: string | null;
+  participantNickname: string | null;
   onClose: () => void;
 }
 
-const InfoModal: React.FC<InfoModalProps> = ({ show, chatRoom, onClose }) => {
+const InfoModal: React.FC<InfoModalProps> = ({
+  show,
+  chatRoom,
+  participantProfileImg,
+  participantNickname,
+  onClose,
+}) => {
+  const isPrivateChat = location.pathname.startsWith("/privatechatroompage");
+
   return (
     <Modal show={show} onHide={onClose}>
       <Modal.Header style={{ border: "none", padding: "0" }}>
         <div style={{ width: "100%" }}>
-          <div>
-            <p style={{ fontSize: "20px", marginBottom: "20px" }}>채널정보</p>
-          </div>
           <div className="container" style={{ width: "100%" }}>
             <div className="row" style={{ display: "flex" }}>
               <div
@@ -27,7 +34,17 @@ const InfoModal: React.FC<InfoModalProps> = ({ show, chatRoom, onClose }) => {
                   marginBottom: "10px",
                 }}
               >
-                {chatRoom?.chatRoomImg ? (
+                {isPrivateChat ? (
+                  <img
+                    src={participantProfileImg || "default_image_url"}
+                    alt="Participant Profile Image"
+                    style={{
+                      width: "150px",
+                      height: "150px",
+                      borderRadius: "75px",
+                    }}
+                  />
+                ) : chatRoom?.chatRoomImg ? (
                   <img
                     src={chatRoom.chatRoomImg}
                     alt="Chat Room Image"
@@ -61,7 +78,7 @@ const InfoModal: React.FC<InfoModalProps> = ({ show, chatRoom, onClose }) => {
               {/* channelname */}
               <div
                 className="row"
-                style={{ display: "flex", marginBottom: "5px" }}
+                style={{ display: "flex", margin: "0", marginBottom: "5px" }}
               >
                 <div
                   className="col-12"
@@ -72,18 +89,23 @@ const InfoModal: React.FC<InfoModalProps> = ({ show, chatRoom, onClose }) => {
                     justifyContent: "center",
                   }}
                 >
-                  <p
+                  <div
+                    className="col-12"
                     style={{
-                      margin: 0,
-                      fontSize: "20px",
+                      padding: "0",
                       display: "flex",
                       alignItems: "center",
+                      justifyContent: "center",
                     }}
                   >
-                    {chatRoom?.channelName
-                      ? `channelName: ${chatRoom.channelName}`
+                    {isPrivateChat
+                      ? participantNickname
+                        ? `${participantNickname}`
+                        : "N/A"
+                      : chatRoom?.channelName
+                      ? `채널명: ${chatRoom.channelName}`
                       : "N/A"}
-                  </p>
+                  </div>
                 </div>
                 <div className="row">
                   <div
@@ -111,7 +133,7 @@ const InfoModal: React.FC<InfoModalProps> = ({ show, chatRoom, onClose }) => {
                             margin: "0",
                           }}
                         >
-                          description: &nbsp;
+                          설명: &nbsp;
                         </span>
                         {chatRoom.description}
                       </p>
