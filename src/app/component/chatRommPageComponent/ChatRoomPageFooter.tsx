@@ -54,7 +54,12 @@ const ChatRoomPageFooter: React.FC<ChatRoomPageFooter> = ({
   return (
     <footer
       className="container-fluid"
-      style={{ margin: "0", padding: "0", height: "50px", border: "none" }}
+      style={{
+        margin: "0",
+        padding: "0",
+        height: "50px",
+        borderBottom: "1px solid gray",
+      }}
     >
       {isParticipant ? (
         <div
