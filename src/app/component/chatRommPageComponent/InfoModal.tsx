@@ -20,16 +20,24 @@ const InfoModal: React.FC<InfoModalProps> = ({
   const isPrivateChat = location.pathname.startsWith("/privatechatroompage");
 
   return (
-    <Modal show={show} onHide={onClose} style={{ width: "300px" }}>
+    <Modal show={show} onHide={onClose}>
       <Modal.Header style={{ border: "none", padding: "0" }}>
         <div style={{ width: "100%" }}>
           <div className="container" style={{ width: "100%" }}>
-            <div className="row" style={{ display: "flex" }}>
+            <div
+              className="row"
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
               <div
                 className="col-12"
                 style={{
                   display: "flex",
                   justifyContent: "center",
+                  alignItems: "center",
                   maxHeight: "300px",
                   marginBottom: "10px",
                 }}
@@ -69,6 +77,7 @@ const InfoModal: React.FC<InfoModalProps> = ({
                       fontSize: "30px",
                       textAlign: "center",
                       marginRight: "30px",
+                      margin: "0",
                     }}
                   >
                     {chatRoom?.channelName?.[0] || "N/A"}
@@ -103,7 +112,7 @@ const InfoModal: React.FC<InfoModalProps> = ({
                         ? `${participantNickname}`
                         : "N/A"
                       : chatRoom?.channelName
-                      ? `채널명: ${chatRoom.channelName}`
+                      ? `${chatRoom.channelName}`
                       : "N/A"}
                   </div>
                 </div>
