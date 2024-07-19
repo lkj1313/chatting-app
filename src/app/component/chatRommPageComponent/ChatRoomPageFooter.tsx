@@ -2,6 +2,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import Picker from "@emoji-mart/react";
 import data from "@emoji-mart/data";
+import { relative } from "path";
 
 interface ChatRoomPageFooter {
   handleSendMessage: (text: string, imageUrl?: string) => void;
@@ -59,6 +60,7 @@ const ChatRoomPageFooter: React.FC<ChatRoomPageFooter> = ({
         padding: "0",
         height: "50px",
         borderBottom: "1px solid gray",
+        position: "relative",
       }}
     >
       {isParticipant ? (
@@ -98,7 +100,7 @@ const ChatRoomPageFooter: React.FC<ChatRoomPageFooter> = ({
               style={{
                 position: "absolute",
                 bottom: "60px",
-                right: "20px",
+                right: "1px",
                 width: "auto",
                 height: "auto",
               }}

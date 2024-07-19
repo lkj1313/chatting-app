@@ -1,104 +1,30 @@
-.chatInput[type="text"] {
-  border: 0;
-
-  height: 100%;
-  background: #ddd;
-  border-radius: 5px;
-  padding-left: 5px;
-  box-sizing: border-box;
-  margin: 0;
-}
-.chatInput[type="text"]::placeholder {
-  color: #999;
-}
-.chatInput[type="text"]::placeholder {
-  color: #999;
-}
-
-.chatInput[type="text"]:hover {
+.chatRoomHeader {
+  width: 100%;
   background-color: white;
-}
-
-// .uploadButtonDiv {
-//   display: flex;
-//   justify-content: flex-start;
-//   align-items: center;
-//   height: 100%;
-//   max-width: 60px;
-//   transition: background-color 0.5s ease;
-// }
-// .uploadButton {
-//   height: 100%;
-//   width: 100%;
-//   max-width: 60px;
-//   border: none;
-//   position: relative;
-//   overflow: hidden;
-// }
-// .uploadButtonDiv:hover {
-//   background-color: rgb(230, 225, 225);
-// }
-// .emojiButtonDiv {
-//   display: flex;
-//   justify-content: flex-end;
-//   align-items: center;
-//   height: 100%;
-//   width: 100%;
-// }
-// .emojiButton {
-//   height: 100%;
-//   width: 100%;
-
-//   display: flex;
-//   align-items: center;
-//   justify-content: center;
-//   border: none;
-//   background-color: white;
-//   transition: background-color 0.5s ease;
-// }
-// .emojiButton span {
-//   height: 100%;
-//   width: 100%;
-//   font-size: 30px;
-// }
-
-// .emojiButton:hover {
-//   background-color: rgb(230, 225, 225);
-// }
-.uploadButtonDiv,
-.emojiButtonDiv {
-  margin: 0;
-  transition: background-color 0.5s ease;
+  height: 70px;
+  padding: 3px 10px;
+  text-align: left;
+  display: flex;
+  align-items: center;
   cursor: pointer;
-}
-.uploadButtonDiv:hover,
-.emojiButtonDiv:hover,
-.chatSubmitDiv:hover {
-  background-color: rgb(150, 150, 150);
-}
-.loadingSpinner {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  width: 10px;
-  height: 10px;
-  border: 8px solid rgba(0, 0, 0, 0.1);
-  border-top: 8px solid #000;
-  border-radius: 50%;
-  transform: translate(-50%, -50%);
-  animation: spin 1s linear infinite;
+  position: relative;
+  border-top: 1px solid gray;
 }
 
-@keyframes spin {
-  100% {
-    transform: rotate(360deg);
-  }
-}
-
-.chat_restricted {
+.backButton {
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 100%;
-  color: rgb(95, 145, 165);
+  width: 40px;
+  height: 40px;
+  margin-right: 15px;
+  border-radius: 20px;
+  border: none;
+  background-color: transparent;
+  padding: 0;
+  transition: background-color 0.3s ease;
+
+  &:hover {
+    background-color: gray;
+  }
 }

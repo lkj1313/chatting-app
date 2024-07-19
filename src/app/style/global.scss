@@ -18,6 +18,11 @@ body {
 body {
   max-width: 500px;
   margin: 0 auto;
+  padding: 0;
+}
+
+body.modal-open {
+  padding-right: 0 !important; /* 강제로 padding-right를 0으로 설정 */
 }
 @media (max-width: 600px) {
   body {

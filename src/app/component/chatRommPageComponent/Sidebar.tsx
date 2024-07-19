@@ -166,21 +166,21 @@ const Sidebar: React.FC<SidebarProps> = ({ sidebarOpen, setSidebarOpen }) => {
       )}
       <div
         className={`headerSidebar ${sidebarOpen ? "headerSidebarShow" : ""}`}
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          backgroundColor: "white",
-          padding: "20px",
-          position: "absolute",
-          height: "100vh",
-          width: "300px",
-          right: sidebarOpen ? "0" : "-300px",
-          top: "0px",
-          zIndex: 1010,
-          opacity: sidebarOpen ? 1 : 0,
-          transition: "right 1s ease, opacity 1s ease",
-          cursor: "default",
-        }}
+        // style={{
+        //   display: "flex",
+        //   flexDirection: "column",
+        //   backgroundColor: "white",
+        //   padding: "20px",
+        //   position: "absolute",
+        //   height: "100vh",
+        //   width: "300px",
+        //   right: sidebarOpen ? "0" : "-300px",
+        //   top: "0px",
+        //   zIndex: 1010,
+        //   opacity: sidebarOpen ? 1 : 0,
+        //   transition: "right 1s ease, opacity 1s ease",
+        //   cursor: "default",
+        // }}
       >
         <strong
           style={{ borderBottom: "1px solid gray", paddingBottom: "10px" }}

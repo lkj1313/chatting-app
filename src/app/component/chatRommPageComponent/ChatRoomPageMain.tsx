@@ -15,16 +15,17 @@ const ChatRoomPageMain: React.FC<MessageListProps> = ({
   handleImageClick,
   totalParticipants,
 }) => {
-  const messageEndRef = useRef<HTMLDivElement>(null);
+  const innerRef = useRef<HTMLDivElement>(null);
 
+  // 메시지가 변경될 때마다 스크롤을 맨 아래로 이동
   useEffect(() => {
-    if (messageEndRef.current) {
-      messageEndRef.current.scrollIntoView({ behavior: "smooth" });
+    if (innerRef.current) {
+      innerRef.current.scrollTop = innerRef.current.scrollHeight;
     }
   }, [messages]);
 
   return (
-    <div style={{ height: "100%" }}>
+    <div className="inner " ref={innerRef}>
       {messages.map((msg) => (
         <div
           key={msg.id}
@@ -81,7 +82,6 @@ const ChatRoomPageMain: React.FC<MessageListProps> = ({
           </div>
         </div>
       ))}
-      <div ref={messageEndRef}></div>
     </div>
   );
 };

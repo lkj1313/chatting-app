@@ -199,23 +199,23 @@ const ChatRoomPage = () => {
   }, [user.uid, isParticipant]);
   console.log(chatRoom);
   return (
-    <div className="chat_wrap">
-      <ChatRoomPageHeader chatRoom={chatRoom} openInfoModal={openInfoModal} />
-      <div className="inner">
+    <>
+      <div className="chat_wrap">
+        <ChatRoomPageHeader chatRoom={chatRoom} openInfoModal={openInfoModal} />
         <ChatRoomPageMain
           messages={messages}
           userId={user.uid!}
           handleImageClick={handleImageClick}
           totalParticipants={chatRoom?.participants.length || 0} // 구독자 수 전달
         />
+        <ChatRoomPageFooter
+          handleSendMessage={handleSendMessage}
+          handleImageUpload={handleImageUpload}
+          loading={loading}
+          isParticipant={isParticipant}
+          enterChatRoom={enterChatRoom}
+        />{" "}
       </div>
-      <ChatRoomPageFooter
-        handleSendMessage={handleSendMessage}
-        handleImageUpload={handleImageUpload}
-        loading={loading}
-        isParticipant={isParticipant}
-        enterChatRoom={enterChatRoom}
-      />{" "}
       <ImageModal
         show={showImageChattingModal}
         imageUrl={modalImage}
@@ -228,7 +228,7 @@ const ChatRoomPage = () => {
         participantProfileImg={null}
         participantNickname={null}
       />
-    </div>
+    </>
   );
 };
 

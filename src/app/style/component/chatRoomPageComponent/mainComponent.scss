@@ -15,7 +15,7 @@
   background-color: #acc2d2;
   padding: 10px;
   overflow-y: auto; /* 스크롤 설정 */
-  height: calc(100% - 70px - 50px);
+  flex: 1;
   margin: 0;
 }
 

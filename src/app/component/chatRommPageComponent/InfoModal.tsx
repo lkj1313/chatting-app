@@ -20,7 +20,7 @@ const InfoModal: React.FC<InfoModalProps> = ({
   const isPrivateChat = location.pathname.startsWith("/privatechatroompage");
 
   return (
-    <Modal show={show} onHide={onClose}>
+    <Modal show={show} onHide={onClose} style={{ width: "300px" }}>
       <Modal.Header style={{ border: "none", padding: "0" }}>
         <div style={{ width: "100%" }}>
           <div className="container" style={{ width: "100%" }}>
