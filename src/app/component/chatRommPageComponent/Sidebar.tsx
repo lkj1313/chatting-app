@@ -1,9 +1,12 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { useSelector } from "react-redux";
-import { RootState } from "@/app/store/store";
+import { useSelector, useDispatch } from "react-redux";
+import { AppDispatch, RootState } from "@/app/store/store";
 import ImageModal from "./ImageModal";
-import ParticipantModal from "./ParticipantModal"; // 추가된 import
+import ParticipantModal from "./ParticipantModal";
+import { useParams } from "next/navigation";
+import { fetchChatRoomById } from "@/app/store/chatRoomSlice";
+import { fetchPrivateChatRoomById } from "@/app/store/privateChatRoomSlice";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "../../../../firebase";
 
@@ -16,31 +19,23 @@ interface ParticipantInfo {
   id: string;
   nickname: string;
   profileImg: string;
-  additionalInfo?: string; // 필요한 추가 정보
+  additionalInfo?: string;
 }
 
-// 각 참가자의 정보를 가져오는 비동기 함수
-const fetchParticipantInfo = async (
-  participantId: string
-): Promise<ParticipantInfo | null> => {
+// 각 참가자의 프로필 이미지를 가져오는 비동기 함수
+const fetchParticipantProfileImg = async (participantId: string) => {
   try {
     const participantRef = doc(db, "users", participantId);
     const participantSnap = await getDoc(participantRef);
 
     if (participantSnap.exists()) {
-      const data = participantSnap.data();
-      return {
-        id: participantId,
-        nickname: data.nickname,
-        profileImg: data.profileImg,
-        additionalInfo: data.additionalInfo, // 필요한 추가 정보
-      };
+      return participantSnap.data().profileImg;
     } else {
       console.error("No such participant!");
       return null;
     }
   } catch (error) {
-    console.error("Error getting participant info:", error);
+    console.error("Error getting participant profile image:", error);
     return null;
   }
 };
@@ -49,11 +44,70 @@ const Sidebar: React.FC<SidebarProps> = ({ sidebarOpen, setSidebarOpen }) => {
   const [showImageModal, setShowImageModal] = useState(false);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [showParticipantModal, setShowParticipantModal] = useState(false);
-  const [selectedParticipant, setSelectedParticipant] =
-    useState<ParticipantInfo | null>(null);
+  const { id: chatRoomId } = useParams<{ id: string }>();
   const [participantInfos, setParticipantInfos] = useState<ParticipantInfo[]>(
     []
-  ); // 여기서 타입 명시
+  );
+  const [selectedParticipant, setSelectedParticipant] =
+    useState<ParticipantInfo | null>(null);
+
+  const dispatch: AppDispatch = useDispatch();
+  const chatRoom = useSelector((state: RootState) => state.chatRoom);
+  const { participants, status, error } = chatRoom;
+  const [participantProfiles, setParticipantProfiles] = useState<
+    ParticipantInfo[]
+  >([]);
+  const fetchParticipantInfo = async (
+    participantId: string
+  ): Promise<ParticipantInfo | null> => {
+    try {
+      const participantRef = doc(db, "users", participantId);
+      const participantSnap = await getDoc(participantRef);
+
+      if (participantSnap.exists()) {
+        const data = participantSnap.data();
+        return {
+          id: participantId,
+          nickname: data.nickname || participantId, // 닉네임이 없을 경우 ID 사용
+          profileImg: data.profileImg || "default_image_url",
+          additionalInfo: data.additionalInfo,
+        };
+      } else {
+        console.error("No such participant!");
+        return null;
+      }
+    } catch (error) {
+      console.error("Error getting participant info:", error);
+      return null;
+    }
+  };
+  useEffect(() => {
+    if (chatRoomId) {
+      if (location.pathname.includes("/chatroompage/")) {
+        dispatch(fetchChatRoomById(chatRoomId));
+      } else if (location.pathname.includes("/privatechatroompage/")) {
+        dispatch(fetchPrivateChatRoomById(chatRoomId));
+      }
+    }
+  }, [chatRoomId, dispatch]);
+
+  useEffect(() => {
+    const fetchProfiles = async () => {
+      const profiles: (ParticipantInfo | null)[] = await Promise.all(
+        participants.map(async (id) => {
+          const participantInfo = await fetchParticipantInfo(id);
+          return participantInfo;
+        })
+      );
+      setParticipantInfos(
+        profiles.filter((info) => info !== null) as ParticipantInfo[]
+      );
+    };
+
+    if (participants.length > 0) {
+      fetchProfiles();
+    }
+  }, [participants]);
 
   const sidebarClose = () => {
     setSidebarOpen(false);
@@ -82,36 +136,15 @@ const Sidebar: React.FC<SidebarProps> = ({ sidebarOpen, setSidebarOpen }) => {
   };
 
   const messages = useSelector((state: RootState) => state.messages.messages);
-  console.log("Messages:", messages);
-
   const haveImageUrLMessages = messages.filter((i) => i.imageUrl !== "");
-  console.log("Messages with Image URL:", haveImageUrLMessages);
 
-  const chatRoomParticipants = useSelector(
-    (state: RootState) => state.chatRoom.participants
-  );
-  console.log(chatRoomParticipants);
+  if (status === "loading") {
+    return <div>Loading...</div>; // 로딩 중일 때 표시할 내용
+  }
 
-  useEffect(() => {
-    const fetchAllParticipants = async () => {
-      const participantInfoPromises = chatRoomParticipants.map(
-        async (participantId) => {
-          const info = await fetchParticipantInfo(participantId);
-          return info;
-        }
-      );
-      const participantInfos = await Promise.all(participantInfoPromises);
-      setParticipantInfos(
-        participantInfos.filter(
-          (info): info is ParticipantInfo => info !== null
-        )
-      );
-    };
-
-    if (chatRoomParticipants.length > 0) {
-      fetchAllParticipants();
-    }
-  }, [chatRoomParticipants]);
+  if (error) {
+    return <div>Error: {error}</div>; // 에러 발생 시 표시할 내용
+  }
 
   return (
     <>
@@ -140,11 +173,7 @@ const Sidebar: React.FC<SidebarProps> = ({ sidebarOpen, setSidebarOpen }) => {
               >
                 {image.imageUrl && (
                   <img
-                    style={{
-                      width: "50px",
-                      height: "50px",
-                      cursor: "pointer",
-                    }}
+                    style={{ width: "50px", height: "50px", cursor: "pointer" }}
                     src={image.imageUrl}
                     alt={`img-${index}`}
                     onClick={() => handleImageClick(image.imageUrl)}
@@ -159,9 +188,9 @@ const Sidebar: React.FC<SidebarProps> = ({ sidebarOpen, setSidebarOpen }) => {
             채팅방 참가자
           </span>
           <div>
-            {participantInfos.map((participant, index) => (
+            {participantInfos.map((participant) => (
               <div
-                key={index}
+                key={participant.id}
                 className="participantInfoDiv"
                 style={{ marginBottom: "10px", cursor: "pointer" }}
                 onClick={() => handleParticipantClick(participant)}
@@ -169,7 +198,11 @@ const Sidebar: React.FC<SidebarProps> = ({ sidebarOpen, setSidebarOpen }) => {
                 <img
                   src={participant.profileImg}
                   alt={participant.nickname}
-                  style={{ width: "30px", height: "30px", borderRadius: "50%" }}
+                  style={{
+                    width: "30px",
+                    height: "30px",
+                    borderRadius: "50%",
+                  }}
                 />{" "}
                 <span>{participant.nickname}</span>
               </div>

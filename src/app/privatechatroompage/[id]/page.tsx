@@ -1,5 +1,4 @@
 "use client";
-
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchChatRoomById } from "@/app/store/chatRoomSlice";
@@ -30,7 +29,7 @@ import ChatRoomInfoModal from "@/app/component/chatRommPageComponent/InfoModal";
 import ImageModal from "@/app/component/chatRommPageComponent/ImageModal";
 import { useParams } from "next/navigation";
 
-const ChatRoomPage = () => {
+const PrivateChatRoomPage = () => {
   const { id } = useParams(); // URL 파라미터에서 채팅방 ID 가져오기
   const chatRoomId = Array.isArray(id) ? id[0] : id; // id가 배열일 경우 첫 번째 요소 사용
   const dispatch = useDispatch<AppDispatch>();
@@ -50,7 +49,7 @@ const ChatRoomPage = () => {
   // 채팅방 정보 가져오기
   useEffect(() => {
     if (chatRoomId && user.uid) {
-      const chatRoomRef = doc(db, "chatRooms", chatRoomId);
+      const chatRoomRef = doc(db, "privateChatRooms", chatRoomId);
       getDoc(chatRoomRef)
         .then((doc) => {
           if (doc.exists()) {
@@ -76,7 +75,12 @@ const ChatRoomPage = () => {
       dispatch(fetchChatRoomById(chatRoomId)); // 채팅방 정보
       dispatch(fetchMessagesByChatRoomId(chatRoomId)); // 챗방정보
 
-      const messagesRef = collection(db, "chatRooms", chatRoomId, "messages");
+      const messagesRef = collection(
+        db,
+        "privateChatRooms",
+        chatRoomId,
+        "messages"
+      );
       const q = query(messagesRef, orderBy("time"));
       const unsubscribe = onSnapshot(q, (querySnapshot) => {
         // Firestore에서 채팅방의 메시지를 실시간으로 구독
@@ -114,7 +118,7 @@ const ChatRoomPage = () => {
         readBy: [], // 읽은 사용자 목록 초기화
       };
       await addDoc(
-        collection(db, "chatRooms", chatRoomId!, "messages"),
+        collection(db, "privateChatRooms", chatRoomId!, "messages"),
         newMessage
       );
     }
@@ -130,7 +134,13 @@ const ChatRoomPage = () => {
       const batch = writeBatch(db);
 
       unreadMessages.forEach((msg) => {
-        const msgRef = doc(db, "chatRooms", chatRoomId!, "messages", msg.id);
+        const msgRef = doc(
+          db,
+          "privateChatRooms",
+          chatRoomId!,
+          "messages",
+          msg.id
+        );
         batch.update(msgRef, {
           readBy: arrayUnion(user.uid!),
         });
@@ -181,7 +191,7 @@ const ChatRoomPage = () => {
   // 채팅방 참가 함수
   const enterChatRoom = async () => {
     try {
-      const chatRoomRef = doc(db, "chatRooms", chatRoomId);
+      const chatRoomRef = doc(db, "privateChatRooms", chatRoomId);
       await updateDoc(chatRoomRef, {
         participants: arrayUnion(user.uid),
       });
@@ -197,7 +207,7 @@ const ChatRoomPage = () => {
       enterChatRoom(); // 사용자 자동 참가
     }
   }, [user.uid, isParticipant]);
-  console.log(chatRoom);
+
   return (
     <div className="chat_wrap">
       <ChatRoomPageHeader chatRoom={chatRoom} openInfoModal={openInfoModal} />
@@ -232,4 +242,4 @@ const ChatRoomPage = () => {
   );
 };
 
-export default ChatRoomPage;
+export default PrivateChatRoomPage;
