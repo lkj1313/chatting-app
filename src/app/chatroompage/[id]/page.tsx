@@ -229,7 +229,7 @@ const ChatRoomPage = () => {
           enterChatRoom={enterChatRoom}
         />{" "}
       </div>
-      모달
+
       <ImageModal
         show={showImageChattingModal}
         imageUrl={modalImage}
