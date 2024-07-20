@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState, AppDispatch } from "@/app/store/store";
 import { db, storage } from "../../../../firebase";
-
+import { auth } from "../../../../firebase";
 import {
   collection,
   addDoc,
@@ -28,6 +28,7 @@ import {
   setMessages,
   fetchPrivateChatMessagesByChatRoomId,
 } from "@/app/store/privateChatRoomMessagesSlice";
+import { closeParticipantModal } from "@/app/store/participantModalSlice";
 
 const PrivateChatRoomPage = () => {
   const { id } = useParams<{ id: string }>(); // URL 파라미터에서 채팅방 ID 가져오기
@@ -51,7 +52,10 @@ const PrivateChatRoomPage = () => {
   // 채팅방 정보 가져오기
 
   const [participantNickname, setParticipantNickname] = useState<string>(""); // 상대방 닉네임 상태
-
+  // 페이지 로드 시 모달 닫기
+  useEffect(() => {
+    dispatch(closeParticipantModal());
+  }, [dispatch]);
   useEffect(() => {
     if (chatRoomId && user?.uid) {
       const chatRoomRef = doc(db, "privateChatRooms", chatRoomId);

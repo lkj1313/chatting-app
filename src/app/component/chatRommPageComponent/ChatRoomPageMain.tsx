@@ -1,6 +1,11 @@
 "use client";
 import React, { useRef, useEffect } from "react";
 import { Message } from "./type";
+import { useDispatch } from "react-redux";
+import {
+  openParticipantModal,
+  closeParticipantModal,
+} from "@/app/store/participantModalSlice";
 
 interface MessageListProps {
   messages: Message[];
@@ -15,6 +20,7 @@ const ChatRoomPageMain: React.FC<MessageListProps> = ({
   handleImageClick,
   totalParticipants,
 }) => {
+  const dispatch = useDispatch();
   const innerRef = useRef<HTMLDivElement>(null);
 
   // 메시지가 변경될 때마다 스크롤을 맨 아래로 이동
@@ -23,6 +29,15 @@ const ChatRoomPageMain: React.FC<MessageListProps> = ({
       innerRef.current.scrollTop = innerRef.current.scrollHeight;
     }
   }, [messages]);
+  const handleProfileClick = (msg: Message) => {
+    dispatch(
+      openParticipantModal({
+        id: msg.userId,
+        nickname: msg.userName,
+        profileImg: msg.profileImg,
+      })
+    );
+  };
 
   return (
     <div className="inner " ref={innerRef}>
@@ -35,9 +50,11 @@ const ChatRoomPageMain: React.FC<MessageListProps> = ({
         >
           {msg.userId !== userId && (
             <img
+              style={{ cursor: "pointer" }}
               src={msg.profileImg}
               alt={msg.userName}
               className="profile-image"
+              onClick={() => handleProfileClick(msg)}
             />
           )}
           <div

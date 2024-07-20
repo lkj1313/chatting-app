@@ -3,6 +3,8 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 interface AuthState {
   isAuthenticated: boolean;
   user: {
+    additionalInfo: any;
+    profileImg: string | undefined;
     uid: string | null;
     email: string | null;
     nickname: string | null;
@@ -17,6 +19,8 @@ const initialState: AuthState = {
     email: null,
     nickname: null,
     profileImgURL: "/profile.jpg",
+    additionalInfo: undefined,
+    profileImg: undefined,
   },
 };
 

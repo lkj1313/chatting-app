@@ -6,6 +6,7 @@ import chatRoomReducer from "./chatRoomSlice";
 import chatRoomMessagesReducer from "./chatRoomMessagesSlice";
 import privateChatRoomReducer from "./privateChatRoomSlice";
 import privateChatRoomMessagesReducer from "./privateChatRoomMessagesSlice"; // 새로운 슬라이스 import
+import participantModalSlice from "./participantModalSlice";
 
 // Redux 스토어를 구성합니다.
 const store = configureStore({
@@ -16,7 +17,8 @@ const store = configureStore({
     chatRoom: chatRoomReducer,
     chatRoomMessages: chatRoomMessagesReducer,
     privateChatRoom: privateChatRoomReducer,
-    privateChatRoomMessages: privateChatRoomMessagesReducer, // 새로운 슬라이스 추가
+    privateChatRoomMessages: privateChatRoomMessagesReducer,
+    participantModal: participantModalSlice, // 새로운 슬라이스 추가
   },
 });
 

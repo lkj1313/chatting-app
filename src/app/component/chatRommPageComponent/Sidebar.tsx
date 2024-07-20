@@ -1,36 +1,22 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { useSelector } from "react-redux";
-import { RootState } from "@/app/store/store";
+import { useSelector, useDispatch } from "react-redux";
+import { RootState, AppDispatch } from "@/app/store/store";
 import ImageModal from "./ImageModal";
-import ParticipantModal from "./ParticipantModal"; // 추가된 import
+import ParticipantModal from "./ParticipantModal";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "../../../../firebase";
 import { Message } from "./type";
+import {
+  openParticipantModal,
+  closeParticipantModal,
+} from "@/app/store/participantModalSlice";
 
 interface SidebarProps {
   sidebarOpen: boolean;
   setSidebarOpen: (close: boolean) => void;
 }
 
-interface chatRoomParticipantInfo {
-  channelName: "";
-  chatRoomId: null;
-  chatRoomImg: null;
-  description: "";
-  participants: [];
-  userId: null;
-  userName: null;
-  status: "idle";
-  error: null;
-}
-
-interface PrivateChatRoomParticipantInfo {
-  chatRoomId: string | null;
-  status: "idle" | "loading" | "succeeded" | "failed";
-  error: string | null;
-  participants: string[]; // participants 속성 추가
-}
 interface ParticipantInfo {
   id: string;
   nickname: string;
@@ -38,6 +24,7 @@ interface ParticipantInfo {
   additionalInfo?: string;
 }
 
+// Firestore에서 참가자 정보를 가져오는 함수
 const fetchParticipantInfo = async (
   participantId: string
 ): Promise<ParticipantInfo | null> => {
@@ -62,22 +49,29 @@ const fetchParticipantInfo = async (
     return null;
   }
 };
+
 const Sidebar: React.FC<SidebarProps> = ({ sidebarOpen, setSidebarOpen }) => {
+  const dispatch: AppDispatch = useDispatch();
   const [showImageModal, setShowImageModal] = useState(false);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
-  const [showParticipantModal, setShowParticipantModal] = useState(false);
   const [participantInfos, setParticipantInfos] = useState<ParticipantInfo[]>(
     []
   );
-  const [selectedParticipant, setSelectedParticipant] =
-    useState<ParticipantInfo | null>(null);
   const [haveImageUrLMessages, setHaveImageUrLMessages] = useState<Message[]>(
     []
   );
+
+  // Redux 상태에서 모달 표시 여부와 선택된 참가자 정보 가져오기
+  const { showModal, selectedParticipant } = useSelector(
+    (state: RootState) => state.participantModal
+  );
+
+  // 사이드바 닫기 함수
   const sidebarClose = () => {
     setSidebarOpen(false);
   };
 
+  // 이미지 클릭 시 이미지 모달 열기 함수
   const handleImageClick = (imageUrl: string | undefined) => {
     if (imageUrl) {
       setSelectedImage(imageUrl);
@@ -85,20 +79,20 @@ const Sidebar: React.FC<SidebarProps> = ({ sidebarOpen, setSidebarOpen }) => {
     }
   };
 
+  // 참가자 클릭 시 참가자 모달 열기 함수
   const handleParticipantClick = (participant: ParticipantInfo) => {
-    setSelectedParticipant(participant);
-    setShowParticipantModal(true);
+    dispatch(openParticipantModal(participant));
   };
+
+  // 이미지 모달 닫기 함수
   const handleCloseImageModal = () => {
     setShowImageModal(false);
     setSelectedImage(null);
   };
 
-  const handleCloseParticipantModal = () => {
-    setShowParticipantModal(false);
-    setSelectedParticipant(null);
-  };
-
+  // Redux 상태에서 user 가져오기
+  const currentUser = useSelector((state: RootState) => state.auth.user);
+  // Redux 상태에서 메시지 가져오기
   const chatRoomMessages = useSelector(
     (state: RootState) => state.chatRoomMessages.messages
   );
@@ -106,15 +100,15 @@ const Sidebar: React.FC<SidebarProps> = ({ sidebarOpen, setSidebarOpen }) => {
     (state: RootState) => state.privateChatRoomMessages.messages
   );
 
+  // Redux 상태에서 참가자 정보 가져오기
   const chatRoomParticipants = useSelector(
-    // 일반채팅창 정보
-    (state: RootState) => state.chatRoom
+    (state: RootState) => state.chatRoom.participants
   );
   const privateChatParticipants = useSelector(
-    // 개인채팅창 정보
-    (state: RootState) => state.privateChatRoom // privateChatRoom을 privateChat으로 변경
+    (state: RootState) => state.privateChatRoom.participants
   );
 
+  // 현재 페이지 경로에 따라 이미지 URL이 있는 메시지 필터링
   useEffect(() => {
     if (location.pathname.startsWith("/chatroompage")) {
       setHaveImageUrLMessages(
@@ -126,13 +120,15 @@ const Sidebar: React.FC<SidebarProps> = ({ sidebarOpen, setSidebarOpen }) => {
       );
     }
   }, [chatRoomMessages, privateChatRoomMessages]);
+
+  // 현재 페이지 경로에 따라 참가자 정보 가져오기
   useEffect(() => {
     const fetchParticipants = async () => {
       let participants: any = [];
       if (location.pathname.startsWith("/chatroompage")) {
-        participants = chatRoomParticipants.participants;
+        participants = chatRoomParticipants;
       } else if (location.pathname.startsWith("/privatechatroompage")) {
-        participants = privateChatParticipants.participants;
+        participants = privateChatParticipants;
       }
 
       const profiles = await Promise.all(
@@ -144,8 +140,13 @@ const Sidebar: React.FC<SidebarProps> = ({ sidebarOpen, setSidebarOpen }) => {
     };
 
     fetchParticipants();
-  }, [chatRoomParticipants.participants, privateChatParticipants.participants]);
+  }, [chatRoomParticipants, privateChatParticipants]);
 
+  // 자신을 가장 위에 표시하기 위해 사용자 정보를 배열의 맨 앞에 추가
+  const orderedParticipants = [
+    ...participantInfos.filter((p) => p.id === currentUser.uid),
+    ...participantInfos.filter((p) => p.id !== currentUser.uid),
+  ];
   return (
     <>
       {sidebarOpen && (
@@ -166,21 +167,6 @@ const Sidebar: React.FC<SidebarProps> = ({ sidebarOpen, setSidebarOpen }) => {
       )}
       <div
         className={`headerSidebar ${sidebarOpen ? "headerSidebarShow" : ""}`}
-        // style={{
-        //   display: "flex",
-        //   flexDirection: "column",
-        //   backgroundColor: "white",
-        //   padding: "20px",
-        //   position: "absolute",
-        //   height: "100vh",
-        //   width: "300px",
-        //   right: sidebarOpen ? "0" : "-300px",
-        //   top: "0px",
-        //   zIndex: 1010,
-        //   opacity: sidebarOpen ? 1 : 0,
-        //   transition: "right 1s ease, opacity 1s ease",
-        //   cursor: "default",
-        // }}
       >
         <strong
           style={{ borderBottom: "1px solid gray", paddingBottom: "10px" }}
@@ -233,7 +219,7 @@ const Sidebar: React.FC<SidebarProps> = ({ sidebarOpen, setSidebarOpen }) => {
           <div>
             {location.pathname.startsWith("/chatroompage") ||
             location.pathname.startsWith("/privatechatroompage")
-              ? participantInfos.map((participant, index) => (
+              ? orderedParticipants.map((participant, index) => (
                   <div
                     key={index}
                     className="participantInfoDiv"
@@ -265,11 +251,7 @@ const Sidebar: React.FC<SidebarProps> = ({ sidebarOpen, setSidebarOpen }) => {
         imageUrl={selectedImage}
         onClose={handleCloseImageModal}
       />
-      <ParticipantModal
-        show={showParticipantModal}
-        participant={selectedParticipant}
-        onClose={handleCloseParticipantModal}
-      />
+      <ParticipantModal />
     </>
   );
 };

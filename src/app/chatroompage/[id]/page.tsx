@@ -8,7 +8,8 @@ import {
   setMessages,
 } from "@/app/store/chatRoomMessagesSlice";
 import { RootState, AppDispatch } from "@/app/store/store";
-import { db, storage } from "../../../../firebase";
+import { db, storage, auth } from "../../../../firebase";
+import { useRouter } from "next/navigation";
 import {
   collection,
   addDoc,
@@ -29,8 +30,10 @@ import ChatRoomPageMain from "@/app/component/chatRommPageComponent/ChatRoomPage
 import ChatRoomInfoModal from "@/app/component/chatRommPageComponent/InfoModal";
 import ImageModal from "@/app/component/chatRommPageComponent/ImageModal";
 import { useParams } from "next/navigation";
+import { onAuthStateChanged } from "firebase/auth";
 
 const ChatRoomPage = () => {
+  const router = useRouter();
   const { id } = useParams(); // URL 파라미터에서 채팅방 ID 가져오기
   const chatRoomId = Array.isArray(id) ? id[0] : id; // id가 배열일 경우 첫 번째 요소 사용
   const dispatch = useDispatch<AppDispatch>();
@@ -100,6 +103,15 @@ const ChatRoomPage = () => {
       return () => unsubscribe();
     }
   }, [chatRoomId, dispatch, userProfileImg]);
+
+  useEffect(() => {
+    //로그아웃 감지시 /loginpage이동
+    onAuthStateChanged(auth, (user) => {
+      if (!user) {
+        router.push("/loginpage");
+      }
+    });
+  });
 
   // 메시지 전송 함수
   const handleSendMessage = async (text: string, imageUrl = "") => {
@@ -197,6 +209,7 @@ const ChatRoomPage = () => {
       enterChatRoom(); // 사용자 자동 참가
     }
   }, [user.uid, isParticipant]);
+
   console.log(chatRoom);
   return (
     <>
@@ -216,6 +229,7 @@ const ChatRoomPage = () => {
           enterChatRoom={enterChatRoom}
         />{" "}
       </div>
+      모달
       <ImageModal
         show={showImageChattingModal}
         imageUrl={modalImage}
