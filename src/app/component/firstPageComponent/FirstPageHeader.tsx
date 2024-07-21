@@ -24,7 +24,12 @@ const FirstPageHeader = () => {
         bg="dark"
         variant="dark"
         expand="lg"
-        style={{ height: "100%", padding: "10px" }}
+        style={{
+          height: "100%",
+          padding: "10px",
+          display: "flex",
+          justifyContent: "end",
+        }}
       >
         <Button
           variant="dark"

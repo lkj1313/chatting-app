@@ -25,16 +25,16 @@
   position: absolute;
   height: 100vh;
   width: 300px;
-  left: -300px; /* 초기 위치를 화면 밖으로 설정 */
+  right: -300px; /* 초기 위치를 화면 밖으로 설정 */
   top: 0px;
   z-index: 1010;
   opacity: 0;
-  transition: left 1s ease, opacity 1s ease;
+  transition: right 1s ease, opacity 1s ease;
   border: none;
 }
 .show {
   opacity: 1;
-  left: 0px; /* 보여질 때의 위치 설정 */
+  right: 0px; /* 보여질 때의 위치 설정 */
 }
 
 .hamburger {

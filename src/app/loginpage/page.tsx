@@ -10,6 +10,7 @@ import { useDispatch } from "react-redux";
 import { login } from "@/app/store/authSlice";
 import { setCookie } from "cookies-next";
 import { toast, Bounce } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 interface Errors {
   email?: string;
@@ -105,11 +106,6 @@ export default function LoginPage() {
     }
   };
 
-  const notify = () => {
-    toast("Login attempt...", {
-      toastId: "123",
-    });
-  };
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
@@ -123,7 +119,7 @@ export default function LoginPage() {
 
     if (!emailError && !passwordError) {
       setIsLoading(true);
-      const toastId = "loginAttempt"; // 특정 ID 설정
+
       toast("Login attempt...", {
         toastId: "123",
         type: "info",
@@ -190,6 +186,12 @@ export default function LoginPage() {
           ...prevErrors,
           form: errorMessage,
         }));
+        toast.update("123", {
+          render: `로그인 실패: ${errorMessage}`,
+          type: "error",
+          position: "top-center",
+          transition: Bounce,
+        });
       } finally {
         setIsLoading(false);
       }
@@ -198,7 +200,11 @@ export default function LoginPage() {
   useEffect(() => {
     setShowCard(true);
   }, []);
-
+  const notify = () => {
+    toast("Login attempt...", {
+      toastId: "123",
+    });
+  };
   return (
     <div className="d-flex justify-content-center align-items-center vh-100 ml-1 mr-1">
       <div
@@ -277,4 +283,3 @@ export default function LoginPage() {
 LoginPage.getLayout = function getLayout(page: React.ReactNode) {
   return null;
 };
-import "react-toastify/dist/ReactToastify.css";

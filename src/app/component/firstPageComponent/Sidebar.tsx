@@ -16,6 +16,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "@/app/store/store";
 
 import { Dropdown, Modal, Button } from "react-bootstrap";
+import { useRouter } from "next/navigation";
 
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -28,6 +29,7 @@ const Sidebar: React.FC = () => {
   const [showProfileModal, setShowProfileModal] = useState(false);
   const [isEditingNickname, setIsEditingNickname] = useState(false);
   const [newNickname, setNewNickname] = useState("");
+  const router = useRouter();
 
   const sidebarOpen = useSelector((state: RootState) => state.ui.sidebarOpen);
   // const showModal = useSelector((state: RootState) => state.ui.showModal);
@@ -103,6 +105,7 @@ const Sidebar: React.FC = () => {
   const closeModalClick = () => {
     dispatch(closeModal());
   };
+
   const handleImageClick = () => {
     if (changeProfileImgInputRef.current) {
       changeProfileImgInputRef.current.click();
