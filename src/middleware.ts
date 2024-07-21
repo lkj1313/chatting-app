@@ -14,6 +14,8 @@ export async function middleware(request: NextRequest) {
 export const config = {
   matcher: [
     "/", // 루트 경로
-    "/chatroompage/:path*", // chatroompage 경로 및 모든 하위 경로
+    "/chatroompage/:path*",
+    "/friendpage",
+    "/privatechatpage/:path*", // chatroompage 경로 및 모든 하위 경로
   ],
 };

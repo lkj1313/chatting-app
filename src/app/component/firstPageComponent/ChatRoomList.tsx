@@ -127,12 +127,29 @@ const ChatRoomList: React.FC = () => {
                 </div>
                 <div className="col-9" style={{ height: "100%", padding: "0" }}>
                   <div className="row" style={{ height: "60%" }}>
-                    <p style={{ margin: "0", fontSize: "20px" }}>
+                    <p
+                      style={{
+                        margin: "0",
+                        fontSize: "20px",
+                        whiteSpace: "nowrap",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                      }}
+                    >
                       <strong>{room.channelName}</strong>
                     </p>
                   </div>
                   <div className="row" style={{ height: "40%" }}>
-                    <p>{room.latestMessage}</p>
+                    <p
+                      style={{
+                        margin: "0",
+                        whiteSpace: "nowrap",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                      }}
+                    >
+                      {room.latestMessage}
+                    </p>
                   </div>
                 </div>
               </div>

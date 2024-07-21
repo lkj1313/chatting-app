@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { useState } from "react";
 import Sidebar from "./Sidebar";
 
@@ -19,7 +19,9 @@ const ChatRoomPageHeader: React.FC<ChatRoomPageHeaderProps> = ({
 }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const router = useRouter();
-
+  const pathname = usePathname();
+  const isPrivateChatRoom = pathname.startsWith("/privatechatroompage/");
+  console.log(pathname);
   const handleBack = (): void => {
     // 뒤로가기
     router.back();
@@ -118,34 +120,48 @@ const ChatRoomPageHeader: React.FC<ChatRoomPageHeaderProps> = ({
                   fontSize: "12px",
                   textAlign: "center",
                   marginRight: "20px",
+                  whiteSpace: "nowrap",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
                 }}
               >
                 {participantNickname?.[0] || "N/A"}
               </div>
             )}
-            <div style={{ display: "flex", flexDirection: "column" }}>
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
               <p
                 style={{
                   margin: "0",
                   fontSize: "18px",
                   userSelect: "none",
+                  whiteSpace: "nowrap",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
                 }}
               >
                 {location.pathname.startsWith("/chatroompage")
                   ? chatRoom?.channelName
                   : participantNickname}
               </p>
-              <p
-                style={{
-                  margin: "0",
-                  fontSize: "13px",
-                  userSelect: "none",
-                  overflow: "hidden",
-                  textOverflow: "ellipsis",
-                }}
-              >
-                구독자수 : {chatRoom?.participants?.length}명
-              </p>
+
+              {!isPrivateChatRoom && (
+                <p
+                  style={{
+                    margin: "0",
+                    fontSize: "10px",
+                    userSelect: "none",
+                  }}
+                >
+                  구독자수 : {chatRoom?.participants?.length}명
+                </p>
+              )}
             </div>
           </div>
           <div

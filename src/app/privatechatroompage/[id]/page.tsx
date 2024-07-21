@@ -21,7 +21,7 @@ import { Message } from "@/app/component/chatRommPageComponent/type";
 import ChatRoomPageHeader from "@/app/component/chatRommPageComponent/ChatRoomPageHeader";
 import ChatRoomPageFooter from "@/app/component/chatRommPageComponent/ChatRoomPageFooter";
 import ChatRoomPageMain from "@/app/component/chatRommPageComponent/ChatRoomPageMain";
-import ChatRoomInfoModal from "@/app/component/chatRommPageComponent/InfoModal";
+import ChatRoomInfoModal from "@/app/component/chatRommPageComponent/ChatRoomInfoModal";
 import ImageModal from "@/app/component/chatRommPageComponent/ImageModal";
 import { useParams } from "next/navigation";
 import {

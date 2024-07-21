@@ -2,7 +2,7 @@
 import React from "react";
 import { Modal, Button } from "react-bootstrap";
 
-interface InfoModalProps {
+interface ChatRoomInfoModalProps {
   show: boolean;
   chatRoom: any;
   participantProfileImg: string | null;
@@ -10,7 +10,7 @@ interface InfoModalProps {
   onClose: () => void;
 }
 
-const InfoModal: React.FC<InfoModalProps> = ({
+const ChatRoomInfoModal: React.FC<ChatRoomInfoModalProps> = ({
   show,
   chatRoom,
   participantProfileImg,
@@ -163,4 +163,4 @@ const InfoModal: React.FC<InfoModalProps> = ({
   );
 };
 
-export default InfoModal;
+export default ChatRoomInfoModal;

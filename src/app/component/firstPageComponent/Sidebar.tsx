@@ -18,8 +18,6 @@ import { RootState } from "@/app/store/store";
 import { Dropdown, Modal, Button } from "react-bootstrap";
 import { useRouter } from "next/navigation";
 
-import { ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 import CreateChatRoomModal from "./CreateChatRoomModal";
 
 const Sidebar: React.FC = () => {

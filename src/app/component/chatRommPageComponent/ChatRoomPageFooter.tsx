@@ -2,7 +2,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import Picker from "@emoji-mart/react";
 import data from "@emoji-mart/data";
-import { relative } from "path";
 
 interface ChatRoomPageFooter {
   handleSendMessage: (text: string, imageUrl?: string) => void;
@@ -15,7 +14,7 @@ interface ChatRoomPageFooter {
 const ChatRoomPageFooter: React.FC<ChatRoomPageFooter> = ({
   handleSendMessage,
   handleImageUpload,
-  loading,
+
   isParticipant,
 
   enterChatRoom,

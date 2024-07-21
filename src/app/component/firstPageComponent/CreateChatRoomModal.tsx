@@ -32,6 +32,7 @@ const CreateChatRoomModal: React.FC = () => {
   const [localChannelName, setLocalChannelName] = useState("");
   const [localDescription, setLocalDescription] = useState("");
   const [localChatRoomImg, setLocalChatRoomImg] = useState(chatRoomImg);
+  const [channelNameError, setChannelNameError] = useState("");
 
   const handleOverlayClick = () => {
     dispatch(closeModal());
@@ -68,7 +69,7 @@ const CreateChatRoomModal: React.FC = () => {
   };
 
   const handleSubmit = async () => {
-    if (user.uid && user.nickname) {
+    if (user.uid && user.nickname && localChannelName.length > 8) {
       notify();
 
       // 상태를 Redux로 디스패치
@@ -104,6 +105,15 @@ const CreateChatRoomModal: React.FC = () => {
       }
     } else {
       console.error("User information is missing");
+    }
+  };
+  const handleChannelNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    if (value.length <= 8) {
+      setLocalChannelName(value);
+      setChannelNameError("");
+    } else {
+      setChannelNameError("채널명은 8자 이하로 입력해주세요.");
     }
   };
 
@@ -171,8 +181,22 @@ const CreateChatRoomModal: React.FC = () => {
                   placeholder="채널명"
                   className="channelInput"
                   value={localChannelName}
-                  onChange={(e) => setLocalChannelName(e.target.value)}
-                />
+                  onChange={handleChannelNameChange}
+                  style={{
+                    borderColor: channelNameError ? "red" : "initial",
+                  }}
+                />{" "}
+                {channelNameError && (
+                  <span
+                    style={{
+                      color: "red",
+                      fontSize: "12px",
+                      marginTop: "5px",
+                    }}
+                  >
+                    {channelNameError}
+                  </span>
+                )}
               </div>
             </div>
           </div>

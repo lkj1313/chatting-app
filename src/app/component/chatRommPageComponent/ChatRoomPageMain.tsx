@@ -32,7 +32,7 @@ const ChatRoomPageMain: React.FC<MessageListProps> = ({
   const handleProfileClick = (msg: Message) => {
     dispatch(
       openParticipantModal({
-        id: msg.userId,
+        uid: msg.userId,
         nickname: msg.userName,
         profileImg: msg.profileImg,
       })

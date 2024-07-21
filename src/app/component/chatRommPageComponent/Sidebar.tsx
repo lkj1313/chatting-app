@@ -18,13 +18,12 @@ interface SidebarProps {
 }
 
 interface ParticipantInfo {
-  id: string;
+  uid: string;
   nickname: string;
   profileImg: string;
   additionalInfo?: string;
 }
 
-// Firestore에서 참가자 정보를 가져오는 함수
 const fetchParticipantInfo = async (
   participantId: string
 ): Promise<ParticipantInfo | null> => {
@@ -35,7 +34,7 @@ const fetchParticipantInfo = async (
     if (participantSnap.exists()) {
       const data = participantSnap.data();
       return {
-        id: participantId,
+        uid: participantId,
         nickname: data.nickname,
         profileImg: data.profileImg || "default_image_url",
         additionalInfo: data.additionalInfo,
@@ -62,9 +61,6 @@ const Sidebar: React.FC<SidebarProps> = ({ sidebarOpen, setSidebarOpen }) => {
   );
 
   // Redux 상태에서 모달 표시 여부와 선택된 참가자 정보 가져오기
-  const { showModal, selectedParticipant } = useSelector(
-    (state: RootState) => state.participantModal
-  );
 
   // 사이드바 닫기 함수
   const sidebarClose = () => {
@@ -144,8 +140,8 @@ const Sidebar: React.FC<SidebarProps> = ({ sidebarOpen, setSidebarOpen }) => {
 
   // 자신을 가장 위에 표시하기 위해 사용자 정보를 배열의 맨 앞에 추가
   const orderedParticipants = [
-    ...participantInfos.filter((p) => p.id === currentUser.uid),
-    ...participantInfos.filter((p) => p.id !== currentUser.uid),
+    ...participantInfos.filter((p) => p.uid === currentUser.uid),
+    ...participantInfos.filter((p) => p.uid !== currentUser.uid),
   ];
   return (
     <>

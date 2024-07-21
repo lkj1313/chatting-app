@@ -33,14 +33,12 @@ export const initiatePrivateChat = createAsyncThunk<
   "privateChatRoom/initiatePrivateChat", // 여기서 액션 타입을 수정합니다.
   async ({ myId, selectedId }, { rejectWithValue, getState }) => {
     const state = getState() as RootState;
-    const currentUser = state.auth.user;
 
     try {
       // 기존 채팅 방 조회
       const chatQuery = query(
         collection(db, "privateChatRooms"),
-        where("user1Id", "in", [currentUser.uid, selectedId]),
-        where("user2Id", "in", [currentUser.uid, selectedId])
+        where("participants", "array-contains-any", [myId, selectedId])
       );
       const chatSnapshot = await getDocs(chatQuery);
 

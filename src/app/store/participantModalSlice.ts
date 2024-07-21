@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 interface ParticipantInfo {
-  id: string;
+  uid: string;
   nickname: string;
   profileImg: string;
   additionalInfo?: string;
