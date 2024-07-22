@@ -3,12 +3,23 @@
 import { useRouter, usePathname } from "next/navigation";
 import { useState } from "react";
 import Sidebar from "./Sidebar";
+import ParticipantModal from "./ParticipantModal";
+import { useDispatch, useSelector } from "react-redux";
+import { openParticipantModal } from "@/app/store/participantModalSlice";
+import { RootState } from "@/app/store/store";
 
 interface ChatRoomPageHeaderProps {
   chatRoom: any;
   openInfoModal: () => void;
   participantProfileImg?: string;
   participantNickname?: string;
+}
+
+interface ParticipantInfo {
+  uid: string;
+  nickname: string;
+  profileImg: string;
+  additionalInfo?: string;
 }
 
 const ChatRoomPageHeader: React.FC<ChatRoomPageHeaderProps> = ({
@@ -20,8 +31,16 @@ const ChatRoomPageHeader: React.FC<ChatRoomPageHeaderProps> = ({
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
+  const dispatch = useDispatch();
+  const showModal = useSelector(
+    (state: RootState) => state.participantModal.showModal
+  );
+  const selectedParticipant = useSelector(
+    (state: RootState) => state.participantModal.selectedParticipant
+  );
   const isPrivateChatRoom = pathname.startsWith("/privatechatroompage/");
-  console.log(pathname);
+  const isParticipantPage = pathname.startsWith("/participantpage/");
+
   const handleBack = (): void => {
     // 뒤로가기
     router.back();
@@ -29,6 +48,24 @@ const ChatRoomPageHeader: React.FC<ChatRoomPageHeaderProps> = ({
 
   const handleBarButtonClick = (): void => {
     setSidebarOpen(true);
+  };
+
+  const handleParticipantClick = () => {
+    const participant: ParticipantInfo = {
+      uid: "example-uid", // 실제로는 적절한 UID를 사용해야 합니다
+      nickname: participantNickname || "Unknown",
+      profileImg: participantProfileImg || "/default-profile.png",
+      additionalInfo: "Some additional info",
+    };
+    dispatch(openParticipantModal(participant));
+  };
+
+  const handleInfoClick = (): void => {
+    if (isPrivateChatRoom) {
+      handleParticipantClick();
+    } else {
+      openInfoModal();
+    }
   };
 
   return (
@@ -61,10 +98,10 @@ const ChatRoomPageHeader: React.FC<ChatRoomPageHeaderProps> = ({
           </div>
 
           <div
-            onClick={openInfoModal}
+            onClick={handleInfoClick}
             style={{ display: "flex", alignItems: "center", flexGrow: "1" }}
           >
-            {location.pathname.startsWith("/chatroompage") ? (
+            {pathname.startsWith("/chatroompage") ? (
               chatRoom.chatRoomImg ? (
                 <img
                   style={{
@@ -107,26 +144,29 @@ const ChatRoomPageHeader: React.FC<ChatRoomPageHeaderProps> = ({
                 alt="Participant Profile Image"
               />
             ) : (
-              <div
-                style={{
-                  width: "50px",
-                  height: "50px",
-                  borderRadius: "25px",
-                  backgroundColor: "#ccc",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  color: "#fff",
-                  fontSize: "12px",
-                  textAlign: "center",
-                  marginRight: "20px",
-                  whiteSpace: "nowrap",
-                  overflow: "hidden",
-                  textOverflow: "ellipsis",
-                }}
-              >
-                {participantNickname?.[0] || "N/A"}
-              </div>
+              <>
+                <ParticipantModal />
+                <div
+                  style={{
+                    width: "50px",
+                    height: "50px",
+                    borderRadius: "25px",
+                    backgroundColor: "#ccc",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    color: "#fff",
+                    fontSize: "12px",
+                    textAlign: "center",
+                    marginRight: "20px",
+                    whiteSpace: "nowrap",
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                  }}
+                >
+                  {participantNickname?.[0] || "N/A"}
+                </div>
+              </>
             )}
             <div
               style={{
@@ -146,7 +186,7 @@ const ChatRoomPageHeader: React.FC<ChatRoomPageHeaderProps> = ({
                   textOverflow: "ellipsis",
                 }}
               >
-                {location.pathname.startsWith("/chatroompage")
+                {pathname.startsWith("/chatroompage")
                   ? chatRoom?.channelName
                   : participantNickname}
               </p>

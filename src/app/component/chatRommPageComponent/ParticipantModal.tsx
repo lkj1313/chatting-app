@@ -9,7 +9,6 @@ import { useRouter } from "next/navigation";
 import { addFriend } from "@/app/store/authSlice";
 import { db } from "../../../../firebase";
 import { arrayUnion, doc, updateDoc, getDoc } from "firebase/firestore";
-import { Bounce, toast } from "react-toastify";
 
 const ParticipantModal = () => {
   const router = useRouter();
@@ -24,17 +23,9 @@ const ParticipantModal = () => {
 
   const handlePrivateChat = async () => {
     // 1:1 채팅함수
-    console.log("handlePrivateChat called");
 
     if (currentUser && currentUser.uid && selectedParticipant) {
       try {
-        toast("Entering chat room...", {
-          toastId: "123",
-          type: "info",
-          position: "top-center",
-          transition: Bounce,
-        });
-
         const resultAction = await dispatch(
           initiatePrivateChat({
             myId: currentUser.uid,
@@ -44,14 +35,7 @@ const ParticipantModal = () => {
 
         if (resultAction) {
           const chatId = resultAction.chatRoomId; // 반환된 채팅 방 ID
-          toast.update("123", {
-            render: "채팅방 접속 완료!",
-            type: "success",
-            autoClose: 500,
-            position: "top-center",
-            transition: Bounce,
-          });
-
+          console.log(chatId);
           router.push(`/privatechatroompage/${chatId}`);
         } else {
           console.error("1:1 채팅을 시작하는 데 실패했습니다.");
@@ -131,14 +115,15 @@ const ParticipantModal = () => {
             <div>
               <img
                 src={selectedParticipant.profileImg}
-                style={{ width: "100px", height: "100px", borderRadius: "50%" }}
+                style={{
+                  width: "100%",
+                  height: "100px",
+                  borderRadius: "50%",
+                }}
               />
               <h4 style={{ textAlign: "center", marginTop: "10px" }}>
                 {selectedParticipant.nickname}
               </h4>
-              {selectedParticipant.additionalInfo && (
-                <p>{selectedParticipant.additionalInfo}</p>
-              )}
             </div>
           )}
         </Modal.Body>
