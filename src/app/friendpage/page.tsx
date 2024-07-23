@@ -1,11 +1,12 @@
 "use client";
 import React from "react";
 import { Container } from "react-bootstrap";
-import FirstPageHeader from "../component/firstPageComponent/FirstPageHeader";
-import FirstPageFooter from "../component/firstPageComponent/FirstPageFooter";
+import FirstPageHeader from "../firstPageComponent/FirstPageHeader";
+import FirstPageFooter from "../firstPageComponent/FirstPageFooter";
 
 import FriendList from "./component/FriendList";
-import ParticipantModal from "../component/chatRommPageComponent/ParticipantModal";
+import ParticipantModal from "../chatroompage/[id]/component/ParticipantModal";
+import Sidebar from "../firstPageComponent/Sidebar";
 
 const FriendPage = () => {
   return (
@@ -23,6 +24,7 @@ const FriendPage = () => {
       <FriendList />
       <FirstPageFooter />
       <ParticipantModal />
+      <Sidebar />
     </Container>
   );
 };

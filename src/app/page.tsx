@@ -4,18 +4,21 @@ import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Container } from "react-bootstrap";
 
-import FirstPageHeader from "./component/firstPageComponent/FirstPageHeader";
-import FirstPageMain from "./component/firstPageComponent/FirstPageMain";
-import FirstPageFooter from "./component/firstPageComponent/FirstPageFooter";
+import FirstPageHeader from "./firstPageComponent/FirstPageHeader";
+import FirstPageMain from "./firstPageComponent/FirstPageMain";
+import FirstPageFooter from "./firstPageComponent/FirstPageFooter";
 
 import { closeSidebar } from "./store/uiSlice"; // closeSidebar 액션 임포트
+import Sidebar from "./firstPageComponent/Sidebar";
 
 const FirstPage: React.FC = () => {
   const dispatch = useDispatch();
+
+  // "/"가 아니면 홈 사이드바 닫음
   useEffect(() => {
     const handleLocationChange = () => {
-      const currentPath = window.location.pathname;
-      const targetPath = "/your-target-path"; // 사이드바를 열어야 하는 특정 경로
+      const currentPath = window.location.pathname; // 현재 url경로
+      const targetPath = "/"; // 사이드바를 열어야 하는 특정 경로
 
       if (currentPath !== targetPath) {
         dispatch(closeSidebar());
@@ -47,6 +50,7 @@ const FirstPage: React.FC = () => {
       <FirstPageHeader />
       <FirstPageMain />
       <FirstPageFooter />
+      <Sidebar /> {/* 사이드바 컴포넌트 렌더링 */}
     </Container>
   );
 };

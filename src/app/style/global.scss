@@ -35,21 +35,13 @@ body.modal-open {
 @import "bootstrap/dist/css/bootstrap.min.css";
 
 // loginpage
-@import "./component/loginpage/loginpage.scss";
+@import "./loginpage/loginpage.scss";
 
-@import "./component/leftComponent/leftComponent.scss";
 // first page
-@import "./component/FirstPageComponent/headerComponent.scss";
-@import "./component/FirstPageComponent/mainComponent.scss";
-@import "./component/FirstPageComponent/footer.scss";
-@import "./component/FirstPageComponent/chatRoomListComponent/chatRoomListComponent.scss";
-@import "./component/FirstPageComponent/createChatRoomModal.scss/createChatRoomModal.scss";
-@import "./component/FirstPageComponent/sidebarComponent/sidebarComponent.scss";
+@import "./FirstPageComponent/firstPage.scss";
+@import "./component/createChatRoomModal.scss";
 
 // chatroompage
-@import "./component/chatRoomPageComponent/footerComponent.scss";
-@import "./component/chatRoomPageComponent/headerComponent.scss";
-@import "./component/chatRoomPageComponent/mainComponent.scss";
-@import "./component/chatRoomPageComponent/sidebarComponent/sidebarComponent.scss";
+@import "./chatRoomPageComponent/ChatRoom.scss";
 //loadingPage
-@import "./component/loadingPage/loadingPage.scss";
+@import "./loadingPage/loadingPage.scss";

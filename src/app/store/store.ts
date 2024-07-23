@@ -12,7 +12,7 @@ import {
 import storage from "redux-persist/lib/storage"; // 기본적으로 localStorage를 사용
 
 import authReducer from "./authSlice";
-import containerReducer from "./containerSlice";
+
 import uiReducer from "./uiSlice";
 import chatRoomReducer from "./chatRoomSlice";
 import chatRoomMessagesReducer from "./chatRoomMessagesSlice";
@@ -29,7 +29,6 @@ const persistConfig = {
 // 루트 리듀서를 생성하여 persistReducer에 전달합니다.
 const rootReducer = {
   auth: persistReducer(persistConfig, authReducer),
-  container: containerReducer,
   ui: uiReducer,
   chatRoom: chatRoomReducer,
   chatRoomMessages: chatRoomMessagesReducer,

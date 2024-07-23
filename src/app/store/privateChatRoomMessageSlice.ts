@@ -1,9 +1,27 @@
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
-import { collection, query, orderBy, getDocs } from "firebase/firestore";
+import {
+  doc,
+  getDoc,
+  setDoc,
+  collection,
+  query,
+  where,
+  getDocs,
+} from "firebase/firestore";
 import { db } from "../../../firebase";
-import { Message } from "../chatroompage/[id]/component/type";
+import { v4 as uuidv4 } from "uuid";
 
-// 상태 인터페이스 정의
+interface Message {
+  id: string;
+  text: string;
+  senderId: string;
+  timestamp: number;
+  userName: string | undefined;
+  profileImg: string | undefined;
+  userId: string | null;
+  readBy: string[];
+}
+
 interface PrivateChatRoomMessagesState {
   chatRoomId: string | null;
   messages: Message[];
@@ -11,7 +29,6 @@ interface PrivateChatRoomMessagesState {
   error: string | null;
 }
 
-// 초기 상태 정의
 const initialState: PrivateChatRoomMessagesState = {
   chatRoomId: null,
   messages: [],
@@ -19,37 +36,31 @@ const initialState: PrivateChatRoomMessagesState = {
   error: null,
 };
 
-// 메시지 가져오기 비동기 액션
 export const fetchMessagesByChatRoomId = createAsyncThunk<
   { chatRoomId: string; messages: Message[] },
   string,
   { rejectValue: string }
 >(
   "privateChatRoomMessages/fetchMessagesByChatRoomId",
-  async (chatRoomId, { rejectWithValue }) => {
+  async (chatRoomId: string, { rejectWithValue }) => {
     try {
-      const messagesRef = collection(
-        db,
-        "privateChatRooms",
-        chatRoomId,
-        "messages"
-      );
-      const q = query(messagesRef, orderBy("time", "asc"));
+      const messagesRef = collection(db, "messages");
+      const q = query(messagesRef, where("chatRoomId", "==", chatRoomId));
       const querySnapshot = await getDocs(q);
 
       const messages = querySnapshot.docs.map((doc) => {
         const data = doc.data();
         return {
-          id: doc.id, // 문서 아이디
-          imageUrl: data.imageUrl,
-          profileImg: data.profileImg,
-          readBy: data.readBy,
+          id: doc.id,
           text: data.text,
-          time: data.time,
-          userId: data.userId,
+          senderId: data.senderId,
+          timestamp: data.timestamp,
           userName: data.userName,
-        };
-      }) as Message[];
+          profileImg: data.profileImg,
+          userId: data.userId,
+          readBy: data.readBy || [],
+        } as Message;
+      });
 
       return { chatRoomId, messages };
     } catch (error: any) {
@@ -58,7 +69,33 @@ export const fetchMessagesByChatRoomId = createAsyncThunk<
   }
 );
 
-// 슬라이스 생성
+export const sendMessage = createAsyncThunk<
+  void,
+  { chatRoomId: string; text: string; senderId: string },
+  { rejectValue: string }
+>(
+  "privateChatRoomMessages/sendMessage",
+  async ({ chatRoomId, text, senderId }, { rejectWithValue }) => {
+    try {
+      const newMessageId = uuidv4();
+      const newMessage = {
+        id: newMessageId,
+        chatRoomId,
+        text,
+        senderId,
+        timestamp: Date.now(),
+        userName: "", // Set default value
+        profileImg: "", // Set default value
+        userId: null, // Set default value
+        readBy: [], // Set default value
+      };
+      await setDoc(doc(db, "messages", newMessageId), newMessage);
+    } catch (error: any) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
 const privateChatRoomMessagesSlice = createSlice({
   name: "privateChatRoomMessages",
   initialState,
@@ -88,11 +125,22 @@ const privateChatRoomMessagesSlice = createSlice({
       .addCase(fetchMessagesByChatRoomId.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.payload as string;
+      })
+      .addCase(sendMessage.pending, (state) => {
+        state.status = "loading";
+        state.error = null;
+      })
+      .addCase(sendMessage.fulfilled, (state) => {
+        state.status = "succeeded";
+        state.error = null;
+      })
+      .addCase(sendMessage.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.payload as string;
       });
   },
 });
 
-// 액션 및 리듀서 내보내기
 export const { clearMessages } = privateChatRoomMessagesSlice.actions;
 
 export default privateChatRoomMessagesSlice.reducer;

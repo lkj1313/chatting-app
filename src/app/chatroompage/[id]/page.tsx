@@ -8,7 +8,7 @@ import {
   setMessages,
 } from "@/app/store/chatRoomMessagesSlice";
 import { RootState, AppDispatch } from "@/app/store/store";
-import { db, storage, auth } from "../../../../firebase";
+import { db, auth } from "../../../../firebase";
 import { useRouter } from "next/navigation";
 import {
   collection,
@@ -22,63 +22,66 @@ import {
   arrayUnion,
   writeBatch,
 } from "firebase/firestore";
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import { Message } from "@/app/component/chatRommPageComponent/type";
-import ChatRoomPageHeader from "@/app/component/chatRommPageComponent/ChatRoomPageHeader";
-import ChatRoomPageFooter from "@/app/component/chatRommPageComponent/ChatRoomPageFooter";
-import ChatRoomPageMain from "@/app/component/chatRommPageComponent/ChatRoomPageMain";
+import {
+  participantModalOpen,
+  participantModalClose,
+} from "@/app/store/uiSlice";
 
-import ImageModal from "@/app/component/chatRommPageComponent/ImageModal";
+import { Message } from "@/app/chatroompage/[id]/component/type";
+import ChatRoomPageHeader from "@/app/chatroompage/[id]/component/ChatRoomPageHeader";
+import ChatRoomPageFooter from "@/app/chatroompage/[id]/component/ChatRoomPageFooter";
+import ChatRoomPageMain from "@/app/chatroompage/[id]/component/ChatRoomPageMain";
+
+import ImageModal from "@/app/chatroompage/[id]/component/ImageModal";
 import { useParams } from "next/navigation";
 import { onAuthStateChanged } from "firebase/auth";
-import ChatRoomInfoModal from "@/app/component/chatRommPageComponent/ChatRoomInfoModal";
+import ChatRoomInfoModal from "@/app/chatroompage/[id]/component/ChatRoomInfoModal";
+import Sidebar from "./component/Sidebar";
 
 const ChatRoomPage = () => {
   const router = useRouter();
   const { id } = useParams(); // URL 파라미터에서 채팅방 ID 가져오기
   const chatRoomId = Array.isArray(id) ? id[0] : id; // id가 배열일 경우 첫 번째 요소 사용
   const dispatch = useDispatch<AppDispatch>();
-  const [chatRoom, setChatRoom] = useState<any>(null); // 채팅방 정보 상태
-  const [isParticipant, setIsParticipant] = useState<boolean>(false); // 사용자가 채팅방 참가자인지 여부
-  const [hasEntered, setHasEntered] = useState<boolean>(false); // 사용자가 채팅방에 들어왔는지 여부
+
   const user = useSelector((state: RootState) => state.auth.user); // Redux에서 사용자 정보 가져오기
   const userProfileImg = user.profileImgURL;
+  const chatRoomInformation = useSelector((state: RootState) => state.chatRoom);
   const { messages, status, error } = useSelector(
     (state: RootState) => state.chatRoomMessages
   ); // Redux에서 메시지 목록 가져오기
   const [loading, setLoading] = useState(false); // 로딩 상태
   const [modalImage, setModalImage] = useState<string | null>(null); // 이미지 모달 상태
   const [showImageChattingModal, setImageChattingShowModal] = useState(false); // 이미지 모달 표시 여부
-  const [showInfoModal, setShowInfoModal] = useState(false); // 정보 모달 표시 여부
 
-  // 채팅방 정보 가져오기
-  useEffect(() => {
-    if (chatRoomId && user.uid) {
-      const chatRoomRef = doc(db, "chatRooms", chatRoomId);
-      getDoc(chatRoomRef)
-        .then((doc) => {
-          if (doc.exists()) {
-            setChatRoom(doc.data());
-            if (doc.data().participants.includes(user.uid)) {
-              setIsParticipant(true);
-            } else {
-              setIsParticipant(false);
-            }
-          } else {
-            console.error("No such document!");
-          }
-        })
-        .catch((error) => {
-          console.error("Error getting document:", error);
-        });
-    }
-  }, [chatRoomId, user.uid]);
+  // // 채팅방 정보 가져오기
+  // useEffect(() => {
+  //   if (chatRoomId && user.uid) {
+  //     const chatRoomRef = doc(db, "chatRooms", chatRoomId);
+  //     getDoc(chatRoomRef)
+  //       .then((doc) => {
+  //         if (doc.exists()) {
+  //           setChatRoom(doc.data());
+  //           if (doc.data().participants.includes(user.uid)) {
+  //             setIsParticipant(true);
+  //           } else {
+  //             setIsParticipant(false);
+  //           }
+  //         } else {
+  //           console.error("No such document!");
+  //         }
+  //       })
+  //       .catch((error) => {
+  //         console.error("Error getting document:", error);
+  //       });
+  //   }
+  // }, [chatRoomId, user.uid]);
 
   // 메시지 목록 가져오기 및 실시간 업데이트
   useEffect(() => {
     if (chatRoomId) {
       dispatch(fetchChatRoomById(chatRoomId)); // 채팅방 정보
-      dispatch(fetchMessagesByChatRoomId(chatRoomId)); // 챗방정보
+      dispatch(fetchMessagesByChatRoomId(chatRoomId)); // 실시간채팅정보
 
       const messagesRef = collection(db, "chatRooms", chatRoomId, "messages");
       const q = query(messagesRef, orderBy("time"));
@@ -153,26 +156,6 @@ const ChatRoomPage = () => {
     }
   }, [messages, user.uid, chatRoomId]);
 
-  // 이미지 업로드 함수
-  const handleImageUpload = async (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      setLoading(true);
-      try {
-        const storageRef = ref(storage, `chatImages/${file.name}`);
-        await uploadBytes(storageRef, file);
-        const imageUrl = await getDownloadURL(storageRef);
-        handleSendMessage("", imageUrl);
-      } catch (error) {
-        console.error("Error uploading image: ", error);
-      } finally {
-        setLoading(false);
-      }
-    }
-  };
-
   // 이미지 클릭 시 모달 열기
   const handleImageClick = (url: string) => {
     setModalImage(url);
@@ -185,50 +168,21 @@ const ChatRoomPage = () => {
     setModalImage(null);
   };
 
-  // 정보 모달 열기
-  const openInfoModal = () => setShowInfoModal(true);
-
-  // 정보 모달 닫기
-  const closeInfoModal = () => setShowInfoModal(false);
-
-  // 채팅방 참가 함수
-  const enterChatRoom = async () => {
-    try {
-      const chatRoomRef = doc(db, "chatRooms", chatRoomId);
-      await updateDoc(chatRoomRef, {
-        participants: arrayUnion(user.uid),
-      });
-      setIsParticipant(true);
-      setHasEntered(true);
-    } catch (error) {
-      console.error("Error adding user to participants: ", error);
-    }
-  };
-
-  useEffect(() => {
-    if (user.uid && !isParticipant) {
-      enterChatRoom(); // 사용자 자동 참가
-    }
-  }, [user.uid, isParticipant]);
-
-  console.log(chatRoom);
   return (
     <>
-      <div className="chat_wrap">
-        <ChatRoomPageHeader chatRoom={chatRoom} openInfoModal={openInfoModal} />
+      {/* <AuthChecker /> */}
+      <div className="chat_wrap" style={{ position: "relative" }}>
+        <ChatRoomPageHeader />
         <ChatRoomPageMain
           messages={messages}
           userId={user.uid!}
           handleImageClick={handleImageClick}
-          totalParticipants={chatRoom?.participants.length || 0} // 구독자 수 전달
+          totalParticipants={
+            chatRoomInformation.participants.length &&
+            chatRoomInformation.participants.length
+          }
         />
-        <ChatRoomPageFooter
-          handleSendMessage={handleSendMessage}
-          handleImageUpload={handleImageUpload}
-          loading={loading}
-          isParticipant={isParticipant}
-          enterChatRoom={enterChatRoom}
-        />{" "}
+        <ChatRoomPageFooter /> <Sidebar />
       </div>
 
       <ImageModal
@@ -237,9 +191,7 @@ const ChatRoomPage = () => {
         onClose={closeImgeModal}
       />
       <ChatRoomInfoModal
-        show={showInfoModal}
-        chatRoom={chatRoom}
-        onClose={closeInfoModal}
+        chatRoom={chatRoomInformation}
         participantProfileImg={null}
         participantNickname={null}
       />

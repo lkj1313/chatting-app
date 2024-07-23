@@ -8,31 +8,23 @@ interface ParticipantInfo {
 }
 
 interface ParticipantModalState {
-  showModal: boolean;
-  selectedParticipant: ParticipantInfo | null;
+  participantInfo: ParticipantInfo | null;
 }
 
 const initialState: ParticipantModalState = {
-  showModal: false,
-  selectedParticipant: null,
+  participantInfo: null,
 };
 
 const participantModalSlice = createSlice({
-  name: "participantModal",
+  name: "participantInfo",
   initialState,
   reducers: {
-    openParticipantModal: (state, action: PayloadAction<ParticipantInfo>) => {
-      state.showModal = true;
-      state.selectedParticipant = action.payload;
-    },
-    closeParticipantModal: (state) => {
-      state.showModal = false;
-      state.selectedParticipant = null;
+    participantInfo: (state, action: PayloadAction<ParticipantInfo>) => {
+      state.participantInfo = action.payload;
     },
   },
 });
 
-export const { openParticipantModal, closeParticipantModal } =
-  participantModalSlice.actions;
+export const { participantInfo } = participantModalSlice.actions;
 
 export default participantModalSlice.reducer;

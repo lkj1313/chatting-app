@@ -44,6 +44,7 @@ export default function LoginPage() {
     return "";
   };
 
+  // 이메일 입력 변경 처리 함수
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setEmail(value);
@@ -53,6 +54,7 @@ export default function LoginPage() {
     }));
   };
 
+  // 비밀번호 입력 변경 처리 함수
   const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setPassword(value);
@@ -62,6 +64,7 @@ export default function LoginPage() {
     }));
   };
 
+  // 에러 코드에 따른 에러 메시지 반환 함수
   const getErrorMessage = (code: string): string => {
     switch (code) {
       case "auth/invalid-credential":
@@ -77,6 +80,7 @@ export default function LoginPage() {
     }
   };
 
+  // 커스텀 토큰으로 로그인 처리 함수
   const signInWithCustomTokenHandler = async (customToken: string) => {
     try {
       const customUserCredential = await signInWithCustomToken(
@@ -106,6 +110,7 @@ export default function LoginPage() {
     }
   };
 
+  // 폼 제출 처리 함수
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
@@ -197,14 +202,11 @@ export default function LoginPage() {
       }
     }
   };
+
   useEffect(() => {
     setShowCard(true);
   }, []);
-  const notify = () => {
-    toast("Login attempt...", {
-      toastId: "123",
-    });
-  };
+
   return (
     <div className="d-flex justify-content-center align-items-center vh-100 ml-1 mr-1">
       <div
