@@ -2,11 +2,13 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/app/store/store";
-import { toast, Bounce } from "react-toastify";
+
 import "react-toastify/dist/ReactToastify.css";
 import { db } from "../../../../firebase"; // Firebase 설정 파일에서 Firestore 인스턴스를 가져옵니다.
 import { doc, getDoc } from "firebase/firestore";
-import { openParticipantModal } from "@/app/store/participantModalSlice";
+import ChatRoomInfoModal from "@/app/chatroompage/[id]/component/ChatRoomInfoModal";
+import { participantInfo } from "@/app/store/participantModalSlice";
+import { participantModalOpen } from "@/app/store/uiSlice";
 
 interface Friend {
   uid: string;
@@ -67,8 +69,8 @@ const FriendList: React.FC = () => {
   }, [currentUser.uid]);
 
   const handleFriendClick = (friend: Friend) => {
-    console.log(friend);
-    dispatch(openParticipantModal(friend)); //
+    dispatch(participantInfo(friend));
+    dispatch(participantModalOpen()); //
   };
   console.log(friends);
 
