@@ -8,7 +8,6 @@ import {
 import { RootState, AppDispatch } from "@/app/store/store";
 import { usePathname } from "next/navigation";
 import ImageModal from "@/app/chatroompage/[id]/component/ImageModal";
-import ParticipantModal from "@/app/chatroompage/[id]/component/ParticipantModal";
 
 import { Message } from "@/app/chatroompage/[id]/component/type";
 import { fetchChatRoomData } from "@/app/store/privateChatRoomSlice";
@@ -71,8 +70,8 @@ const Sidebar: React.FC = () => {
   // Redux 상태에서 user 가져오기
   const currentUser = useSelector((state: RootState) => state.auth.user);
   // Redux 상태에서 메시지 가져오기
-  const chatRoomMessages = useSelector(
-    (state: RootState) => state.chatRoomMessages.messages
+  const privateChatRoomMessages = useSelector(
+    (state: RootState) => state.privateChatRoomMessages.messages
   );
 
   // 현재 페이지 경로에서 chatRoomId 추출
@@ -103,10 +102,10 @@ const Sidebar: React.FC = () => {
   useEffect(() => {
     if (location.pathname.startsWith("/privatechatroompage")) {
       setHaveImageUrLMessages(
-        chatRoomMessages.filter((i) => i.imageUrl !== "")
+        privateChatRoomMessages.filter((i) => i.imageUrl !== "")
       );
     }
-  }, [chatRoomMessages]);
+  }, [privateChatRoomMessages]);
 
   // 사이드바 닫기 함수
   const closeSidebar = () => {

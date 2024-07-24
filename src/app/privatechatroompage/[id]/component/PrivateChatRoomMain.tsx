@@ -1,5 +1,5 @@
 "use client";
-import React, { useRef, useEffect } from "react";
+import React, { useRef, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   fetchMessagesByChatRoomId,
@@ -9,11 +9,15 @@ import { participantInfo } from "@/app/store/participantModalSlice";
 import { RootState, AppDispatch } from "@/app/store/store";
 import { usePathname } from "next/navigation";
 import { Message } from "./type";
+import ImageModal from "@/app/chatroompage/[id]/component/ImageModal";
 
 const PrivateChatRoomPageMain: React.FC = () => {
   const dispatch: AppDispatch = useDispatch();
   const innerRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
+
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [showImageModal, setShowImageModal] = useState(false);
 
   // URL 경로에서 채팅방 ID 추출
   const chatRoomId = pathname.split("/")[2];
@@ -39,11 +43,6 @@ const PrivateChatRoomPageMain: React.FC = () => {
       // 채팅방 ID로 메시지 가져오기
       dispatch(fetchMessagesByChatRoomId(chatRoomId));
     }
-
-    // 컴포넌트 언마운트 시 메시지 클리어
-    return () => {
-      dispatch(clearMessages());
-    };
   }, [chatRoomId, dispatch]);
 
   // 프로필 클릭 핸들러
@@ -59,7 +58,14 @@ const PrivateChatRoomPageMain: React.FC = () => {
 
   // 이미지 클릭 핸들러
   const handleImageClick = (url: string) => {
-    // 이미지 클릭 시 할 동작 정의
+    setSelectedImage(url);
+    setShowImageModal(true);
+  };
+
+  // 이미지 모달 닫기 핸들러
+  const handleCloseImageModal = () => {
+    setShowImageModal(false);
+    setSelectedImage(null);
   };
 
   return (
@@ -130,6 +136,13 @@ const PrivateChatRoomPageMain: React.FC = () => {
           </div>
         </div>
       ))}
+      {showImageModal && (
+        <ImageModal
+          show={showImageModal}
+          imageUrl={selectedImage}
+          onClose={handleCloseImageModal}
+        />
+      )}
     </div>
   );
 };

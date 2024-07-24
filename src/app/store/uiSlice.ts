@@ -8,6 +8,7 @@ interface UIState {
   chatRoomInfoModalOpen: boolean;
   participantModalOpen: boolean;
   privateChatRoomSidebar: boolean;
+  imageModalState: boolean;
 }
 
 const initialState: UIState = {
@@ -17,6 +18,7 @@ const initialState: UIState = {
   chatRoomInfoModalOpen: false,
   participantModalOpen: false,
   privateChatRoomSidebar: false,
+  imageModalState: false,
 };
 
 const uiSlice = createSlice({
@@ -35,6 +37,12 @@ const uiSlice = createSlice({
     },
     closeSidebar: (state) => {
       state.sidebarOpen = false;
+    },
+    openImageModal: (state) => {
+      state.imageModalState = true;
+    },
+    closeImageModal: (state) => {
+      state.imageModalState = false;
     },
     chatRoomSidebarOpen: (state) => {
       state.chatRoomSidebarOpen = true;
@@ -81,5 +89,8 @@ export const {
 
   privateChatRoomSidebarOpen,
   privateChatRoomSidebarClose,
+
+  openImageModal,
+  closeImageModal,
 } = uiSlice.actions;
 export default uiSlice.reducer;

@@ -54,30 +54,6 @@ const ChatRoomPage = () => {
   const [modalImage, setModalImage] = useState<string | null>(null); // 이미지 모달 상태
   const [showImageChattingModal, setImageChattingShowModal] = useState(false); // 이미지 모달 표시 여부
 
-  // // 채팅방 정보 가져오기
-  // useEffect(() => {
-  //   if (chatRoomId && user.uid) {
-  //     const chatRoomRef = doc(db, "chatRooms", chatRoomId);
-  //     getDoc(chatRoomRef)
-  //       .then((doc) => {
-  //         if (doc.exists()) {
-  //           setChatRoom(doc.data());
-  //           if (doc.data().participants.includes(user.uid)) {
-  //             setIsParticipant(true);
-  //           } else {
-  //             setIsParticipant(false);
-  //           }
-  //         } else {
-  //           console.error("No such document!");
-  //         }
-  //       })
-  //       .catch((error) => {
-  //         console.error("Error getting document:", error);
-  //       });
-  //   }
-  // }, [chatRoomId, user.uid]);
-
-  // 메시지 목록 가져오기 및 실시간 업데이트
   useEffect(() => {
     if (chatRoomId) {
       dispatch(fetchChatRoomById(chatRoomId)); // 채팅방 정보
