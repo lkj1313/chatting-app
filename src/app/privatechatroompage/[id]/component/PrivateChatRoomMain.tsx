@@ -147,4 +147,4 @@ const PrivateChatRoomPageMain: React.FC = () => {
   );
 };
 
-export default PrivateChatRoomPageMain;
+export default React.memo(PrivateChatRoomPageMain);

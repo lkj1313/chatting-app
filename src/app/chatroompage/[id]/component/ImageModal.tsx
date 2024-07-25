@@ -25,4 +25,4 @@ const ImageModal: React.FC<ImageModalProps> = ({ show, imageUrl, onClose }) => {
   );
 };
 
-export default ImageModal;
+export default React.memo(ImageModal);

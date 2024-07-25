@@ -231,4 +231,4 @@ const PrivateChatRoomPageFooter: React.FC = ({}) => {
   );
 };
 
-export default PrivateChatRoomPageFooter;
+export default React.memo(PrivateChatRoomPageFooter);

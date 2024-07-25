@@ -2,11 +2,12 @@
 import React, { useEffect, useState } from "react";
 import { db } from "../../../firebase";
 import { collection, getDocs, query, orderBy, limit } from "firebase/firestore";
-import { useDispatch } from "react-redux";
-import { setChatRoomId } from "@/app/store/chatRoomSlice";
+import { UseDispatch, useDispatch, useSelector } from "react-redux";
+import { fetchChatRooms, setChatRoomId } from "@/app/store/chatRoomSlice";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { AppDispatch, RootState } from "../store/store";
 
 interface ChatRoom {
   id: string;
@@ -17,42 +18,15 @@ interface ChatRoom {
 }
 
 const FirstPageMain: React.FC = () => {
-  const dispatch = useDispatch();
+  const dispatch: AppDispatch = useDispatch();
+
   const router = useRouter();
-  const [chatRooms, setChatRooms] = useState<ChatRoom[]>([]);
+  const chatRooms = useSelector((state: RootState) => state.chatRoom.chatRooms);
 
   useEffect(() => {
-    const fetchChatRooms = async () => {
-      try {
-        const chatRoomDocs = await getDocs(collection(db, "chatRooms"));
-        const chatRoomList: ChatRoom[] = await Promise.all(
-          chatRoomDocs.docs.map(async (doc) => {
-            const latestMessageQuery = query(
-              collection(db, "chatRooms", doc.id, "messages"),
-              orderBy("time", "desc"),
-              limit(1)
-            );
-            const latestMessageSnapshot = await getDocs(latestMessageQuery);
-            const latestMessage =
-              latestMessageSnapshot.docs[0]?.data().text || "No messages yet";
+    dispatch(fetchChatRooms());
+  }, [dispatch]);
 
-            return {
-              id: doc.id,
-              channelName: doc.data().channelName,
-              description: doc.data().description,
-              chatRoomImg: doc.data().chatRoomImg,
-              latestMessage,
-            };
-          })
-        );
-        setChatRooms(chatRoomList);
-      } catch (error) {
-        console.error("Error fetching chat rooms: ", error);
-      }
-    };
-
-    fetchChatRooms();
-  }, []);
   const handleChatBoxClick = (id: string) => {
     toast.info("Entering chat room...", {
       autoClose: 1000,
@@ -73,7 +47,7 @@ const FirstPageMain: React.FC = () => {
     >
       {chatRooms.length > 0 ? (
         chatRooms.map((room) => (
-          <div className="chatBox chatRow" key={room.id}>
+          <div className="chatBox chatRow" key={room.chatRoomId}>
             <div
               className="container"
               style={{ height: "70px", padding: "0px" }}
@@ -87,7 +61,9 @@ const FirstPageMain: React.FC = () => {
                   height: "100%",
                   cursor: "pointer",
                 }}
-                onClick={() => handleChatBoxClick(room.id)}
+                onClick={() =>
+                  room.chatRoomId && handleChatBoxClick(room.chatRoomId)
+                }
               >
                 <div
                   className="col-3"
@@ -101,7 +77,7 @@ const FirstPageMain: React.FC = () => {
                 >
                   <button className="chatRoomButton">
                     {room.chatRoomImg ? (
-                      <img src={room.chatRoomImg} alt={room.channelName} />
+                      <img src={room.chatRoomImg} />
                     ) : room.channelName ? (
                       <span
                         style={{
@@ -163,4 +139,4 @@ const FirstPageMain: React.FC = () => {
   );
 };
 
-export default FirstPageMain;
+export default React.memo(FirstPageMain);

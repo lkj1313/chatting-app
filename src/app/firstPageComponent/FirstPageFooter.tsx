@@ -48,4 +48,4 @@ const FirstPageFooter = () => {
   );
 };
 
-export default FirstPageFooter;
+export default React.memo(FirstPageFooter);

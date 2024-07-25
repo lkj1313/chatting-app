@@ -7,7 +7,7 @@ import {
 } from "@/app/store/uiSlice";
 import { AppDispatch, RootState } from "@/app/store/store";
 import ParticipantModal from "@/app/chatroompage/[id]/component/ParticipantModal";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { fetchChatRoomData } from "@/app/store/privateChatRoomSlice";
 
 const PrivateChatRoomHeader: React.FC = ({}) => {
@@ -171,4 +171,4 @@ const PrivateChatRoomHeader: React.FC = ({}) => {
   );
 };
 
-export default PrivateChatRoomHeader;
+export default React.memo(PrivateChatRoomHeader);

@@ -1,8 +1,18 @@
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
-import { doc, getDoc, setDoc } from "firebase/firestore";
+import {
+  doc,
+  getDoc,
+  getDocs,
+  collection,
+  query,
+  orderBy,
+  limit,
+  setDoc,
+} from "firebase/firestore";
 import { ref, uploadString, getDownloadURL } from "firebase/storage";
 import { db, storage } from "../../../firebase";
 import { v4 as uuidv4 } from "uuid";
+import { RootState, AppDispatch } from "./store";
 
 interface ChatRoomState {
   chatRoomImg: string | null;
@@ -14,6 +24,8 @@ interface ChatRoomState {
   error: string | null;
   userId: string | null;
   userName: string | null;
+  chatRooms: ChatRoomState[];
+  latestMessage: string | null;
 }
 
 const initialState: ChatRoomState = {
@@ -26,6 +38,8 @@ const initialState: ChatRoomState = {
   userName: null,
   status: "idle",
   error: null,
+  chatRooms: [],
+  latestMessage: null,
 };
 
 export const saveChatRoom = createAsyncThunk<
@@ -71,22 +85,73 @@ export const fetchChatRoomById = createAsyncThunk<
     const chatRoomRef = doc(db, "chatRooms", chatRoomId);
     const chatRoomSnap = await getDoc(chatRoomRef);
 
-    if (chatRoomSnap.exists()) {
-      const chatRoomData = chatRoomSnap.data();
-      return {
-        chatRoomImg: chatRoomData.chatRoomImg,
-        channelName: chatRoomData.channelName,
-        description: chatRoomData.description,
-        chatRoomId: chatRoomId,
-        participants: chatRoomData.participants || [],
-        userId: chatRoomData.userId || null,
-        userName: chatRoomData.userName || null,
-        status: "idle",
-        error: null,
-      };
-    } else {
+    if (!chatRoomSnap.exists()) {
       throw new Error("Chat room not found");
     }
+
+    const chatRoomData = chatRoomSnap.data();
+
+    const latestMessageQuery = query(
+      collection(db, "chatRooms", chatRoomId, "messages"),
+      orderBy("time", "desc"),
+      limit(1)
+    );
+    const latestMessageSnapshot = await getDocs(latestMessageQuery);
+    const latestMessage =
+      latestMessageSnapshot.docs[0]?.data().text || "No messages yet";
+
+    return {
+      chatRoomImg: chatRoomData.chatRoomImg,
+      channelName: chatRoomData.channelName,
+      description: chatRoomData.description,
+      chatRoomId: chatRoomId,
+      participants: chatRoomData.participants || [],
+      userId: chatRoomData.userId || null,
+      userName: chatRoomData.userName || null,
+      latestMessage,
+      status: "idle",
+      error: null,
+      chatRooms: [],
+    };
+  } catch (error: any) {
+    return rejectWithValue(error.message);
+  }
+});
+
+export const fetchChatRooms = createAsyncThunk<
+  ChatRoomState[],
+  void,
+  { state: RootState; dispatch: AppDispatch; rejectValue: string }
+>("chatRoom/fetchChatRooms", async (_, { rejectWithValue }) => {
+  try {
+    const chatRoomDocs = await getDocs(collection(db, "chatRooms"));
+    const chatRoomList: ChatRoomState[] = await Promise.all(
+      chatRoomDocs.docs.map(async (doc) => {
+        const latestMessageQuery = query(
+          collection(db, "chatRooms", doc.id, "messages"),
+          orderBy("time", "desc"),
+          limit(1)
+        );
+        const latestMessageSnapshot = await getDocs(latestMessageQuery);
+        const latestMessage =
+          latestMessageSnapshot.docs[0]?.data().text || "No messages yet";
+
+        return {
+          chatRoomImg: doc.data().chatRoomImg,
+          channelName: doc.data().channelName,
+          description: doc.data().description,
+          latestMessage,
+          chatRoomId: doc.id,
+          participants: doc.data().participants || [],
+          userId: doc.data().userId || null,
+          userName: doc.data().userName || null,
+          status: "idle",
+          error: null,
+          chatRooms: [],
+        };
+      })
+    );
+    return chatRoomList;
   } catch (error: any) {
     return rejectWithValue(error.message);
   }
@@ -157,13 +222,30 @@ const chatRoomSlice = createSlice({
           state.channelName = action.payload.channelName;
           state.description = action.payload.description;
           state.chatRoomId = action.payload.chatRoomId;
-          state.participants = action.payload.participants; // Ensure participants are updated
+          state.participants = action.payload.participants;
           state.userId = action.payload.userId;
           state.userName = action.payload.userName;
+          state.latestMessage = action.payload.latestMessage;
           state.error = null;
         }
       )
       .addCase(fetchChatRoomById.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.payload as string;
+      })
+      .addCase(fetchChatRooms.pending, (state) => {
+        state.status = "loading";
+        state.error = null;
+      })
+      .addCase(
+        fetchChatRooms.fulfilled,
+        (state, action: PayloadAction<ChatRoomState[]>) => {
+          state.status = "succeeded";
+          state.chatRooms = action.payload;
+          state.error = null;
+        }
+      )
+      .addCase(fetchChatRooms.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.payload as string;
       });
