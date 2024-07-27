@@ -67,7 +67,7 @@ React, Firebase, Next.js, TypeScript를 사용하여 만든 웹 기반 채팅 �
 
 이 애플리케이션은 Vercel을 통해 배포되었습니다. 배포된 애플리케이션은 아래 링크에서 확인할 수 있습니다:
 
-[채팅 애플리케이션 - Vercel 배포](https://vercel.com/lkj1313s-projects/chatting-app)
+[채팅 애플리케이션 - Vercel 배포](https://chatting-app-sandy.vercel.app/loginpage)
 
 ## 사용 방법
 
