@@ -1,6 +1,6 @@
 # 채팅 애플리케이션
 
-![Chat Application Logo](https://github.com/lkj1313/chatting-app/raw/main/public/favicon.ico)
+![Chat Application Logo](https://github.com/lkj1313/chatting-app/raw/main/public/favicon.png)
 
 React, Firebase, Next.js, TypeScript를 사용하여 만든 웹 기반 채팅 애플리케이션입니다. 이 애플리케이션을 통해 사용자는 회원 가입, 로그인, 실시간 채팅을 할 수 있습니다. 1:1채팅, 친추 추가, 이미지 업로드, 실시간 메시징, 사용자 인증 등의 기능을 포함하고 있습니다.
 
