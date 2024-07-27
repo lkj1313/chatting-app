@@ -267,4 +267,4 @@ const ChatRoomPageFooter: React.FC = ({}) => {
   );
 };
 
-export default ChatRoomPageFooter;
+export default React.memo(ChatRoomPageFooter);

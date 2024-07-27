@@ -8,6 +8,7 @@ import ParticipantModal from "./ParticipantModal";
 
 import { RootState } from "@/app/store/store";
 import { chatRoomInfoModalOpen } from "@/app/store/uiSlice";
+import React from "react";
 
 interface ChatRoomPageHeaderProps {
   participantProfileImg?: string;
@@ -21,10 +22,7 @@ interface ParticipantInfo {
   additionalInfo?: string;
 }
 
-const ChatRoomPageHeader: React.FC<ChatRoomPageHeaderProps> = ({
-  participantProfileImg,
-  participantNickname,
-}) => {
+const ChatRoomPageHeader: React.FC<ChatRoomPageHeaderProps> = ({}) => {
   const chatRoomInformation = useSelector((state: RootState) => state.chatRoom);
   const router = useRouter(); // 라우터 훅
   const pathname = usePathname(); // 현재 경로
@@ -185,4 +183,4 @@ const ChatRoomPageHeader: React.FC<ChatRoomPageHeaderProps> = ({
   );
 };
 
-export default ChatRoomPageHeader;
+export default React.memo(ChatRoomPageHeader);

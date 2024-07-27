@@ -25,6 +25,7 @@ const CreateChatRoomModal: React.FC = () => {
   );
   const status = useSelector((state: RootState) => state.chatRoom.status);
   const user = useSelector((state: RootState) => state.auth.user);
+  console.log("유저", user);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const faviconUrl = "favicon.png";
 
@@ -67,9 +68,11 @@ const CreateChatRoomModal: React.FC = () => {
       position: "top-center",
     });
   };
-
   const handleSubmit = async () => {
-    if (user.uid && user.nickname && localChannelName.length > 8) {
+    console.log("User Info:", user); // 사용자 정보 확인
+
+    // 유저 정보와 채널명 길이 확인 (8자 이하)
+    if (user && user.uid && user.nickname && localChannelName.length <= 8) {
       notify();
 
       // 상태를 Redux로 디스패치
@@ -104,9 +107,23 @@ const CreateChatRoomModal: React.FC = () => {
         console.error("Failed to create chat room");
       }
     } else {
-      console.error("User information is missing");
+      // 어느 조건이 false인지 확인하기 위해 각각의 조건을 출력
+      if (!user) {
+        console.error("User object is null");
+      } else {
+        if (!user.uid) {
+          console.error("User UID is missing");
+        }
+        if (!user.nickname) {
+          console.error("User Nickname is missing");
+        }
+        if (localChannelName.length > 8) {
+          console.error("Channel name is too long");
+        }
+      }
     }
   };
+
   const handleChannelNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     if (value.length <= 8) {

@@ -105,4 +105,4 @@ const ChatRoomPageMain: React.FC<MessageListProps> = ({
   );
 };
 
-export default ChatRoomPageMain;
+export default React.memo(ChatRoomPageMain);
