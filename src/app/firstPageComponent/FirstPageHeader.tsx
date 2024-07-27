@@ -3,7 +3,7 @@ import React from "react";
 import { useDispatch } from "react-redux";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { Navbar, Button } from "react-bootstrap";
-import { openSidebar, closeSidebar } from "@/app/store/uiSlice";
+import { openSidebar } from "@/app/store/uiSlice";
 
 const FirstPageHeader = () => {
   const dispatch = useDispatch();

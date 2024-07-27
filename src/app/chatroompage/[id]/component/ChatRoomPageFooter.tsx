@@ -1,21 +1,22 @@
 "use client";
-import React, { useState, useRef, useEffect } from "react";
+
+import React, { useState, useRef, useEffect, useCallback } from "react";
 import Picker from "@emoji-mart/react";
 import data from "@emoji-mart/data";
 import { useSelector } from "react-redux";
 import { RootState } from "@/app/store/store";
-import {
-  doc,
-  addDoc,
-  collection,
-  updateDoc,
-  arrayUnion,
-} from "firebase/firestore";
+import { doc, updateDoc, arrayUnion } from "firebase/firestore";
 import { db, storage } from "../../../../../firebase"; // storage 추가
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage"; // storage 관련 함수 추가
 import { useParams } from "next/navigation";
 
-const ChatRoomPageFooter: React.FC = ({}) => {
+interface ChatRoomPageFooterProps {
+  handleSendMessage: (text: string, imageUrl?: string) => void;
+}
+
+const ChatRoomPageFooter: React.FC<ChatRoomPageFooterProps> = ({
+  handleSendMessage,
+}) => {
   const [inputText, setInputText] = useState<string>("");
   const [showPicker, setShowPicker] = useState(false);
   const [isParticipant, setIsParticipant] = useState<boolean>(false); // 사용자가 채팅방 참가자인지 여부
@@ -29,24 +30,6 @@ const ChatRoomPageFooter: React.FC = ({}) => {
 
   // params.id가 배열인 경우 첫 번째 요소를 사용하고, 그렇지 않으면 그대로 사용
   const chatRoomId = Array.isArray(params?.id) ? params.id[0] : params?.id;
-
-  const handleSendMessage = async (text: string, imageUrl = "") => {
-    if ((text.trim() || imageUrl) && user.uid) {
-      const newMessage = {
-        text,
-        time: new Date().toISOString(),
-        userId: user.uid,
-        userName: user.nickname || "Anonymous",
-        profileImg: user.profileImgURL || "/default-profile.png",
-        imageUrl,
-        readBy: [], // 읽은 사용자 목록 초기화
-      };
-      await addDoc(
-        collection(db, "chatRooms", chatRoomId, "messages"),
-        newMessage
-      );
-    }
-  };
 
   // 이미지 업로드 함수
   const handleImageUpload = async (
@@ -64,8 +47,9 @@ const ChatRoomPageFooter: React.FC = ({}) => {
       }
     }
   };
-  // chatroom입장 함수
-  const enterChatRoom = async () => {
+
+  // chatroom 입장 함수
+  const enterChatRoom = useCallback(async () => {
     try {
       const chatRoomRef = doc(db, "chatRooms", chatRoomId);
       await updateDoc(chatRoomRef, {
@@ -76,40 +60,43 @@ const ChatRoomPageFooter: React.FC = ({}) => {
     } catch (error) {
       console.error("Error adding user to participants: ", error);
     }
-  };
+  }, [chatRoomId, user.uid]);
 
   useEffect(() => {
     if (user.uid && !isParticipant) {
       enterChatRoom(); // 사용자 자동 참가
     }
-  }, [user.uid, isParticipant]);
+  }, [user.uid, isParticipant, enterChatRoom]);
 
-  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter") {
-      handleSendMessage(inputText);
-      setInputText("");
-    }
-  };
+  const handleKeyPress = useCallback(
+    (e: React.KeyboardEvent<HTMLInputElement>) => {
+      if (e.key === "Enter") {
+        handleSendMessage(inputText);
+        setInputText("");
+      }
+    },
+    [inputText, handleSendMessage]
+  );
 
-  const handleEmojiSelect = (emoji: any) => {
+  const handleEmojiSelect = useCallback((emoji: any) => {
     setInputText((prevText) => prevText + emoji.native);
-  };
+  }, []);
 
-  const handleClickOutside = (event: MouseEvent) => {
+  const handleClickOutside = useCallback((event: MouseEvent) => {
     if (
       pickerRef.current &&
       !pickerRef.current.contains(event.target as Node)
     ) {
       setShowPicker(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     document.addEventListener("mousedown", handleClickOutside);
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, []);
+  }, [handleClickOutside]);
 
   return (
     <footer
@@ -150,9 +137,9 @@ const ChatRoomPageFooter: React.FC = ({}) => {
               src="/uploadButton.png"
               alt="uploadButton"
               style={{ width: "30px" }}
-            ></img>
+            />
           </div>
-          {/* {loading && <div className="loadingSpinner"></div>} */}
+
           {showPicker && (
             <div
               ref={pickerRef}
@@ -197,7 +184,7 @@ const ChatRoomPageFooter: React.FC = ({}) => {
           />
 
           <div
-            className="emojiButtonDiv "
+            className="emojiButtonDiv"
             style={{
               display: "flex",
               alignItems: "center",
@@ -235,8 +222,6 @@ const ChatRoomPageFooter: React.FC = ({}) => {
               margin: "0",
               padding: "0",
               cursor: "pointer",
-
-              // borderLeft: "0.5px solid black",
             }}
           >
             <button
@@ -254,7 +239,7 @@ const ChatRoomPageFooter: React.FC = ({}) => {
                 setInputText("");
               }}
             >
-              <img src="/favicon.png" style={{ width: "25px" }}></img>
+              <img src="/favicon.png" style={{ width: "25px" }} />
             </button>
           </div>
         </div>

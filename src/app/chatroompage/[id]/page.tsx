@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchChatRoomById } from "@/app/store/chatRoomSlice";
 import {
@@ -9,23 +9,18 @@ import {
 } from "@/app/store/chatRoomMessagesSlice";
 import { RootState, AppDispatch } from "@/app/store/store";
 import { db, auth } from "../../../../firebase";
-import { useRouter } from "next/navigation";
+import { useRouter, useParams } from "next/navigation";
 import {
   collection,
-  addDoc,
   query,
   orderBy,
   onSnapshot,
   doc,
-  getDoc,
-  updateDoc,
   arrayUnion,
   writeBatch,
+  addDoc,
 } from "firebase/firestore";
-import {
-  participantModalOpen,
-  participantModalClose,
-} from "@/app/store/uiSlice";
+import { participantModalOpen } from "@/app/store/uiSlice";
 
 import { Message } from "@/app/chatroompage/[id]/component/type";
 import ChatRoomPageHeader from "@/app/chatroompage/[id]/component/ChatRoomPageHeader";
@@ -33,7 +28,6 @@ import ChatRoomPageFooter from "@/app/chatroompage/[id]/component/ChatRoomPageFo
 import ChatRoomPageMain from "@/app/chatroompage/[id]/component/ChatRoomPageMain";
 
 import ImageModal from "@/app/chatroompage/[id]/component/ImageModal";
-import { useParams } from "next/navigation";
 import { onAuthStateChanged } from "firebase/auth";
 import ChatRoomInfoModal from "@/app/chatroompage/[id]/component/ChatRoomInfoModal";
 import Sidebar from "./component/Sidebar";
@@ -50,9 +44,29 @@ const ChatRoomPage = () => {
   const { messages, status, error } = useSelector(
     (state: RootState) => state.chatRoomMessages
   ); // Redux에서 메시지 목록 가져오기
-  const [loading, setLoading] = useState(false); // 로딩 상태
   const [modalImage, setModalImage] = useState<string | null>(null); // 이미지 모달 상태
   const [showImageChattingModal, setImageChattingShowModal] = useState(false); // 이미지 모달 표시 여부
+
+  const handleSendMessage = useCallback(
+    async (text: string, imageUrl = "") => {
+      if ((text.trim() || imageUrl) && user.uid) {
+        const newMessage = {
+          text,
+          time: new Date().toISOString(),
+          userId: user.uid,
+          userName: user.nickname || "Anonymous",
+          profileImg: userProfileImg,
+          imageUrl,
+          readBy: [], // 읽은 사용자 목록 초기화
+        };
+        await addDoc(
+          collection(db, "chatRooms", chatRoomId!, "messages"),
+          newMessage
+        );
+      }
+    },
+    [user.uid, user.nickname, userProfileImg, chatRoomId]
+  );
 
   useEffect(() => {
     if (chatRoomId) {
@@ -85,32 +99,13 @@ const ChatRoomPage = () => {
   }, [chatRoomId, dispatch, userProfileImg]);
 
   useEffect(() => {
-    //로그아웃 감지시 /loginpage이동
+    // 로그아웃 감지시 /loginpage 이동
     onAuthStateChanged(auth, (user) => {
       if (!user) {
         router.push("/loginpage");
       }
     });
   });
-
-  // 메시지 전송 함수
-  const handleSendMessage = async (text: string, imageUrl = "") => {
-    if ((text.trim() || imageUrl) && user.uid) {
-      const newMessage = {
-        text,
-        time: new Date().toISOString(),
-        userId: user.uid,
-        userName: user.nickname || "Anonymous",
-        profileImg: userProfileImg,
-        imageUrl,
-        readBy: [], // 읽은 사용자 목록 초기화
-      };
-      await addDoc(
-        collection(db, "chatRooms", chatRoomId!, "messages"),
-        newMessage
-      );
-    }
-  };
 
   // 읽지 않은 메시지 업데이트
   useEffect(() => {
@@ -146,19 +141,17 @@ const ChatRoomPage = () => {
 
   return (
     <>
-      {/* <AuthChecker /> */}
       <div className="chat_wrap" style={{ position: "relative" }}>
         <ChatRoomPageHeader />
         <ChatRoomPageMain
           messages={messages}
           userId={user.uid!}
           handleImageClick={handleImageClick}
-          totalParticipants={
-            chatRoomInformation.participants.length &&
-            chatRoomInformation.participants.length
-          }
+          totalParticipants={chatRoomInformation.participants.length}
         />
-        <ChatRoomPageFooter /> <Sidebar />
+        <ChatRoomPageFooter handleSendMessage={handleSendMessage} />{" "}
+        {/* handleSendMessage 전달 */}
+        <Sidebar />
       </div>
 
       <ImageModal
@@ -175,4 +168,4 @@ const ChatRoomPage = () => {
   );
 };
 
-export default ChatRoomPage;
+export default React.memo(ChatRoomPage);

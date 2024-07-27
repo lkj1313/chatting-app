@@ -2,10 +2,7 @@
 import React, { useRef, useEffect } from "react";
 import { Message } from "./type";
 import { useDispatch } from "react-redux";
-import {
-  participantModalOpen,
-  participantModalClose,
-} from "@/app/store/uiSlice";
+import { participantModalOpen } from "@/app/store/uiSlice";
 import { participantInfo } from "@/app/store/participantModalSlice";
 
 interface MessageListProps {
@@ -30,6 +27,7 @@ const ChatRoomPageMain: React.FC<MessageListProps> = ({
       innerRef.current.scrollTop = innerRef.current.scrollHeight;
     }
   }, [messages]);
+
   const handleProfileClick = (msg: Message) => {
     dispatch(
       participantInfo({
@@ -42,7 +40,7 @@ const ChatRoomPageMain: React.FC<MessageListProps> = ({
   };
 
   return (
-    <div className="inner " ref={innerRef}>
+    <div className="inner" ref={innerRef}>
       {messages.map((msg) => (
         <div
           key={msg.id}

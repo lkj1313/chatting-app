@@ -15,6 +15,7 @@ import {
   participantModalClose,
 } from "@/app/store/uiSlice";
 import { usePathname } from "next/navigation";
+import { toast } from "react-toastify";
 
 const ParticipantModal = () => {
   const router = useRouter();
@@ -51,10 +52,18 @@ const ParticipantModal = () => {
           console.log(chatId);
           dispatch(chatRoomSidebarClose());
           dispatch(participantModalClose());
-
+          const toastId1 = toast("대화방 입장중...", {
+            type: "info",
+            autoClose: false,
+          });
           console.log("Dispatched participantModalClose");
 
           router.push(`/privatechatroompage/${chatId}`);
+          toast.update(toastId1, {
+            render: "대화방 입장 완료!",
+            type: "success",
+            autoClose: 200,
+          });
         } else {
           console.error("1:1 채팅을 시작하는 데 실패했습니다.");
         }
