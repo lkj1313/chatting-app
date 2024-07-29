@@ -31,6 +31,7 @@ import ImageModal from "@/app/chatroompage/[id]/component/ImageModal";
 import { onAuthStateChanged } from "firebase/auth";
 import ChatRoomInfoModal from "@/app/chatroompage/[id]/component/ChatRoomInfoModal";
 import Sidebar from "./component/Sidebar";
+import useViewportHeight from "@/app/component/useViewportHeight";
 
 const ChatRoomPage = () => {
   const router = useRouter();
@@ -138,7 +139,7 @@ const ChatRoomPage = () => {
     setImageChattingShowModal(false);
     setModalImage(null);
   };
-
+  useViewportHeight();
   return (
     <>
       <div
@@ -146,7 +147,7 @@ const ChatRoomPage = () => {
         style={{
           position: "relative",
           width: "100%",
-          height: "100vh",
+          height: "calc(var(--vh) * 100)",
           overflow: "auto",
         }}
       >
