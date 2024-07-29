@@ -19,8 +19,8 @@ interface Errors {
 }
 type TypeOptions = "info" | "success" | "warning" | "error";
 function LoginPage() {
-  const [email, setEmail] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
+  const [email, setEmail] = useState<string>("testid@gmail.com");
+  const [password, setPassword] = useState<string>("a123456!!");
   const [errors, setErrors] = useState<Errors>({});
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [showCard, setShowCard] = useState<boolean>(false);
@@ -208,78 +208,80 @@ function LoginPage() {
   }, []);
 
   return (
-    <div className="d-flex justify-content-center align-items-center vh-100 ml-1 mr-1">
-      <div
-        className={`card p-4 shadow-sm container card-box ${
-          showCard ? "show" : ""
-        }`}
-        style={{
-          width: "80%",
-          maxWidth: "500px",
-          borderRadius: "5%",
-          display: "flex",
-          alignItems: "center",
-          position: "relative",
-          top: "-5%",
-        }}
-      >
-        <img
-          style={{ width: "50%", height: "10%" }}
-          src="/favicon.png"
-          className={`card-img-top`}
-          alt=""
-        />
-        <div className="card-body" style={{ width: "100%" }}>
-          <h5 className="card-title text-center mb-4">Login</h5>
-          <form onSubmit={handleSubmit}>
-            <div className="mb-3">
-              <label htmlFor="email" className="form-label">
-                Email address
-              </label>
-              <input
-                value={email}
-                onChange={handleEmailChange}
-                type="email"
-                className="form-control"
-                id="email"
-                aria-describedby="emailHelp"
-                required
-              />
-              {errors.email && <p className="text-danger">{errors.email}</p>}
-            </div>
-            <div className="mb-3">
-              <label htmlFor="password" className="form-label">
-                Password
-              </label>
-              <input
-                value={password}
-                onChange={handlePasswordChange}
-                type="password"
-                className="form-control"
-                id="password"
-                required
-              />
-              {errors.password && (
-                <p className="text-danger">{errors.password}</p>
-              )}
-            </div>
-            {errors.form && <p className="text-danger">{errors.form}</p>}
-            <button
-              type="submit"
-              className="btn btn-primary w-100"
-              disabled={isLoading}
-            >
-              {isLoading ? "Loading..." : "Login"}
-            </button>
-          </form>
-          <Link href="/signuppage">
-            <button type="button" className="btn btn-secondary w-100 mt-2">
-              Signup
-            </button>
-          </Link>
+    <>
+      <div className="d-flex justify-content-center align-items-center vh-100 ml-1 mr-1">
+        <div
+          className={`card p-4 shadow-sm container card-box ${
+            showCard ? "show" : ""
+          }`}
+          style={{
+            width: "80%",
+            maxWidth: "500px",
+            borderRadius: "5%",
+            display: "flex",
+            alignItems: "center",
+            position: "relative",
+            top: "-5%",
+          }}
+        >
+          <img
+            style={{ width: "50%", height: "10%" }}
+            src="/favicon.png"
+            className={`card-img-top`}
+            alt=""
+          />
+          <div className="card-body" style={{ width: "100%" }}>
+            <h5 className="card-title text-center mb-4">Login</h5>
+            <form onSubmit={handleSubmit}>
+              <div className="mb-3">
+                <label htmlFor="email" className="form-label">
+                  Email address
+                </label>
+                <input
+                  value={email}
+                  onChange={handleEmailChange}
+                  type="email"
+                  className="form-control"
+                  id="email"
+                  aria-describedby="emailHelp"
+                  required
+                />
+                {errors.email && <p className="text-danger">{errors.email}</p>}
+              </div>
+              <div className="mb-3">
+                <label htmlFor="password" className="form-label">
+                  Password
+                </label>
+                <input
+                  value={password}
+                  onChange={handlePasswordChange}
+                  type="password"
+                  className="form-control"
+                  id="password"
+                  required
+                />
+                {errors.password && (
+                  <p className="text-danger">{errors.password}</p>
+                )}
+              </div>
+              {errors.form && <p className="text-danger">{errors.form}</p>}
+              <button
+                type="submit"
+                className="btn btn-primary w-100"
+                disabled={isLoading}
+              >
+                {isLoading ? "Loading..." : "Login"}
+              </button>
+            </form>
+            <Link href="/signuppage">
+              <button type="button" className="btn btn-secondary w-100 mt-2">
+                Signup
+              </button>
+            </Link>
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }
 export default LoginPage;
