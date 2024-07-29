@@ -34,11 +34,7 @@ const Sidebar: React.FC = () => {
 
   const user = useSelector((state: RootState) => state.auth.user);
   const changeProfileImgInputRef = useRef<HTMLInputElement>(null);
-
-  useEffect(() => {
-    setIsClient(true); // 클라이언트 사이드에서만 실행되도록 설정
-  }, []);
-
+  const isAnimating = useRef(false); // 애니메이션 상태를 추적하는 ref
   useEffect(() => {
     if (isClient) {
       const authToken = getCookie("authToken");
@@ -169,7 +165,33 @@ const Sidebar: React.FC = () => {
   const handleNicknameClick = () => {
     setIsEditingNickname(true);
   };
+  useEffect(() => {
+    const sidebar = document.querySelector(".homeSidebar") as HTMLElement;
 
+    const handleAnimationEnd = () => {
+      isAnimating.current = false; // 애니메이션이 끝나면 false로 설정
+    };
+
+    if (sidebarOpen) {
+      // 사이드바가 열렸을 때
+      if (isAnimating.current) return; // 애니메이션 중이면 동작하지 않음
+      isAnimating.current = true;
+      sidebar.style.display = "flex";
+      requestAnimationFrame(() => {
+        sidebar.classList.add("homeSidebarShow");
+        setTimeout(handleAnimationEnd, 500); // 애니메이션 지속 시간과 동일하게 설정
+      });
+    } else {
+      // 사이드바가 닫혔을 때
+      if (isAnimating.current) return; // 애니메이션 중이면 동작하지 않음
+      isAnimating.current = true;
+      sidebar.classList.remove("homeSidebarShow");
+      setTimeout(() => {
+        sidebar.style.display = "none";
+        handleAnimationEnd(); // 애니메이션이 끝나면 false로 설정
+      }, 500); // 애니메이션 지속 시간 후 display를 none으로 변경
+    }
+  }, [sidebarOpen]);
   return (
     <>
       {sidebarOpen && ( //sidebar열릴시 배경 overlay

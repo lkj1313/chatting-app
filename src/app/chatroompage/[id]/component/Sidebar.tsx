@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { chatRoomSidebarClose, chatRoomSidebarOpen } from "@/app/store/uiSlice";
 import { RootState, AppDispatch } from "@/app/store/store";
@@ -10,11 +10,7 @@ import { deleteDoc, doc, getDoc } from "firebase/firestore";
 import { db } from "../../../../../firebase";
 import { Message } from "./type";
 import { participantInfo } from "@/app/store/participantModalSlice";
-import {
-  participantModalOpen,
-  participantModalClose,
-} from "@/app/store/uiSlice";
-import { auth } from "firebase-admin";
+import { participantModalOpen } from "@/app/store/uiSlice";
 
 interface ParticipantInfo {
   uid: string;
@@ -62,6 +58,7 @@ const Sidebar: React.FC = () => {
     []
   );
   const router = useRouter();
+  const isAnimating = useRef(false); // 애니메이션 상태를 추적하는 ref
 
   // Redux 상태에서 사이드바 열림/닫힘 상태 가져오기
   const chatRoomSidebar = useSelector(
@@ -70,11 +67,13 @@ const Sidebar: React.FC = () => {
 
   // 사이드바 열기 함수
   const openSidebar = () => {
+    if (isAnimating.current) return;
     dispatch(chatRoomSidebarOpen());
   };
 
   // 사이드바 닫기 함수
   const closeSidebar = () => {
+    if (isAnimating.current) return;
     dispatch(chatRoomSidebarClose());
   };
 
@@ -167,19 +166,55 @@ const Sidebar: React.FC = () => {
       alert("방장만이 채팅방을 삭제할수 있습니다.");
     }
   };
+
+  useEffect(() => {
+    // 'headerSidebar' 클래스를 가진 요소를 선택합니다.
+    const sidebar = document.querySelector(".headerSidebar") as HTMLElement;
+
+    // 애니메이션이 끝난 후 호출되는 함수
+    const handleAnimationEnd = () => {
+      isAnimating.current = false; // 애니메이션이 끝나면 false로 설정
+    };
+
+    if (chatRoomSidebar) {
+      // 사이드바가 열렸을 때의 동작
+      if (isAnimating.current) return; // 애니메이션 중이면 동작하지 않음
+      isAnimating.current = true; // 애니메이션 상태를 true로 설정
+      sidebar.style.display = "flex"; // 사이드바를 보이게 설정
+      requestAnimationFrame(() => {
+        // 브라우저가 다음 페인트 작업을 수행하기 전에 실행됩니다.
+        sidebar.classList.add("headerSidebarShow"); // 애니메이션을 시작하기 위해 클래스 추가
+        setTimeout(handleAnimationEnd, 500); // 애니메이션 지속 시간 후 handleAnimationEnd 호출
+      });
+    } else {
+      // 사이드바가 닫혔을 때의 동작
+      if (isAnimating.current) return; // 애니메이션 중이면 동작하지 않음
+      isAnimating.current = true; // 애니메이션 상태를 true로 설정
+      sidebar.classList.remove("headerSidebarShow"); // 애니메이션을 시작하기 위해 클래스 제거
+      setTimeout(() => {
+        sidebar.style.display = "none"; // 애니메이션이 끝난 후 사이드바를 숨김
+        handleAnimationEnd(); // 애니메이션이 끝나면 handleAnimationEnd 호출
+      }, 500); // 애니메이션 지속 시간 후
+    }
+  }, [chatRoomSidebar]); // chatRoomSidebar 상태가 변경될 때마다 이 효과가 실행됩니다.
+
+  const handleOverlayClick = () => {
+    const sidebar = document.querySelector(".headerSidebar") as HTMLElement;
+    sidebar.classList.remove("headerSidebarShow");
+    setTimeout(() => {
+      sidebar.style.display = "none";
+    }, 1000); // 애니메이션 지속 시간 후 display를 none으로 변경
+    dispatch(chatRoomSidebarClose());
+  };
   return (
     <div className="pageWrapper">
       {chatRoomSidebar && (
         <div
           className={`sidebarOverlay ${chatRoomSidebar ? "overlayShow" : ""}`}
-          onClick={closeSidebar}
+          onClick={handleOverlayClick}
         ></div>
       )}
-      <div
-        className={`headerSidebar ${
-          chatRoomSidebar ? "headerSidebarShow" : ""
-        }`}
-      >
+      <div className="headerSidebar">
         <strong
           style={{ borderBottom: "1px solid gray", paddingBottom: "10px" }}
         >
