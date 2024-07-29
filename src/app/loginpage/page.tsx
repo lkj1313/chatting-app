@@ -18,7 +18,7 @@ interface Errors {
   form?: string;
 }
 type TypeOptions = "info" | "success" | "warning" | "error";
-export default function LoginPage() {
+function LoginPage() {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [errors, setErrors] = useState<Errors>({});
@@ -282,6 +282,4 @@ export default function LoginPage() {
     </div>
   );
 }
-LoginPage.getLayout = function getLayout(page: React.ReactNode) {
-  return null;
-};
+export default LoginPage;

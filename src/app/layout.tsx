@@ -6,6 +6,8 @@ import { ToastContainer, Bounce } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 import ReduxProvider from "./component/ReduxProvider";
+import { AnimatePresence } from "framer-motion";
+import PageTransition from "./component/PageTransition";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -26,7 +28,8 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         <ReduxProvider>
-          {children}
+          <PageTransition>{children} </PageTransition>
+          {/* 페이지 전환 애니메이션 추가 */}
           <ToastContainer
             position="top-center"
             limit={1}
