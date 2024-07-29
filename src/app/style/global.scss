@@ -33,7 +33,12 @@ body.modal-open {
     min-height: 100vh; /* 추가: 최소 높이를 전체 화면 높이로 설정 */
   }
 }
-
+@media (max-width: 600px) {
+  div,
+  container {
+    max-height: 90vh;
+  }
+}
 //부트스트랩
 @import "bootstrap/dist/css/bootstrap.min.css";
 

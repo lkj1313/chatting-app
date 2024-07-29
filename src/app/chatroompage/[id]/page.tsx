@@ -31,7 +31,6 @@ import ImageModal from "@/app/chatroompage/[id]/component/ImageModal";
 import { onAuthStateChanged } from "firebase/auth";
 import ChatRoomInfoModal from "@/app/chatroompage/[id]/component/ChatRoomInfoModal";
 import Sidebar from "./component/Sidebar";
-import useViewportHeight from "@/app/component/useViewportHieght";
 
 const ChatRoomPage = () => {
   const router = useRouter();
@@ -48,7 +47,6 @@ const ChatRoomPage = () => {
   const [modalImage, setModalImage] = useState<string | null>(null); // 이미지 모달 상태
   const [showImageChattingModal, setImageChattingShowModal] = useState(false); // 이미지 모달 표시 여부
 
-  useViewportHeight(); // 훅 사용
   const handleSendMessage = useCallback(
     async (text: string, imageUrl = "") => {
       if ((text.trim() || imageUrl) && user.uid) {
