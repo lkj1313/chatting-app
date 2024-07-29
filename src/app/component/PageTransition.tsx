@@ -5,13 +5,13 @@ import { usePathname } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 
 const variants = {
-  initial: { opacity: 0, y: -300 }, // 초기 상태: 요소가 보이지 않고 위쪽에 위치
-  enter: { opacity: 1, y: 0 }, // 애니메이션 상태: 요소가 보이고 원래 위치로 이동
-  exit: { opacity: 0, y: 300 }, // 애니메이션 종료 상태: 요소가 보이지 않고 아래쪽으로 이동
+  initial: { opacity: 0 },
+  enter: { opacity: 1, y: 0 },
 };
 
 const transition = {
-  duration: 0.5, // 애니메이션 지속 시간 (초 단위)
+  duration: 1.2,
+  ease: "easeInOut",
 };
 
 const PageTransition = ({ children }: { children: React.ReactNode }) => {
@@ -21,12 +21,12 @@ const PageTransition = ({ children }: { children: React.ReactNode }) => {
     <AnimatePresence mode="wait" initial={false}>
       <motion.div
         key={pathname}
-        variants={variants}
-        initial="hidden"
+        initial="initial"
         animate="enter"
         exit="exit"
+        variants={variants}
         transition={transition}
-        style={{ height: "100%", width: "100%" }}
+        style={{ position: "absolute", width: "100%", height: "100%" }}
       >
         {children}
       </motion.div>

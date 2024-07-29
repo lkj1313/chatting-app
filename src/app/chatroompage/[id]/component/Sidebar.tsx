@@ -3,10 +3,10 @@ import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { chatRoomSidebarClose, chatRoomSidebarOpen } from "@/app/store/uiSlice";
 import { RootState, AppDispatch } from "@/app/store/store";
-
+import { useRouter } from "next/navigation";
 import ImageModal from "./ImageModal";
 import ParticipantModal from "./ParticipantModal";
-import { doc, getDoc } from "firebase/firestore";
+import { deleteDoc, doc, getDoc } from "firebase/firestore";
 import { db } from "../../../../../firebase";
 import { Message } from "./type";
 import { participantInfo } from "@/app/store/participantModalSlice";
@@ -14,6 +14,7 @@ import {
   participantModalOpen,
   participantModalClose,
 } from "@/app/store/uiSlice";
+import { auth } from "firebase-admin";
 
 interface ParticipantInfo {
   uid: string;
@@ -60,6 +61,7 @@ const Sidebar: React.FC = () => {
   const [haveImageUrLMessages, setHaveImageUrLMessages] = useState<Message[]>(
     []
   );
+  const router = useRouter();
 
   // Redux 상태에서 사이드바 열림/닫힘 상태 가져오기
   const chatRoomSidebar = useSelector(
@@ -83,6 +85,11 @@ const Sidebar: React.FC = () => {
       setShowImageModal(true);
     }
   };
+  // 이미지 모달 닫기 함수
+  const handleCloseImageModal = () => {
+    setShowImageModal(false);
+    setSelectedImage(null);
+  };
 
   // 참가자 클릭 시 참가자 모달 열기 함수
   const handleParticipantClick = (participant: ParticipantInfo) => {
@@ -90,13 +97,7 @@ const Sidebar: React.FC = () => {
     dispatch(participantModalOpen());
   };
 
-  // 이미지 모달 닫기 함수
-  const handleCloseImageModal = () => {
-    setShowImageModal(false);
-    setSelectedImage(null);
-  };
-
-  // Redux 상태에서 user 가져오기
+  // Redux 상태에서 현재 user 가져오기
   const currentUser = useSelector((state: RootState) => state.auth.user);
   // Redux 상태에서 메시지 가져오기
   const chatRoomMessages = useSelector(
@@ -107,6 +108,8 @@ const Sidebar: React.FC = () => {
   const chatRoomParticipants = useSelector(
     (state: RootState) => state.chatRoom.participants
   );
+  // Redux 상태에서 채팅방 정보 가져오기
+  const chatRoomInfo = useSelector((state: RootState) => state.chatRoom);
 
   // 현재 페이지 경로에 따라 이미지 URL이 있는 메시지 필터링
   useEffect(() => {
@@ -141,8 +144,31 @@ const Sidebar: React.FC = () => {
     ...participantInfos.filter((p) => p.uid === currentUser.uid),
     ...participantInfos.filter((p) => p.uid !== currentUser.uid),
   ];
+
+  // Firestore에서 채팅방을 삭제하는 비동기 함수
+  const deleteChatRoom = async (chatRoomId: string): Promise<void> => {
+    try {
+      const chatRoomRef = doc(db, "chatRooms", chatRoomId);
+      await deleteDoc(chatRoomRef);
+      console.log("Chat room deleted successfully.");
+    } catch (error) {
+      console.error("Error deleting chat room:", error);
+    }
+  };
+  const handleDeleteChatRoom = async () => {
+    if (chatRoomInfo.userId === currentUser.uid) {
+      const confirmDelete = window.confirm("정말로 채팅방을 삭제하시겠습니까?");
+      if (confirmDelete && chatRoomInfo.chatRoomId) {
+        await deleteChatRoom(chatRoomInfo.chatRoomId); // chatRoomInfo.id는 삭제할 채팅방의 ID
+        router.push("/");
+        closeSidebar();
+      }
+    } else {
+      alert("방장만이 채팅방을 삭제할수 있습니다.");
+    }
+  };
   return (
-    <>
+    <div className="pageWrapper">
       {chatRoomSidebar && (
         <div
           className={`sidebarOverlay ${chatRoomSidebar ? "overlayShow" : ""}`}
@@ -228,6 +254,14 @@ const Sidebar: React.FC = () => {
                 </div>
               ))}
           </div>
+          {chatRoomInfo.userId === currentUser.uid ? (
+            <button
+              style={{ marginTop: "20px" }}
+              onClick={handleDeleteChatRoom}
+            >
+              채팅방 삭제
+            </button>
+          ) : null}
         </>
       </div>
       <ImageModal
@@ -236,7 +270,7 @@ const Sidebar: React.FC = () => {
         onClose={handleCloseImageModal}
       />
       <ParticipantModal />
-    </>
+    </div>
   );
 };
 

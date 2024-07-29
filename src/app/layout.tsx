@@ -1,3 +1,4 @@
+// app/layout.tsx
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "@/app/style/global.scss";
@@ -6,7 +7,6 @@ import { ToastContainer, Bounce } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 import ReduxProvider from "./component/ReduxProvider";
-import { AnimatePresence } from "framer-motion";
 import PageTransition from "./component/PageTransition";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -26,10 +26,12 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={inter.className}>
+      <body className={inter.className} style={{ overflow: "hidden" }}>
         <ReduxProvider>
-          <PageTransition>{children} </PageTransition>
-          {/* 페이지 전환 애니메이션 추가 */}
+          <div style={{ position: "relative", width: "100%", height: "100vh" }}>
+            <PageTransition>{children}</PageTransition>
+            {/* PageTransition 추가 */}
+          </div>
           <ToastContainer
             position="top-center"
             limit={1}
