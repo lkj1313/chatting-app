@@ -43,7 +43,13 @@ const FirstPageMain: React.FC = () => {
   return (
     <div
       className="firstPageMaincontainer"
-      style={{ width: "100%", height: "100%", padding: "0", margin: "0" }}
+      style={{
+        width: "100%",
+        height: "100%",
+        padding: "0",
+        margin: "0",
+        overflow: "auto",
+      }}
     >
       {chatRooms.length > 0 ? (
         chatRooms.map((room) => (

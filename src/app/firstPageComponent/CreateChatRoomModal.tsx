@@ -25,7 +25,7 @@ const CreateChatRoomModal: React.FC = () => {
   );
   const status = useSelector((state: RootState) => state.chatRoom.status);
   const user = useSelector((state: RootState) => state.auth.user);
-  console.log("유저", user);
+
   const fileInputRef = useRef<HTMLInputElement>(null);
   const faviconUrl = "favicon.png";
 
@@ -33,7 +33,9 @@ const CreateChatRoomModal: React.FC = () => {
   const [localChannelName, setLocalChannelName] = useState("");
   const [localDescription, setLocalDescription] = useState("");
   const [localChatRoomImg, setLocalChatRoomImg] = useState(chatRoomImg);
-  const [channelNameError, setChannelNameError] = useState("");
+  const [channelNameError, setChannelNameError] = useState(
+    "채널명은 최소 1자 이상 입력해주세요."
+  );
 
   const handleOverlayClick = () => {
     dispatch(closeModal());
@@ -71,8 +73,14 @@ const CreateChatRoomModal: React.FC = () => {
   const handleSubmit = async () => {
     console.log("User Info:", user); // 사용자 정보 확인
 
-    // 유저 정보와 채널명 길이 확인 (8자 이하)
-    if (user && user.uid && user.nickname && localChannelName.length <= 8) {
+    // 유저 정보와 채널명 길이 확인 (1자 이상 8자 이하)
+    if (
+      user &&
+      user.uid &&
+      user.nickname &&
+      localChannelName.length > 0 &&
+      localChannelName.length <= 8
+    ) {
       notify();
 
       // 상태를 Redux로 디스패치
@@ -117,6 +125,9 @@ const CreateChatRoomModal: React.FC = () => {
         if (!user.nickname) {
           console.error("User Nickname is missing");
         }
+        if (localChannelName.length === 0) {
+          console.error("Channel name is too short");
+        }
         if (localChannelName.length > 8) {
           console.error("Channel name is too long");
         }
@@ -126,11 +137,13 @@ const CreateChatRoomModal: React.FC = () => {
 
   const handleChannelNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-    if (value.length <= 8) {
-      setLocalChannelName(value);
-      setChannelNameError("");
-    } else {
+    setLocalChannelName(value);
+    if (value.length < 1) {
+      setChannelNameError("채널명은 최소 1자 이상 입력해주세요.");
+    } else if (value.length > 8) {
       setChannelNameError("채널명은 8자 이하로 입력해주세요.");
+    } else {
+      setChannelNameError("");
     }
   };
 
