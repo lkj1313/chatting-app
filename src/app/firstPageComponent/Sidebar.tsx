@@ -10,7 +10,7 @@ import { RootState } from "@/app/store/store";
 import { Dropdown, Modal, Button } from "react-bootstrap";
 import { useRouter } from "next/navigation";
 import CreateChatRoomModal from "./CreateChatRoomModal";
-import ProfileModal from "../component/ProfileModal";
+import ProfileModal from "./ProfileModal";
 
 const Sidebar: React.FC = () => {
   const handleSignOut = useSignOut();

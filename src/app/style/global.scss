@@ -33,67 +33,6 @@ body.modal-open {
     min-height: 100vh; /* 추가: 최소 높이를 전체 화면 높이로 설정 */
   }
 }
-
-//부트스트랩
-@import "bootstrap/dist/css/bootstrap.min.css";
-
-// loginpage
-@import "./loginpage/loginpage.scss";
-
-// first page
-@import "./FirstPageComponent/firstPage.scss";
-@import "./component/createChatRoomModal.scss";
-
-// chatroompage
-@import "./chatRoomPageComponent/ChatRoom.scss";
-//loadingPage
-@import "./loadingPage/loadingPage.scss";
-.signup-form {
-  width: 100%;
-  max-width: 400px;
-  margin: auto;
-  padding: 20px;
-  border: 1px solid #ccc;
-  border-radius: 10px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  background-color: #fff;
-}
-
-.form-step {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  animation: fadeIn 0.5s ease-in-out;
-}
-
-.form-step label {
-  font-weight: bold;
-}
-
-.form-step input {
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-}
-
-.form-step button {
-  padding: 10px;
-  border: none;
-  border-radius: 5px;
-  background-color: #007bff;
-  color: #fff;
-  cursor: pointer;
-}
-
-.form-step button:hover {
-  background-color: #0056b3;
-}
-
-.error {
-  color: red;
-  font-size: 0.9em;
-}
-
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -104,3 +43,17 @@ body.modal-open {
     transform: translateY(0);
   }
 }
+//부트스트랩
+@import "bootstrap/dist/css/bootstrap.min.css";
+
+// loginpage
+@import "../loginpage/style/loginPage.scss";
+
+// first page
+@import "../firstPageComponent/style/firstPage.scss";
+
+// chatroompage
+@import "../chatroompage/[id]/style/ChatRoomPage.scss";
+
+//loadingPage
+@import "../loadingpage/style/loadingPage.scss";

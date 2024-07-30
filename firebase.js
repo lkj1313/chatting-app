@@ -10,7 +10,7 @@ dotenv.config();
 const firebaseConfig = JSON.parse(process.env.NEXT_PUBLIC_FIREBASE_CONFIG);
 
 // Firebase 설정 로드
-console.log("Firebase Config:", firebaseConfig);
+// console.log("Firebase Config:", firebaseConfig);
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);

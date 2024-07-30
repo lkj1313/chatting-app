@@ -7,16 +7,16 @@ interface ProfileModalProps {
   user: any;
   newNickname: string;
   isEditingNickname: boolean;
-  newStatusMessage: string; // 새로운 상태 메시지
-  isEditingStatusMessage: boolean; // 상태 메시지 편집 상태
+  newStatusMessage: string;
+  isEditingStatusMessage: boolean;
   onNicknameChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   onNicknameSave: () => void;
   onNicknameBlur: () => void;
   onNicknameClick: () => void;
-  onStatusMessageChange: (event: React.ChangeEvent<HTMLInputElement>) => void; // 상태 메시지 변경 핸들러
-  onStatusMessageSave: () => void; // 상태 메시지 저장 핸들러
-  onStatusMessageBlur: () => void; // 상태 메시지 블러 핸들러
-  onStatusMessageClick: () => void; // 상태 메시지 클릭 핸들러
+  onStatusMessageChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  onStatusMessageSave: () => void;
+  onStatusMessageBlur: () => void;
+  onStatusMessageClick: () => void;
   onImageChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   onImageClick: () => void;
 }
@@ -41,6 +41,12 @@ const ProfileModal: React.FC<ProfileModalProps> = ({
   onImageClick,
 }) => {
   const changeProfileImgInputRef = useRef<HTMLInputElement>(null);
+
+  const handleImageClick = () => {
+    if (changeProfileImgInputRef.current) {
+      changeProfileImgInputRef.current.click();
+    }
+  };
 
   return (
     <Modal show={show} onHide={onClose}>
@@ -70,7 +76,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({
                   cursor: "pointer",
                   marginRight: "30px",
                 }}
-                onClick={onImageClick}
+                onClick={handleImageClick}
               >
                 <img
                   style={{
@@ -78,8 +84,9 @@ const ProfileModal: React.FC<ProfileModalProps> = ({
                     height: "70px",
                     borderRadius: "35px",
                   }}
-                  src={`${user.profileImgURL}`}
-                ></img>
+                  src={user.profileImgURL}
+                  alt="Profile"
+                />
               </button>
               {isEditingNickname ? (
                 <input

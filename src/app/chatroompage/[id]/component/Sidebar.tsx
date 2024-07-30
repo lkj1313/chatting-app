@@ -168,7 +168,7 @@ const Sidebar: React.FC = () => {
   };
 
   useEffect(() => {
-    // 'headerSidebar' 클래스를 가진 요소를 선택합니다.
+    // 'headerSidebar' 클래스를 가진 요소를 선택
     const sidebar = document.querySelector(".headerSidebar") as HTMLElement;
 
     // 애니메이션이 끝난 후 호출되는 함수
@@ -196,7 +196,7 @@ const Sidebar: React.FC = () => {
         handleAnimationEnd(); // 애니메이션이 끝나면 handleAnimationEnd 호출
       }, 500); // 애니메이션 지속 시간 후
     }
-  }, [chatRoomSidebar]); // chatRoomSidebar 상태가 변경될 때마다 이 효과가 실행됩니다.
+  }, [chatRoomSidebar]); // chatRoomSidebar 상태가 변경될 때마다 이 효과가 실행
 
   const handleOverlayClick = () => {
     const sidebar = document.querySelector(".headerSidebar") as HTMLElement;
