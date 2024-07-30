@@ -2,10 +2,10 @@
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { db, auth } from "../../../firebase";
-import { signInWithEmailAndPassword } from "firebase/auth";
+import { db, auth, googleProvider } from "../../../firebase";
+import { signInWithEmailAndPassword, signInWithPopup } from "firebase/auth";
 import { signInWithCustomToken } from "firebase/auth";
-import { doc, getDoc } from "firebase/firestore";
+import { doc, getDoc, setDoc } from "firebase/firestore";
 import { useDispatch } from "react-redux";
 import { login } from "@/app/store/authSlice";
 import { setCookie } from "cookies-next";
@@ -24,6 +24,8 @@ function LoginPage() {
   const [errors, setErrors] = useState<Errors>({});
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [showCard, setShowCard] = useState<boolean>(false);
+  const [naverLoginUrl, setNaverLoginUrl] = useState<string>("");
+
   const router = useRouter();
   const dispatch = useDispatch();
 
@@ -207,6 +209,73 @@ function LoginPage() {
     setShowCard(true);
   }, []);
 
+  const handleGoogleLogin = async () => {
+    try {
+      const result = await signInWithPopup(auth, googleProvider);
+      const user = result.user;
+      const idToken = await user.getIdToken();
+      const docRef = doc(db, "users", user.uid);
+      const docSnap = await getDoc(docRef);
+
+      if (!docSnap.exists()) {
+        await setDoc(doc(db, "users", user.uid), {
+          email: user.email,
+          nickname: user.displayName,
+          profileImg: user.photoURL,
+          createdAt: new Date(),
+        });
+      }
+
+      const response = await fetch("/api/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ idToken }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        const customToken = data.customToken;
+        console.log("Received Custom Token:", customToken);
+
+        // 커스텀 토큰으로 Firebase 인증
+        await signInWithCustomToken(auth, customToken);
+        const idTokenResult = await auth.currentUser?.getIdToken();
+
+        // 쿠키 설정
+        setCookie("authToken", idTokenResult, {
+          maxAge: 60 * 60 * 24, // 1일
+          httpOnly: false,
+          secure: process.env.NODE_ENV === "production",
+          sameSite: "strict",
+          path: "/",
+        });
+
+        const userDoc = await getDoc(docRef);
+        if (userDoc.exists()) {
+          const userData = userDoc.data();
+          dispatch(
+            login({
+              uid: user.uid,
+              email: user.email,
+              nickname: userData.nickname,
+              profileImgURL: userData.profileImg,
+            })
+          );
+          toast.success("로그인 완료!");
+          setTimeout(() => {
+            router.push("/loadingpage");
+          }, 1000);
+        }
+      } else {
+        const errorData = await response.json();
+        throw new Error("커스텀 토큰으로 로그인하는 중 오류가 발생했습니다.");
+      }
+    } catch (error: any) {
+      console.error("Google login error:", error);
+      toast.error("Google 로그인 실패. 다시 시도해주세요.");
+    }
+  };
+
   return (
     <>
       <div className="d-flex justify-content-center align-items-center vh-100 ml-1 mr-1">
@@ -278,6 +347,20 @@ function LoginPage() {
                 Signup
               </button>
             </Link>
+            <hr></hr>
+            <button
+              type="button"
+              className="btn btn-light w-100"
+              style={{ border: "1px solid gray" }}
+              onClick={handleGoogleLogin}
+            >
+              <img
+                src="/googleLogo.png"
+                style={{ width: "30px" }}
+                alt="Google Logo"
+              />
+              <span style={{ marginLeft: "10px" }}>Google로 시작하기</span>
+            </button>
           </div>
         </div>
       </div>
