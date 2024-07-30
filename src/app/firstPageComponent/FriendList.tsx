@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/app/store/store";
 
 import "react-toastify/dist/ReactToastify.css";
-import { db } from "../../../../firebase"; // Firebase 설정 파일에서 Firestore 인스턴스를 가져옵니다.
+import { db } from "../../../firebase";
 import { doc, getDoc } from "firebase/firestore";
 
 import { participantInfo } from "@/app/store/participantModalSlice";

@@ -1,11 +1,14 @@
 import React from "react";
-import { useRouter } from "next/navigation";
 
-const FirstPageFooter = () => {
-  const router = useRouter();
+interface FirstPageFooterProps {
+  setActiveComponent: (component: string) => void;
+}
 
-  const handleNavigation = (path: string) => {
-    router.push(path);
+const FirstPageFooter: React.FC<FirstPageFooterProps> = ({
+  setActiveComponent,
+}) => {
+  const handleNavigation = (component: string) => {
+    setActiveComponent(component);
   };
 
   return (
@@ -14,14 +17,14 @@ const FirstPageFooter = () => {
         <div
           className="col-6 footer-button"
           role="button"
-          onClick={() => handleNavigation("/friendpage")}
+          onClick={() => handleNavigation("friend")}
         >
           <img src="/friendIcon.png" className="icon-img" alt="Friends" />
         </div>
         <div
           className="col-6 footer-button"
           role="button"
-          onClick={() => handleNavigation("/")}
+          onClick={() => handleNavigation("main")}
         >
           <img src="/comment.png" className="icon-img" alt="Comments" />
         </div>
