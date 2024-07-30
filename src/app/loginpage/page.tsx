@@ -290,7 +290,6 @@ function LoginPage() {
             display: "flex",
             alignItems: "center",
             position: "relative",
-            top: "-5%",
           }}
         >
           <img

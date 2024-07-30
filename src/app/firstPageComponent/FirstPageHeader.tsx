@@ -1,7 +1,7 @@
 "use client"; // 클라이언트 컴포넌트로 지정
 import React from "react";
 import { useDispatch } from "react-redux";
-import "bootstrap/dist/css/bootstrap.min.css";
+
 import { Navbar, Button } from "react-bootstrap";
 import { openSidebar } from "@/app/store/uiSlice";
 
@@ -19,7 +19,7 @@ const FirstPageHeader = () => {
       }}
     >
       <Navbar
-        bg="dark"
+        className="headerNavBar"
         variant="dark"
         expand="lg"
         style={{

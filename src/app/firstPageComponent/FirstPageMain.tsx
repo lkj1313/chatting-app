@@ -48,7 +48,7 @@ const FirstPageMain: React.FC = () => {
         height: "100%",
         padding: "0",
         margin: "0",
-        overflow: "auto",
+        overflowX: "hidden",
       }}
     >
       {chatRooms.length > 0 ? (
