@@ -158,8 +158,10 @@ const ChatRoomPage = () => {
           handleImageClick={handleImageClick}
           totalParticipants={chatRoomInformation.participants.length}
         />
-        <ChatRoomPageFooter handleSendMessage={handleSendMessage} />{" "}
-        {/* handleSendMessage 전달 */}
+        <ChatRoomPageFooter
+          handleSendMessage={handleSendMessage}
+          chatRoomParticipants={chatRoomInformation.participants}
+        />{" "}
         <Sidebar />
       </div>
 

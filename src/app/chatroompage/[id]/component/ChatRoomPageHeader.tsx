@@ -119,7 +119,7 @@ const ChatRoomPageHeader: React.FC<ChatRoomPageHeaderProps> = ({}) => {
               style={{
                 display: "flex",
                 flexDirection: "column",
-                alignItems: "center",
+
                 justifyContent: "center",
               }}
             >
@@ -131,6 +131,7 @@ const ChatRoomPageHeader: React.FC<ChatRoomPageHeaderProps> = ({}) => {
                   whiteSpace: "nowrap",
                   overflow: "hidden",
                   textOverflow: "ellipsis",
+                  width: "100%",
                 }}
               >
                 {chatRoomInformation?.channelName}

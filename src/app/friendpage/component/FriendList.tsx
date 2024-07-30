@@ -15,6 +15,7 @@ interface Friend {
   nickname: string;
   profileImg: string;
   email: string;
+  statusMessage: string | null;
 }
 
 const getFriends = async (userUid: string) => {
@@ -53,6 +54,7 @@ const FriendList: React.FC = () => {
               nickname: friendData.nickname,
               profileImg: friendData.profileImg,
               email: friendData.email,
+              statusMessage: friendData.statusMessage,
             };
           }
           return null;
@@ -75,7 +77,7 @@ const FriendList: React.FC = () => {
     },
     [dispatch]
   );
-
+  console.log("friends", friends);
   const friendItems = useMemo(() => {
     return friends.map((friend) => (
       <div className="container chatBox chatRow" key={friend.uid}>
@@ -133,7 +135,7 @@ const FriendList: React.FC = () => {
                 </p>
               </div>
               <div className="row" style={{ height: "40%" }}>
-                <p>{friend.email}</p>
+                <p>{friend.statusMessage}</p>
               </div>
             </div>
           </div>

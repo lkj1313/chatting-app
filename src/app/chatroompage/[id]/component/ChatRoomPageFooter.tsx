@@ -12,10 +12,12 @@ import { useParams } from "next/navigation";
 
 interface ChatRoomPageFooterProps {
   handleSendMessage: (text: string, imageUrl?: string) => void;
+  chatRoomParticipants: string[];
 }
 
 const ChatRoomPageFooter: React.FC<ChatRoomPageFooterProps> = ({
   handleSendMessage,
+  chatRoomParticipants,
 }) => {
   const [inputText, setInputText] = useState<string>("");
   const [showPicker, setShowPicker] = useState(false);
@@ -30,7 +32,7 @@ const ChatRoomPageFooter: React.FC<ChatRoomPageFooterProps> = ({
 
   // params.id가 배열인 경우 첫 번째 요소를 사용하고, 그렇지 않으면 그대로 사용
   const chatRoomId = Array.isArray(params?.id) ? params.id[0] : params?.id;
-
+  console.log(chatRoomParticipants);
   // 이미지 업로드 함수
   const handleImageUpload = async (
     event: React.ChangeEvent<HTMLInputElement>
@@ -63,10 +65,10 @@ const ChatRoomPageFooter: React.FC<ChatRoomPageFooterProps> = ({
   }, [chatRoomId, user.uid]);
 
   useEffect(() => {
-    if (user.uid && !isParticipant) {
+    if (user?.uid && chatRoomParticipants.includes(user.uid) && !hasEntered) {
       enterChatRoom(); // 사용자 자동 참가
     }
-  }, [user.uid, isParticipant, enterChatRoom]);
+  }, [user?.uid, chatRoomParticipants, enterChatRoom, hasEntered]);
 
   const handleKeyPress = useCallback(
     (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -109,7 +111,7 @@ const ChatRoomPageFooter: React.FC<ChatRoomPageFooterProps> = ({
         position: "relative",
       }}
     >
-      {isParticipant ? (
+      {isParticipant || hasEntered ? (
         <div
           className="row"
           style={{
@@ -244,9 +246,16 @@ const ChatRoomPageFooter: React.FC<ChatRoomPageFooterProps> = ({
           </div>
         </div>
       ) : (
-        <div className="chat_restricted" role="button" onClick={enterChatRoom}>
-          대화방 들어가기
-        </div>
+        !hasEntered && (
+          <button
+            style={{ width: "100%", height: "100%", borderRadius: "0" }}
+            type="button"
+            className="btn btn-secondary"
+            onClick={enterChatRoom}
+          >
+            대화방 참가
+          </button>
+        )
       )}
     </footer>
   );

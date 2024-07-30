@@ -111,7 +111,7 @@ const ParticipantModal = () => {
           await updateDoc(userDocRef, {
             friends: arrayUnion(selectedParticipant.uid),
           });
-          console.log("친구가 성공적으로 추가되었습니다."); // 성공 메시지 출력
+          alert("친구가 성공적으로 추가되었습니다."); // 성공 메시지 출력
         } else {
           console.error("사용자 문서를 찾을 수 없습니다."); // 사용자 문서를 찾을 수 없는 경우 오류 메시지 출력
         }

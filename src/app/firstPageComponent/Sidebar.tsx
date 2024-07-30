@@ -1,24 +1,16 @@
-import React from "react";
-import { useEffect, useState, useRef } from "react";
-
+import React, { useState, useRef, useEffect } from "react";
 import useSignOut from "./useSignOut";
-
 import { openModal, closeModal, closeSidebar } from "@/app/store/uiSlice";
-
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { db } from "../../../firebase"; // Firestore 초기화
-
 import { login } from "@/app/store/authSlice";
-
 import { getCookie } from "cookies-next";
-
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "@/app/store/store";
-
 import { Dropdown, Modal, Button } from "react-bootstrap";
 import { useRouter } from "next/navigation";
-
 import CreateChatRoomModal from "./CreateChatRoomModal";
+import ProfileModal from "../component/ProfileModal";
 
 const Sidebar: React.FC = () => {
   const handleSignOut = useSignOut();
@@ -27,14 +19,15 @@ const Sidebar: React.FC = () => {
   const [showProfileModal, setShowProfileModal] = useState(false);
   const [isEditingNickname, setIsEditingNickname] = useState(false);
   const [newNickname, setNewNickname] = useState("");
+  const [isEditingStatusMessage, setIsEditingStatusMessage] = useState(false); // 상태 메시지 편집 상태
+  const [newStatusMessage, setNewStatusMessage] = useState(""); // 새로운 상태 메시지
   const router = useRouter();
 
   const sidebarOpen = useSelector((state: RootState) => state.ui.sidebarOpen);
-  // const showModal = useSelector((state: RootState) => state.ui.showModal);
-
   const user = useSelector((state: RootState) => state.auth.user);
   const changeProfileImgInputRef = useRef<HTMLInputElement>(null);
   const isAnimating = useRef(false); // 애니메이션 상태를 추적하는 ref
+
   useEffect(() => {
     if (isClient) {
       const authToken = getCookie("authToken");
@@ -47,7 +40,6 @@ const Sidebar: React.FC = () => {
 
   const handleProfileClick = () => {
     // 프로필모달 열기함수
-
     setShowProfileModal(true);
   };
 
@@ -55,6 +47,7 @@ const Sidebar: React.FC = () => {
     // 프로필모달 닫기 함수
     setShowProfileModal(false);
   };
+
   const fetchUserData = async (token: string) => {
     try {
       console.log("Fetching UID with token:", token);
@@ -81,6 +74,7 @@ const Sidebar: React.FC = () => {
               email: userData?.email || null,
               nickname: userData?.nickname || null,
               profileImgURL: userData?.profileImg || null,
+              statusMessage: userData?.statusMessage || null, // 상태 메시지 추가
             })
           );
         } else {
@@ -93,9 +87,11 @@ const Sidebar: React.FC = () => {
       console.error("Error fetching user data:", error);
     }
   };
+
   const handleOverlayClick = () => {
     dispatch(closeSidebar());
   };
+
   const closeModalClick = () => {
     dispatch(closeModal());
   };
@@ -107,7 +103,7 @@ const Sidebar: React.FC = () => {
   };
 
   const handleFileChange = async (
-    //프사변경 함수
+    // 프사변경 함수
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
     const file = event.target.files?.[0];
@@ -139,7 +135,7 @@ const Sidebar: React.FC = () => {
   };
 
   const handleNicknameSave = async () => {
-    //닉네임변경함수
+    // 닉네임변경함수
     if (user.uid && newNickname) {
       try {
         const userDocRef = doc(db, "users", user.uid);
@@ -159,12 +155,47 @@ const Sidebar: React.FC = () => {
   const handleNicknameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setNewNickname(event.target.value);
   };
+
   const handleNicknameBlur = () => {
     setIsEditingNickname(false);
   };
+
   const handleNicknameClick = () => {
     setIsEditingNickname(true);
   };
+
+  const handleStatusMessageSave = async () => {
+    // 상태 메시지 저장 함수
+    if (user.uid && newStatusMessage) {
+      try {
+        const userDocRef = doc(db, "users", user.uid);
+        await updateDoc(userDocRef, {
+          statusMessage: newStatusMessage,
+        });
+
+        // Redux 상태 업데이트
+        dispatch(login({ ...user, statusMessage: newStatusMessage }));
+        setIsEditingStatusMessage(false);
+      } catch (error) {
+        console.error("Error updating status message in Firestore:", error);
+      }
+    }
+  };
+
+  const handleStatusMessageChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setNewStatusMessage(event.target.value);
+  };
+
+  const handleStatusMessageBlur = () => {
+    setIsEditingStatusMessage(false);
+  };
+
+  const handleStatusMessageClick = () => {
+    setIsEditingStatusMessage(true);
+  };
+
   useEffect(() => {
     const sidebar = document.querySelector(".homeSidebar") as HTMLElement;
 
@@ -192,6 +223,7 @@ const Sidebar: React.FC = () => {
       }, 500); // 애니메이션 지속 시간 후 display를 none으로 변경
     }
   }, [sidebarOpen]);
+
   return (
     <>
       {sidebarOpen && ( //sidebar열릴시 배경 overlay
@@ -243,83 +275,26 @@ const Sidebar: React.FC = () => {
         <hr />
         <CreateChatRoomModal />
 
-        <Modal show={showProfileModal} onHide={handleCloseProfileModal}>
-          <div
-            style={{
-              width: "100%",
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "flex-start",
-            }}
-          >
-            <Modal.Header>
-              <Modal.Title>
-                <div style={{ display: "flex", alignItems: "center" }}>
-                  <input
-                    type="file"
-                    ref={changeProfileImgInputRef}
-                    style={{ display: "none" }}
-                    onChange={handleFileChange}
-                  />
-                  <button
-                    style={{
-                      width: "70px",
-                      height: "70px",
-                      borderRadius: "35px",
-                      border: "none",
-                      cursor: "pointer",
-                      marginRight: "30px",
-                    }}
-                    onClick={handleImageClick}
-                  >
-                    <img
-                      style={{
-                        width: "70px",
-                        height: "70px",
-                        borderRadius: "35px",
-                      }}
-                      src={`${user.profileImgURL}`}
-                    ></img>
-                  </button>
-                  {isEditingNickname ? (
-                    <input
-                      style={{
-                        padding: "15px",
-                        height: "50px",
-                        width: "300px",
-                        borderRadius: "10px",
-                      }}
-                      placeholder="닉네임을 변경하세요"
-                      type="text"
-                      value={newNickname}
-                      onChange={handleNicknameChange}
-                      onBlur={handleNicknameBlur}
-                      onKeyPress={(event) => {
-                        if (event.key === "Enter") {
-                          handleNicknameSave();
-                        }
-                      }}
-                      autoFocus
-                    />
-                  ) : (
-                    <p
-                      style={{ margin: "0", cursor: "pointer" }}
-                      onClick={handleNicknameClick}
-                    >
-                      {user.nickname}
-                    </p>
-                  )}
-                </div>
-              </Modal.Title>
-            </Modal.Header>
-            <Modal.Body>프로필사진과 닉네임을 변경하세요!</Modal.Body>
-            <Modal.Footer>
-              <Button variant="secondary" onClick={handleCloseProfileModal}>
-                Close
-              </Button>
-            </Modal.Footer>
-          </div>
-        </Modal>
+        {/* ProfileModal 컴포넌트 사용 */}
+        <ProfileModal
+          show={showProfileModal}
+          onClose={handleCloseProfileModal}
+          user={user}
+          newNickname={newNickname}
+          isEditingNickname={isEditingNickname}
+          newStatusMessage={newStatusMessage} // 새로운 상태 메시지
+          isEditingStatusMessage={isEditingStatusMessage} // 상태 메시지 편집 상태
+          onNicknameChange={handleNicknameChange}
+          onNicknameSave={handleNicknameSave}
+          onNicknameBlur={handleNicknameBlur}
+          onNicknameClick={handleNicknameClick}
+          onStatusMessageChange={handleStatusMessageChange} // 상태 메시지 변경 핸들러
+          onStatusMessageSave={handleStatusMessageSave} // 상태 메시지 저장 핸들러
+          onStatusMessageBlur={handleStatusMessageBlur} // 상태 메시지 블러 핸들러
+          onStatusMessageClick={handleStatusMessageClick} // 상태 메시지 클릭 핸들러
+          onImageChange={handleFileChange}
+          onImageClick={handleImageClick}
+        />
       </div>
     </>
   );

@@ -8,6 +8,7 @@ interface User {
   nickname: string | null;
   profileImgURL: string | null;
   friend: string[] | null; // 친구 목록을 배열로 수정
+  statusMessage: string | null;
 }
 
 interface AuthState {
@@ -25,6 +26,7 @@ const initialState: AuthState = {
     additionalInfo: undefined,
     profileImg: undefined,
     friend: [], // 초기 값을 빈 배열로 설정
+    statusMessage: null,
   },
 };
 
