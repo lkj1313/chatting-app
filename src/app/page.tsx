@@ -10,6 +10,7 @@ import FriendList from "./firstPageComponent/FriendList";
 import { closeSidebar } from "./store/uiSlice";
 import Sidebar from "./firstPageComponent/Sidebar";
 import ParticipantModal from "./chatroompage/[id]/component/ParticipantModal";
+import useViewportHeight from "./component/useViewportHeight";
 
 const FirstPage: React.FC = () => {
   const [activeComponent, setActiveComponent] = useState("main");
@@ -47,14 +48,14 @@ const FirstPage: React.FC = () => {
       window.removeEventListener("popstate", handleLocationChange);
     };
   }, [dispatch]);
-
+  useViewportHeight();
   return (
     <>
       <Container
         style={{
           margin: "0",
           padding: "0",
-          height: "100vh",
+          height: "calc(var(--vh) * 100)",
           display: "flex",
           flexDirection: "column",
           position: "relative",

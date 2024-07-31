@@ -11,6 +11,7 @@ import { login } from "@/app/store/authSlice";
 import { setCookie } from "cookies-next";
 import { toast, Bounce } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import useViewportHeight from "../component/useViewportHeight";
 
 interface Errors {
   email?: string;
@@ -275,10 +276,13 @@ function LoginPage() {
       toast.error("Google 로그인 실패. 다시 시도해주세요.");
     }
   };
-
+  useViewportHeight();
   return (
     <>
-      <div className="d-flex justify-content-center align-items-center vh-100 ml-1 mr-1">
+      <div
+        className="d-flex justify-content-center align-items-center vh-100 ml-1 mr-1"
+        style={{ height: "calc(var(--vh) * 100)" }}
+      >
         <div
           className={`card p-4 shadow-sm container card-box ${
             showCard ? "show" : ""
