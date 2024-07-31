@@ -8,6 +8,8 @@ import {
   orderBy,
   limit,
   setDoc,
+  updateDoc,
+  arrayUnion,
 } from "firebase/firestore";
 import { ref, uploadString, getDownloadURL } from "firebase/storage";
 import { db, storage } from "../../../firebase";
@@ -44,18 +46,13 @@ const initialState: ChatRoomState = {
 
 export const saveChatRoom = createAsyncThunk<
   string,
-  {
-    chatRoomImg: string | null;
-    channelName: string;
-    description: string;
-    userId: string;
-    userName: string;
-  },
+  ChatRoomState,
   { rejectValue: string }
 >("chatRoom/saveChatRoom", async (chatRoom, { rejectWithValue }) => {
   try {
     const newChatRoomId = uuidv4();
     let imageUrl = "";
+
     if (chatRoom.chatRoomImg) {
       const storageRef = ref(
         storage,
@@ -65,11 +62,23 @@ export const saveChatRoom = createAsyncThunk<
       imageUrl = await getDownloadURL(storageRef);
     }
 
+    if (!chatRoom.userId) {
+      throw new Error("User ID is null");
+    }
+
+    // 채팅방 생성
     await setDoc(doc(db, "chatRooms", newChatRoomId), {
       ...chatRoom,
       chatRoomImg: imageUrl,
       chatRoomId: newChatRoomId,
     });
+
+    // 사용자 문서 업데이트
+    const userRef = doc(db, "users", chatRoom.userId);
+    await updateDoc(userRef, {
+      participatingRoom: arrayUnion(newChatRoomId), // 새로운 채팅방 ID 추가
+    });
+
     return newChatRoomId;
   } catch (error: any) {
     return rejectWithValue(error.message);
@@ -122,13 +131,37 @@ export const fetchChatRooms = createAsyncThunk<
   ChatRoomState[],
   void,
   { state: RootState; dispatch: AppDispatch; rejectValue: string }
->("chatRoom/fetchChatRooms", async (_, { rejectWithValue }) => {
+>("chatRoom/fetchChatRooms", async (_, { getState, rejectWithValue }) => {
+  const state = getState();
+  const user = state.auth.user;
+
+  if (!user?.uid) {
+    return rejectWithValue("User not authenticated");
+  }
+
   try {
-    const chatRoomDocs = await getDocs(collection(db, "chatRooms"));
+    // 사용자 정보 가져오기
+    const userDocRef = doc(db, "users", user.uid);
+    const userDoc = await getDoc(userDocRef);
+
+    if (!userDoc.exists()) {
+      return rejectWithValue("User document not found");
+    }
+
+    const participatingRooms = userDoc.data().participatingRoom || [];
+
+    // 참가한 방들 정보 가져오기
     const chatRoomList: ChatRoomState[] = await Promise.all(
-      chatRoomDocs.docs.map(async (doc) => {
+      participatingRooms.map(async (roomId: string) => {
+        const chatRoomDocRef = doc(db, "chatRooms", roomId);
+        const chatRoomDoc = await getDoc(chatRoomDocRef);
+
+        if (!chatRoomDoc.exists()) {
+          return null;
+        }
+
         const latestMessageQuery = query(
-          collection(db, "chatRooms", doc.id, "messages"),
+          collection(db, "chatRooms", roomId, "messages"),
           orderBy("time", "desc"),
           limit(1)
         );
@@ -137,21 +170,23 @@ export const fetchChatRooms = createAsyncThunk<
           latestMessageSnapshot.docs[0]?.data().text || "No messages yet";
 
         return {
-          chatRoomImg: doc.data().chatRoomImg,
-          channelName: doc.data().channelName,
-          description: doc.data().description,
+          chatRoomImg: chatRoomDoc.data().chatRoomImg,
+          channelName: chatRoomDoc.data().channelName,
+          description: chatRoomDoc.data().description,
           latestMessage,
-          chatRoomId: doc.id,
-          participants: doc.data().participants || [],
-          userId: doc.data().userId || null,
-          userName: doc.data().userName || null,
+          chatRoomId: chatRoomDoc.id,
+          participants: chatRoomDoc.data().participants || [],
+          userId: chatRoomDoc.data().userId || null,
+          userName: chatRoomDoc.data().userName || null,
           status: "idle",
           error: null,
           chatRooms: [],
         };
       })
     );
-    return chatRoomList;
+
+    // null 필터링
+    return chatRoomList.filter((room) => room !== null) as ChatRoomState[];
   } catch (error: any) {
     return rejectWithValue(error.message);
   }

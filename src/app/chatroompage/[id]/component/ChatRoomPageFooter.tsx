@@ -52,17 +52,30 @@ const ChatRoomPageFooter: React.FC<ChatRoomPageFooterProps> = ({
 
   // chatroom 입장 함수
   const enterChatRoom = useCallback(async () => {
+    if (!chatRoomId || !user?.uid) {
+      console.error("ChatRoom ID or User UID is null");
+      return;
+    }
+
     try {
+      // 채팅방 문서 참조
       const chatRoomRef = doc(db, "chatRooms", chatRoomId);
       await updateDoc(chatRoomRef, {
         participants: arrayUnion(user.uid),
       });
+
+      // 사용자 문서 참조
+      const userRef = doc(db, "users", user.uid);
+      await updateDoc(userRef, {
+        participatingRoom: arrayUnion(chatRoomId), // participatingRoom 필드에 채팅방 ID 추가
+      });
+
       setIsParticipant(true);
       setHasEntered(true);
     } catch (error) {
       console.error("Error adding user to participants: ", error);
     }
-  }, [chatRoomId, user.uid]);
+  }, [chatRoomId, user?.uid]);
 
   useEffect(() => {
     if (user?.uid && chatRoomParticipants.includes(user.uid) && !hasEntered) {

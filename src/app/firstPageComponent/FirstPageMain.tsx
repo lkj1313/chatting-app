@@ -6,6 +6,8 @@ import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { AppDispatch, RootState } from "../store/store";
 import { fetchChatRooms, setChatRoomId } from "@/app/store/chatRoomSlice";
+import { collection, getDocs } from "firebase/firestore";
+import { db } from "../../../firebase";
 
 interface ChatRoom {
   chatRoomId: string;
@@ -25,25 +27,40 @@ const FirstPageMain: React.FC<FirstPageMainProps> = ({
   const dispatch: AppDispatch = useDispatch();
   const router = useRouter();
   const chatRooms = useSelector((state: RootState) => state.chatRoom.chatRooms);
-
+  const [allChatRooms, setAllChatRooms] = useState<ChatRoom[]>([]);
   useEffect(() => {
     dispatch(fetchChatRooms());
   }, [dispatch]);
 
   const handleChatBoxClick = (id: string) => {
-    toast.info("Entering chat room...", {
-      autoClose: 1000,
-      position: "top-center",
-    });
-
-    setTimeout(() => {
-      router.push(`/chatroompage/${id}`);
-      dispatch(setChatRoomId(id));
-    }, 200);
+    router.push(`/chatroompage/${id}`);
+    dispatch(setChatRoomId(id));
   };
+  useEffect(() => {
+    const fetchAllChatRooms = async () => {
+      try {
+        const chatRoomCollection = collection(db, "chatRooms");
+        const chatRoomSnapshot = await getDocs(chatRoomCollection);
+        const chatRoomList: ChatRoom[] = chatRoomSnapshot.docs.map((doc) => {
+          const data = doc.data();
+          return {
+            chatRoomId: doc.id,
+            channelName: data.channelName,
+            description: data.description,
+            chatRoomImg: data.chatRoomImg,
+            latestMessage: data.latestMessage || "No messages yet",
+          };
+        });
+        setAllChatRooms(chatRoomList);
+      } catch (error) {
+        console.error("Error fetching chat rooms: ", error);
+      }
+    };
 
+    fetchAllChatRooms();
+  }, []);
   const filteredChatRooms = selectedChatRoomId
-    ? chatRooms.filter((room) => room.chatRoomId === selectedChatRoomId)
+    ? allChatRooms.filter((room) => room.chatRoomId === selectedChatRoomId)
     : chatRooms;
 
   return (
