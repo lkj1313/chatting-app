@@ -9,7 +9,8 @@ interface FirstPageHeaderProps {
   isReadingMode: boolean;
   onClickReadingButton: () => void;
   onClickBackButton: () => void;
-  onSelectChatRoom: (channelName: string) => void; // 콜백 함수 프롭 추가
+  onSelectChatRoom: (chatRoomId: string) => void;
+  activeComponent: string; // 추가
 }
 
 const FirstPageHeader: React.FC<FirstPageHeaderProps> = ({
@@ -17,6 +18,7 @@ const FirstPageHeader: React.FC<FirstPageHeaderProps> = ({
   onClickReadingButton,
   onClickBackButton,
   onSelectChatRoom,
+  activeComponent, // 추가
 }) => {
   const dispatch = useDispatch();
 
@@ -34,7 +36,7 @@ const FirstPageHeader: React.FC<FirstPageHeaderProps> = ({
           alignItems: "center",
         }}
       >
-        {isReadingMode ? (
+        {activeComponent === "main" && isReadingMode ? (
           <>
             <button
               onClick={onClickReadingButton}
@@ -55,10 +57,13 @@ const FirstPageHeader: React.FC<FirstPageHeaderProps> = ({
             </Button>
           </>
         ) : (
-          <ChatRoomSearch
-            onClickBackButton={onClickBackButton}
-            onSelectChatRoom={onSelectChatRoom}
-          />
+          activeComponent === "main" &&
+          !isReadingMode && (
+            <ChatRoomSearch
+              onClickBackButton={onClickBackButton}
+              onSelectChatRoom={onSelectChatRoom}
+            />
+          )
         )}
       </Navbar>
     </header>

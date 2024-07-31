@@ -2,14 +2,13 @@
 import React, { useEffect, useState, useCallback, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/app/store/store";
-
 import "react-toastify/dist/ReactToastify.css";
 import { db } from "../../../firebase";
 import { doc, getDoc } from "firebase/firestore";
-
 import { participantInfo } from "@/app/store/participantModalSlice";
 import { participantModalOpen } from "@/app/store/uiSlice";
 
+// Friend 인터페이스 정의
 interface Friend {
   uid: string;
   nickname: string;
@@ -18,6 +17,7 @@ interface Friend {
   statusMessage: string | null;
 }
 
+// 친구 목록 가져오기
 const getFriends = async (userUid: string) => {
   const userDocRef = doc(db, "users", userUid);
   const userDoc = await getDoc(userDocRef);
@@ -27,6 +27,7 @@ const getFriends = async (userUid: string) => {
   return [];
 };
 
+// 사용자 정보 가져오기
 const getUserInfo = async (uid: string) => {
   const userDocRef = doc(db, "users", uid);
   const userDoc = await getDoc(userDocRef);
@@ -41,6 +42,7 @@ const FriendList: React.FC = () => {
   const currentUser = useSelector((state: RootState) => state.auth.user);
   const dispatch = useDispatch();
 
+  // 친구 목록을 가져오는 함수
   const fetchFriends = useCallback(async () => {
     if (!currentUser?.uid) return;
     try {
@@ -66,10 +68,12 @@ const FriendList: React.FC = () => {
     }
   }, [currentUser]);
 
+  // 컴포넌트가 마운트될 때 친구 목록을 가져옴
   useEffect(() => {
     fetchFriends();
   }, [fetchFriends]);
 
+  // 친구를 클릭했을 때 동작하는 함수
   const handleFriendClick = useCallback(
     (friend: Friend) => {
       dispatch(participantInfo(friend));
@@ -77,7 +81,8 @@ const FriendList: React.FC = () => {
     },
     [dispatch]
   );
-  console.log("friends", friends);
+
+  // 친구 목록을 렌더링
   const friendItems = useMemo(() => {
     return friends.map((friend) => (
       <div className="container chatBox chatRow" key={friend.uid}>

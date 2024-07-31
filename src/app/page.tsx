@@ -9,6 +9,7 @@ import FirstPageFooter from "./firstPageComponent/FirstPageFooter";
 import FriendList from "./firstPageComponent/FriendList";
 import { closeSidebar } from "./store/uiSlice";
 import Sidebar from "./firstPageComponent/Sidebar";
+import ParticipantModal from "./chatroompage/[id]/component/ParticipantModal";
 
 const FirstPage: React.FC = () => {
   const [activeComponent, setActiveComponent] = useState("main");
@@ -64,7 +65,8 @@ const FirstPage: React.FC = () => {
           isReadingMode={isReadingMode}
           onClickReadingButton={onClickReadingButton}
           onClickBackButton={onClickBackButton}
-          onSelectChatRoom={onSelectChatRoom} // 이 부분 추가
+          onSelectChatRoom={onSelectChatRoom}
+          activeComponent={activeComponent}
         />
         {activeComponent === "main" ? (
           <FirstPageMain selectedChatRoomId={selectedChatRoomId} />
@@ -77,6 +79,7 @@ const FirstPage: React.FC = () => {
         />
       </Container>
       <Sidebar />
+      <ParticipantModal />
     </>
   );
 };
