@@ -1,5 +1,5 @@
 "use client";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -36,6 +36,15 @@ const CreateChatRoomModal: React.FC = () => {
   const [channelNameError, setChannelNameError] = useState(
     "채널명은 최소 1자 이상 입력해주세요."
   );
+  useEffect(() => {
+    if (showModal) {
+      // 모달이 열릴 때 상태 초기화
+      setLocalChannelName("");
+      setLocalDescription("");
+      setLocalChatRoomImg("");
+      setChannelNameError("채널명은 최소 1자 이상 입력해주세요.");
+    }
+  }, [showModal, chatRoomImg]);
 
   const handleOverlayClick = () => {
     dispatch(closeModal());

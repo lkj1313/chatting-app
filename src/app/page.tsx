@@ -12,6 +12,20 @@ import Sidebar from "./firstPageComponent/Sidebar";
 
 const FirstPage: React.FC = () => {
   const [activeComponent, setActiveComponent] = useState("main");
+  const [isReadingMode, setIsReadingMode] = useState(true);
+  const [selectedChatRoomName, setSelectedChatRoomName] = useState<string>("");
+
+  const onClickReadingButton = () => {
+    setIsReadingMode(false);
+  };
+
+  const onClickBackButton = () => {
+    setIsReadingMode(true);
+  };
+  const onSelectChatRoom = (channelName: string) => {
+    setSelectedChatRoomName(channelName);
+  };
+
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -34,22 +48,32 @@ const FirstPage: React.FC = () => {
   }, [dispatch]);
 
   return (
-    <Container
-      style={{
-        margin: "0",
-        padding: "0",
-        height: "100vh",
-        display: "flex",
-        flexDirection: "column",
-        position: "relative",
-        overflow: "hidden",
-      }}
-    >
-      <FirstPageHeader />
-      {activeComponent === "main" ? <FirstPageMain /> : <FriendList />}
-      <FirstPageFooter setActiveComponent={setActiveComponent} />
+    <>
+      <Container
+        style={{
+          margin: "0",
+          padding: "0",
+          height: "100vh",
+          display: "flex",
+          flexDirection: "column",
+          position: "relative",
+          overflow: "hidden",
+        }}
+      >
+        <FirstPageHeader
+          isReadingMode={isReadingMode}
+          onClickReadingButton={onClickReadingButton}
+          onClickBackButton={onClickBackButton}
+          onSelectChatRoom={onSelectChatRoom} // 이 부분 추가
+        />
+        {activeComponent === "main" ? <FirstPageMain /> : <FriendList />}
+        <FirstPageFooter
+          setActiveComponent={setActiveComponent}
+          activeComponent={activeComponent}
+        />
+      </Container>
       <Sidebar />
-    </Container>
+    </>
   );
 };
 

@@ -145,24 +145,9 @@ const FriendList: React.FC = () => {
   }, [friends, handleFriendClick]);
 
   return (
-    <main
-      className="container"
-      style={{
-        border: "1px solid gray",
-        width: "100%",
-        height: "calc(100% - 106px)",
-        padding: "0",
-        margin: "0",
-        display: "flex",
-        flexDirection: "column",
-        backgroundImage: "url(/backgroundImg.jpg)",
-        backgroundSize: "cover",
-        backgroundRepeat: "no-repeat",
-        backgroundPosition: "center",
-      }}
-    >
+    <div className="friendListContainer">
       {friends.length > 0 ? friendItems : <p>No friends available</p>}
-    </main>
+    </div>
   );
 };
 

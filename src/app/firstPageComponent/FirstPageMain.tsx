@@ -37,20 +37,11 @@ const FirstPageMain: React.FC = () => {
     setTimeout(() => {
       router.push(`/chatroompage/${id}`);
       dispatch(setChatRoomId(id));
-    }, 1000); // Adjust the delay to match the toast duration
+    }, 200); // Adjust the delay to match the toast duration
   };
 
   return (
-    <div
-      className="firstPageMaincontainer"
-      style={{
-        width: "100%",
-        height: "100%",
-        padding: "0",
-        margin: "0",
-        overflowX: "hidden",
-      }}
-    >
+    <div className="firstPageMaincontainer">
       {chatRooms.length > 0 ? (
         chatRooms.map((room) => (
           <div className="chatBox chatRow" key={room.chatRoomId}>

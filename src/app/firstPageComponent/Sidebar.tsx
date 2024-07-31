@@ -28,6 +28,11 @@ const Sidebar: React.FC = () => {
   const changeProfileImgInputRef = useRef<HTMLInputElement>(null);
   const isAnimating = useRef(false); // 애니메이션 상태를 추적하는 ref
 
+  // findChatRoomModal
+  const [findChatRoomShow, setFindChatRoomShow] = useState(false);
+  const handleCloseFindChatRoomModal = () => setFindChatRoomShow(false);
+  const handleShowFindChatRoomModal = () => setFindChatRoomShow(true);
+
   useEffect(() => {
     if (isClient) {
       const authToken = getCookie("authToken");
@@ -269,6 +274,17 @@ const Sidebar: React.FC = () => {
                 <use xlinkHref="#speedometer2" />
               </svg>
               대화방 만들기
+            </button>
+          </li>
+          <li className="nav-item">
+            <button
+              onClick={handleShowFindChatRoomModal}
+              className="nav-link link-body-emphasis"
+            >
+              <svg className="bi pe-none me-2" width="16" height="16">
+                <use xlinkHref="#speedometer2" />
+              </svg>
+              대화방 찾기
             </button>
           </li>
         </ul>

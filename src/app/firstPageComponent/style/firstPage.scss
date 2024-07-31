@@ -1,5 +1,11 @@
 // header
-
+.firstPageHeaderDiv {
+  padding: 0;
+  margin: 0;
+  height: 80px;
+  position: relative;
+  flex-grow: 0;
+}
 .navbar-brand {
   color: white;
   transition: color 0.3s ease, background-color 0.3s ease;
@@ -31,8 +37,8 @@
 .firstPageMaincontainer {
   border: 1px solid gray;
   width: 100%;
-  height: 100vh;
-  flex-grow: 1;
+  overflow-x: hidden;
+  height: calc(100vh - 180px);
   padding: 0;
   margin: 0;
   display: flex;
@@ -83,11 +89,28 @@
   margin: 0;
 }
 
+//friendlist
+.friendListContainer {
+  border: 1px solid gray;
+  width: 100%;
+  overflow-x: hidden;
+  height: calc(100vh - 180px);
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  background-image: url("/backgroundImg.jpg");
+  background-size: cover; /* 크기에 맞게 이미지 조정 */
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
 //footer
 .firstPageFooterDiv {
   position: relative;
+  flex-grow: 0;
   width: 100%;
-  height: 70px;
+  height: 100px;
   background: linear-gradient(
       to bottom,
       rgba(255, 255, 255, 0.15) 0%,
@@ -119,30 +142,23 @@
   transition: transform 0.3s ease-in-out;
 }
 
-.footer-button:hover::after {
+.footer-button.active::after {
   content: "";
   position: absolute;
-  width: 70px;
-  height: 70px;
-  border: 6px solid #06021b;
-  border-radius: 50%;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  z-index: 1; /* Ensure the indicator is behind the image */
-  animation: drawCircle 0.3s forwards ease-in-out;
+  bottom: -10px;
+  left: 0;
+  width: 0;
+  height: 4px;
+  background-color: red;
+  animation: drawUnderline 0.5s forwards;
 }
 
-@keyframes drawCircle {
-  0% {
+@keyframes drawUnderline {
+  from {
     width: 0;
-    height: 0;
-    border-width: 0;
   }
-  100% {
-    width: 70px;
-    height: 70px;
-    border-width: 6px;
+  to {
+    width: 100%;
   }
 }
 
