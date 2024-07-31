@@ -9,14 +9,17 @@ import { db } from "../../../firebase";
 import { ChatRoomState } from "@/app/store/chatRoomSlice";
 interface FirstPageMainProps {
   selectedChatRoomId?: string;
+  isReadingMode: boolean;
 }
 
 const FirstPageMain: React.FC<FirstPageMainProps> = ({
   selectedChatRoomId,
+  isReadingMode,
 }) => {
   const dispatch: AppDispatch = useDispatch();
   const router = useRouter();
   const chatRooms = useSelector((state: RootState) => state.chatRoom.chatRooms);
+  console.log("chatRooms", chatRooms);
   const [allChatRooms, setAllChatRooms] = useState<ChatRoomState[]>([]);
   useEffect(() => {
     dispatch(fetchChatRooms());
@@ -51,14 +54,14 @@ const FirstPageMain: React.FC<FirstPageMainProps> = ({
     };
 
     fetchAllChatRooms();
-  }, []);
+  }, [dispatch]);
 
   const handleChatBoxClick = (id: string) => {
     router.push(`/chatroompage/${id}`);
     dispatch(setChatRoomId(id));
   };
 
-  const filteredChatRooms = selectedChatRoomId
+  const filteredChatRooms = isReadingMode
     ? allChatRooms.filter((room) => room.chatRoomId === selectedChatRoomId)
     : chatRooms;
 

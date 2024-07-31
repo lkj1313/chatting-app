@@ -276,17 +276,6 @@ const Sidebar: React.FC = () => {
               대화방 만들기
             </button>
           </li>
-          <li className="nav-item">
-            <button
-              onClick={handleShowFindChatRoomModal}
-              className="nav-link link-body-emphasis"
-            >
-              <svg className="bi pe-none me-2" width="16" height="16">
-                <use xlinkHref="#speedometer2" />
-              </svg>
-              대화방 찾기
-            </button>
-          </li>
         </ul>
         <hr />
         <CreateChatRoomModal />

@@ -5,9 +5,9 @@ import Picker from "@emoji-mart/react";
 import data from "@emoji-mart/data";
 import { useSelector } from "react-redux";
 import { RootState } from "@/app/store/store";
-import { doc, updateDoc, arrayUnion } from "firebase/firestore";
-import { db, storage } from "../../../../../firebase"; // storage 추가
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage"; // storage 관련 함수 추가
+import { doc, updateDoc, arrayUnion, getDoc, setDoc } from "firebase/firestore";
+import { db, storage } from "../../../../../firebase";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { useParams } from "next/navigation";
 
 interface ChatRoomPageFooterProps {
@@ -21,18 +21,18 @@ const ChatRoomPageFooter: React.FC<ChatRoomPageFooterProps> = ({
 }) => {
   const [inputText, setInputText] = useState<string>("");
   const [showPicker, setShowPicker] = useState(false);
-  const [isParticipant, setIsParticipant] = useState<boolean>(false); // 사용자가 채팅방 참가자인지 여부
+  const [isParticipant, setIsParticipant] = useState<boolean>(false);
   const user = useSelector((state: RootState) => state.auth.user);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const pickerRef = useRef<HTMLDivElement>(null);
-  const [hasEntered, setHasEntered] = useState<boolean>(false); // 사용자가 채팅방에 들어왔는지 여부
 
   // URL 파라미터에서 채팅방 ID 가져오기
   const params = useParams();
 
   // params.id가 배열인 경우 첫 번째 요소를 사용하고, 그렇지 않으면 그대로 사용
   const chatRoomId = Array.isArray(params?.id) ? params.id[0] : params?.id;
-  console.log(chatRoomParticipants);
+  console.log(isParticipant);
+
   // 이미지 업로드 함수
   const handleImageUpload = async (
     event: React.ChangeEvent<HTMLInputElement>
@@ -60,28 +60,40 @@ const ChatRoomPageFooter: React.FC<ChatRoomPageFooterProps> = ({
     try {
       // 채팅방 문서 참조
       const chatRoomRef = doc(db, "chatRooms", chatRoomId);
-      await updateDoc(chatRoomRef, {
-        participants: arrayUnion(user.uid),
-      });
+      const chatRoomDoc = await getDoc(chatRoomRef);
+
+      // 문서가 존재하지 않는다면 생성
+      if (!chatRoomDoc.exists()) {
+        await setDoc(chatRoomRef, { participants: [user.uid] });
+      } else {
+        await updateDoc(chatRoomRef, {
+          participants: arrayUnion(user.uid),
+        });
+      }
 
       // 사용자 문서 참조
       const userRef = doc(db, "users", user.uid);
-      await updateDoc(userRef, {
-        participatingRoom: arrayUnion(chatRoomId), // participatingRoom 필드에 채팅방 ID 추가
-      });
+      const userDoc = await getDoc(userRef);
+
+      // 문서가 존재하지 않는다면 생성
+      if (!userDoc.exists()) {
+        await setDoc(userRef, { participatingRoom: [chatRoomId] });
+      } else {
+        await updateDoc(userRef, {
+          participatingRoom: arrayUnion(chatRoomId),
+        });
+      }
 
       setIsParticipant(true);
-      setHasEntered(true);
     } catch (error) {
       console.error("Error adding user to participants: ", error);
     }
   }, [chatRoomId, user?.uid]);
-
   useEffect(() => {
-    if (user?.uid && chatRoomParticipants.includes(user.uid) && !hasEntered) {
-      enterChatRoom(); // 사용자 자동 참가
+    if (user?.uid && chatRoomParticipants.includes(user.uid)) {
+      setIsParticipant(true);
     }
-  }, [user?.uid, chatRoomParticipants, enterChatRoom, hasEntered]);
+  }, [user?.uid, chatRoomParticipants]);
 
   const handleKeyPress = useCallback(
     (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -124,7 +136,7 @@ const ChatRoomPageFooter: React.FC<ChatRoomPageFooterProps> = ({
         position: "relative",
       }}
     >
-      {isParticipant || hasEntered ? (
+      {isParticipant ? (
         <div
           className="row"
           style={{
@@ -259,16 +271,14 @@ const ChatRoomPageFooter: React.FC<ChatRoomPageFooterProps> = ({
           </div>
         </div>
       ) : (
-        !hasEntered && (
-          <button
-            style={{ width: "100%", height: "100%", borderRadius: "0" }}
-            type="button"
-            className="btn btn-secondary"
-            onClick={enterChatRoom}
-          >
-            대화방 참가
-          </button>
-        )
+        <button
+          style={{ width: "100%", height: "100%", borderRadius: "0" }}
+          type="button"
+          className="btn btn-secondary"
+          onClick={enterChatRoom}
+        >
+          대화방 참가
+        </button>
       )}
     </footer>
   );

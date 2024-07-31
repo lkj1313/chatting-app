@@ -37,6 +37,11 @@ const FirstPageHeader: React.FC<FirstPageHeaderProps> = ({
         }}
       >
         {activeComponent === "main" && isReadingMode ? (
+          <ChatRoomSearch
+            onClickBackButton={onClickBackButton}
+            onSelectChatRoom={onSelectChatRoom}
+          />
+        ) : (
           <>
             <button
               onClick={onClickReadingButton}
@@ -56,14 +61,6 @@ const FirstPageHeader: React.FC<FirstPageHeaderProps> = ({
               <span className="navbar-toggler-icon"></span>
             </Button>
           </>
-        ) : (
-          activeComponent === "main" &&
-          !isReadingMode && (
-            <ChatRoomSearch
-              onClickBackButton={onClickBackButton}
-              onSelectChatRoom={onSelectChatRoom}
-            />
-          )
         )}
       </Navbar>
     </header>

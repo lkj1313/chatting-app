@@ -14,15 +14,15 @@ import useViewportHeight from "./component/useViewportHeight";
 
 const FirstPage: React.FC = () => {
   const [activeComponent, setActiveComponent] = useState("main");
-  const [isReadingMode, setIsReadingMode] = useState(true);
+  const [isReadingMode, setIsReadingMode] = useState(false);
   const [selectedChatRoomId, setSelectedChatRoomId] = useState<string>("");
   console.log("selectedChatRoomId", selectedChatRoomId);
   const onClickReadingButton = () => {
-    setIsReadingMode(false);
+    setIsReadingMode(true);
   };
 
   const onClickBackButton = () => {
-    setIsReadingMode(true);
+    setIsReadingMode(false);
   };
   const onSelectChatRoom = (id: string) => {
     setSelectedChatRoomId(id);
@@ -70,7 +70,10 @@ const FirstPage: React.FC = () => {
           activeComponent={activeComponent}
         />
         {activeComponent === "main" ? (
-          <FirstPageMain selectedChatRoomId={selectedChatRoomId} />
+          <FirstPageMain
+            selectedChatRoomId={selectedChatRoomId}
+            isReadingMode={isReadingMode}
+          />
         ) : (
           <FriendList />
         )}
