@@ -1,25 +1,28 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { db } from "../../../firebase";
-import { collection, getDocs, query, orderBy, limit } from "firebase/firestore";
-import { UseDispatch, useDispatch, useSelector } from "react-redux";
-import { fetchChatRooms, setChatRoomId } from "@/app/store/chatRoomSlice";
+import { useDispatch, useSelector } from "react-redux";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { AppDispatch, RootState } from "../store/store";
+import { fetchChatRooms, setChatRoomId } from "@/app/store/chatRoomSlice";
 
 interface ChatRoom {
-  id: string;
+  chatRoomId: string;
   channelName: string;
   description: string;
   chatRoomImg: string;
   latestMessage?: string;
 }
 
-const FirstPageMain: React.FC = () => {
-  const dispatch: AppDispatch = useDispatch();
+interface FirstPageMainProps {
+  selectedChatRoomId?: string;
+}
 
+const FirstPageMain: React.FC<FirstPageMainProps> = ({
+  selectedChatRoomId,
+}) => {
+  const dispatch: AppDispatch = useDispatch();
   const router = useRouter();
   const chatRooms = useSelector((state: RootState) => state.chatRoom.chatRooms);
 
@@ -33,17 +36,20 @@ const FirstPageMain: React.FC = () => {
       position: "top-center",
     });
 
-    // Delay the navigation and state update slightly to allow the toast to show
     setTimeout(() => {
       router.push(`/chatroompage/${id}`);
       dispatch(setChatRoomId(id));
-    }, 200); // Adjust the delay to match the toast duration
+    }, 200);
   };
+
+  const filteredChatRooms = selectedChatRoomId
+    ? chatRooms.filter((room) => room.chatRoomId === selectedChatRoomId)
+    : chatRooms;
 
   return (
     <div className="firstPageMaincontainer">
-      {chatRooms.length > 0 ? (
-        chatRooms.map((room) => (
+      {filteredChatRooms.length > 0 ? (
+        filteredChatRooms.map((room) => (
           <div className="chatBox chatRow" key={room.chatRoomId}>
             <div
               className="container"

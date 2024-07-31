@@ -13,8 +13,8 @@ import Sidebar from "./firstPageComponent/Sidebar";
 const FirstPage: React.FC = () => {
   const [activeComponent, setActiveComponent] = useState("main");
   const [isReadingMode, setIsReadingMode] = useState(true);
-  const [selectedChatRoomName, setSelectedChatRoomName] = useState<string>("");
-
+  const [selectedChatRoomId, setSelectedChatRoomId] = useState<string>("");
+  console.log("selectedChatRoomId", selectedChatRoomId);
   const onClickReadingButton = () => {
     setIsReadingMode(false);
   };
@@ -22,8 +22,8 @@ const FirstPage: React.FC = () => {
   const onClickBackButton = () => {
     setIsReadingMode(true);
   };
-  const onSelectChatRoom = (channelName: string) => {
-    setSelectedChatRoomName(channelName);
+  const onSelectChatRoom = (id: string) => {
+    setSelectedChatRoomId(id);
   };
 
   const dispatch = useDispatch();
@@ -66,7 +66,11 @@ const FirstPage: React.FC = () => {
           onClickBackButton={onClickBackButton}
           onSelectChatRoom={onSelectChatRoom} // 이 부분 추가
         />
-        {activeComponent === "main" ? <FirstPageMain /> : <FriendList />}
+        {activeComponent === "main" ? (
+          <FirstPageMain selectedChatRoomId={selectedChatRoomId} />
+        ) : (
+          <FriendList />
+        )}
         <FirstPageFooter
           setActiveComponent={setActiveComponent}
           activeComponent={activeComponent}

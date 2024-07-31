@@ -21,7 +21,11 @@ const ChatRoomSearch: React.FC<ChatRoomSearchProps> = ({
 }) => {
   const [chatRooms, setChatRooms] = useState<ChatRoom[]>([]);
   const [selectedChatRoom, setSelectedChatRoom] = useState<ChatRoom[]>([]);
-
+  const handleBackButtonClick = () => {
+    setSelectedChatRoom([]); // 선택된 채팅방 초기화
+    onSelectChatRoom(""); // 상태 초기화
+    onClickBackButton(); // 뒤로 가기 버튼 클릭 시 동작
+  };
   useEffect(() => {
     const fetchChatRooms = async () => {
       try {
@@ -42,7 +46,7 @@ const ChatRoomSearch: React.FC<ChatRoomSearchProps> = ({
 
   useEffect(() => {
     if (selectedChatRoom.length > 0) {
-      onSelectChatRoom(selectedChatRoom[0].channelName); // 선택된 채팅방의 이름을 콜백 함수로 전달
+      onSelectChatRoom(selectedChatRoom[0].chatRoomId); // 선택된 채팅방의 이름을 콜백 함수로 전달
     }
   }, [selectedChatRoom, onSelectChatRoom]);
 
@@ -54,7 +58,7 @@ const ChatRoomSearch: React.FC<ChatRoomSearchProps> = ({
           border: "none",
           marginRight: "30px",
         }}
-        onClick={onClickBackButton}
+        onClick={handleBackButtonClick}
       >
         <img src="/backIcon.png" style={{ height: "40px" }} alt="Back" />
       </button>
