@@ -2,21 +2,11 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useRouter } from "next/navigation";
-import { toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 import { AppDispatch, RootState } from "../store/store";
 import { fetchChatRooms, setChatRoomId } from "@/app/store/chatRoomSlice";
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "../../../firebase";
-
-interface ChatRoom {
-  chatRoomId: string;
-  channelName: string;
-  description: string;
-  chatRoomImg: string;
-  latestMessage?: string;
-}
-
+import { ChatRoomState } from "@/app/store/chatRoomSlice";
 interface FirstPageMainProps {
   selectedChatRoomId?: string;
 }
@@ -27,30 +17,33 @@ const FirstPageMain: React.FC<FirstPageMainProps> = ({
   const dispatch: AppDispatch = useDispatch();
   const router = useRouter();
   const chatRooms = useSelector((state: RootState) => state.chatRoom.chatRooms);
-  const [allChatRooms, setAllChatRooms] = useState<ChatRoom[]>([]);
+  const [allChatRooms, setAllChatRooms] = useState<ChatRoomState[]>([]);
   useEffect(() => {
     dispatch(fetchChatRooms());
   }, [dispatch]);
-
-  const handleChatBoxClick = (id: string) => {
-    router.push(`/chatroompage/${id}`);
-    dispatch(setChatRoomId(id));
-  };
   useEffect(() => {
     const fetchAllChatRooms = async () => {
       try {
         const chatRoomCollection = collection(db, "chatRooms");
         const chatRoomSnapshot = await getDocs(chatRoomCollection);
-        const chatRoomList: ChatRoom[] = chatRoomSnapshot.docs.map((doc) => {
-          const data = doc.data();
-          return {
-            chatRoomId: doc.id,
-            channelName: data.channelName,
-            description: data.description,
-            chatRoomImg: data.chatRoomImg,
-            latestMessage: data.latestMessage || "No messages yet",
-          };
-        });
+        const chatRoomList: ChatRoomState[] = chatRoomSnapshot.docs.map(
+          (doc) => {
+            const data = doc.data() as ChatRoomState;
+            return {
+              chatRoomId: doc.id,
+              channelName: data.channelName,
+              description: data.description,
+              chatRoomImg: data.chatRoomImg,
+              latestMessage: data.latestMessage || "No messages yet",
+              participants: data.participants,
+              userId: data.userId,
+              userName: data.userName,
+              status: "idle",
+              error: null,
+              chatRooms: [],
+            };
+          }
+        );
         setAllChatRooms(chatRoomList);
       } catch (error) {
         console.error("Error fetching chat rooms: ", error);
@@ -59,6 +52,12 @@ const FirstPageMain: React.FC<FirstPageMainProps> = ({
 
     fetchAllChatRooms();
   }, []);
+
+  const handleChatBoxClick = (id: string) => {
+    router.push(`/chatroompage/${id}`);
+    dispatch(setChatRoomId(id));
+  };
+
   const filteredChatRooms = selectedChatRoomId
     ? allChatRooms.filter((room) => room.chatRoomId === selectedChatRoomId)
     : chatRooms;

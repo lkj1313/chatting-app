@@ -8,15 +8,13 @@ import {
   orderBy,
   limit,
   setDoc,
-  updateDoc,
-  arrayUnion,
 } from "firebase/firestore";
 import { ref, uploadString, getDownloadURL } from "firebase/storage";
 import { db, storage } from "../../../firebase";
 import { v4 as uuidv4 } from "uuid";
 import { RootState, AppDispatch } from "./store";
 
-interface ChatRoomState {
+export interface ChatRoomState {
   chatRoomImg: string | null;
   channelName: string | null;
   description: string;
@@ -46,13 +44,18 @@ const initialState: ChatRoomState = {
 
 export const saveChatRoom = createAsyncThunk<
   string,
-  ChatRoomState,
+  {
+    chatRoomImg: string | null;
+    channelName: string;
+    description: string;
+    userId: string;
+    userName: string;
+  },
   { rejectValue: string }
 >("chatRoom/saveChatRoom", async (chatRoom, { rejectWithValue }) => {
   try {
     const newChatRoomId = uuidv4();
     let imageUrl = "";
-
     if (chatRoom.chatRoomImg) {
       const storageRef = ref(
         storage,
@@ -62,23 +65,11 @@ export const saveChatRoom = createAsyncThunk<
       imageUrl = await getDownloadURL(storageRef);
     }
 
-    if (!chatRoom.userId) {
-      throw new Error("User ID is null");
-    }
-
-    // 채팅방 생성
     await setDoc(doc(db, "chatRooms", newChatRoomId), {
       ...chatRoom,
       chatRoomImg: imageUrl,
       chatRoomId: newChatRoomId,
     });
-
-    // 사용자 문서 업데이트
-    const userRef = doc(db, "users", chatRoom.userId);
-    await updateDoc(userRef, {
-      participatingRoom: arrayUnion(newChatRoomId), // 새로운 채팅방 ID 추가
-    });
-
     return newChatRoomId;
   } catch (error: any) {
     return rejectWithValue(error.message);
@@ -185,7 +176,6 @@ export const fetchChatRooms = createAsyncThunk<
       })
     );
 
-    // null 필터링
     return chatRoomList.filter((room) => room !== null) as ChatRoomState[];
   } catch (error: any) {
     return rejectWithValue(error.message);

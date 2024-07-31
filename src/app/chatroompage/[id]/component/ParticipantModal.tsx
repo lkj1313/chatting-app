@@ -35,9 +35,9 @@ const ParticipantModal = () => {
   const closeParticipantModal = () => {
     dispatch(participantModalClose());
   };
+
   const handlePrivateChat = async () => {
     // 1:1 채팅함수
-
     if (currentUser && currentUser.uid && selectedParticipant) {
       try {
         const resultAction = await dispatch(
@@ -57,6 +57,12 @@ const ParticipantModal = () => {
             autoClose: false,
           });
           console.log("Dispatched participantModalClose");
+
+          // 사용자 문서 업데이트
+          const userRef = doc(db, "users", currentUser.uid);
+          await updateDoc(userRef, {
+            participatingRoom: arrayUnion(chatId), // 새로운 채팅방 ID 추가
+          });
 
           router.push(`/privatechatroompage/${chatId}`);
           toast.update(toastId1, {
