@@ -15,13 +15,17 @@ interface ChatRoomPageFooterProps {
   chatRoomParticipants: string[];
 }
 
+interface ParticipantMap {
+  [chatRoomId: string]: boolean;
+}
+
 const ChatRoomPageFooter: React.FC<ChatRoomPageFooterProps> = ({
   handleSendMessage,
   chatRoomParticipants,
 }) => {
   const [inputText, setInputText] = useState<string>("");
   const [showPicker, setShowPicker] = useState(false);
-  const [isParticipant, setIsParticipant] = useState<boolean>(false);
+  const [participantMap, setParticipantMap] = useState<ParticipantMap>({});
   const user = useSelector((state: RootState) => state.auth.user);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const pickerRef = useRef<HTMLDivElement>(null);
@@ -31,7 +35,11 @@ const ChatRoomPageFooter: React.FC<ChatRoomPageFooterProps> = ({
 
   // params.id가 배열인 경우 첫 번째 요소를 사용하고, 그렇지 않으면 그대로 사용
   const chatRoomId = Array.isArray(params?.id) ? params.id[0] : params?.id;
-  console.log(isParticipant);
+
+  // 디버깅 로그 추가
+  console.log("Chat Room ID:", chatRoomId);
+  console.log("User UID:", user?.uid);
+  console.log("Participant Map:", participantMap);
 
   // 이미지 업로드 함수
   const handleImageUpload = async (
@@ -84,16 +92,19 @@ const ChatRoomPageFooter: React.FC<ChatRoomPageFooterProps> = ({
         });
       }
 
-      setIsParticipant(true);
+      setParticipantMap((prevMap) => ({ ...prevMap, [chatRoomId]: true }));
     } catch (error) {
       console.error("Error adding user to participants: ", error);
     }
   }, [chatRoomId, user?.uid]);
+  console.log("차트룸참가자", chatRoomParticipants);
   useEffect(() => {
     if (user?.uid && chatRoomParticipants.includes(user.uid)) {
-      setIsParticipant(true);
+      setParticipantMap((prevMap) => ({ ...prevMap, [chatRoomId]: true }));
+    } else {
+      setParticipantMap((prevMap) => ({ ...prevMap, [chatRoomId]: false }));
     }
-  }, [user?.uid, chatRoomParticipants]);
+  }, [user?.uid, chatRoomParticipants, chatRoomId]);
 
   const handleKeyPress = useCallback(
     (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -136,7 +147,7 @@ const ChatRoomPageFooter: React.FC<ChatRoomPageFooterProps> = ({
         position: "relative",
       }}
     >
-      {isParticipant ? (
+      {participantMap[chatRoomId] ? (
         <div
           className="row"
           style={{

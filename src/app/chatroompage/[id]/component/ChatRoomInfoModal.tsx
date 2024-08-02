@@ -13,7 +13,7 @@ interface ChatRoomInfoModalProps {
 
 const ChatRoomInfoModal: React.FC<ChatRoomInfoModalProps> = ({ chatRoom }) => {
   const dispatch = useDispatch();
-  const isPrivateChat = location.pathname.startsWith("/privatechatroompage");
+
   const infomodalShow = useSelector(
     (state: RootState) => state.ui.chatRoomInfoModalOpen
   );
