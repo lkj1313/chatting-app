@@ -117,6 +117,8 @@ const CreateChatRoomModal: React.FC = () => {
           participants: arrayUnion(user.uid),
         });
 
+       
+
         dispatch(closeModal());
         dispatch(closeSidebar()); // 사이드바 닫기
         router.push(`/chatroompage/${chatRoomId}`);

@@ -18,14 +18,13 @@ interface Errors {
   password?: string;
   form?: string;
 }
-type TypeOptions = "info" | "success" | "warning" | "error";
+
 function LoginPage() {
   const [email, setEmail] = useState<string>("testid@gmail.com");
   const [password, setPassword] = useState<string>("a123456!!");
   const [errors, setErrors] = useState<Errors>({});
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [showCard, setShowCard] = useState<boolean>(false);
-  const [naverLoginUrl, setNaverLoginUrl] = useState<string>("");
 
   const router = useRouter();
   const dispatch = useDispatch();
@@ -280,8 +279,8 @@ function LoginPage() {
   return (
     <>
       <div
-        className="d-flex justify-content-center align-items-center vh-100 ml-1 mr-1"
-        style={{ height: "calc(var(--vh) * 100)" }}
+        className="d-flex justify-content-center  ml-1 mr-1"
+        style={{ height: "calc(var(--vh) * 100)", alignItems: "center" }}
       >
         <div
           className={`card p-4 shadow-sm container card-box ${
