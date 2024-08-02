@@ -8,6 +8,8 @@ import {
   orderBy,
   limit,
   setDoc,
+  updateDoc,
+  arrayUnion,
 } from "firebase/firestore";
 import { ref, uploadString, getDownloadURL } from "firebase/storage";
 import { db, storage } from "../../../firebase";
@@ -56,6 +58,7 @@ export const saveChatRoom = createAsyncThunk<
   try {
     const newChatRoomId = uuidv4();
     let imageUrl = "";
+
     if (chatRoom.chatRoomImg) {
       const storageRef = ref(
         storage,
@@ -70,6 +73,11 @@ export const saveChatRoom = createAsyncThunk<
       chatRoomImg: imageUrl,
       chatRoomId: newChatRoomId,
     });
+
+    await updateDoc(doc(db, "users", chatRoom.userId), {
+      participatingRoom: arrayUnion(newChatRoomId),
+    });
+
     return newChatRoomId;
   } catch (error: any) {
     return rejectWithValue(error.message);

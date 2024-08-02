@@ -128,7 +128,7 @@ function LoginPage() {
     if (!emailError && !passwordError) {
       setIsLoading(true);
 
-      toast("Login attempt...", {
+      toast("로그인 시도중...", {
         toastId: "123",
         type: "info",
         position: "top-center",

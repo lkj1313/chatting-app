@@ -60,7 +60,7 @@ const FirstPageMain: React.FC<FirstPageMainProps> = ({
     router.push(`/chatroompage/${id}`);
     dispatch(setChatRoomId(id));
   };
-
+  console.log("chatrooms", chatRooms);
   const filteredChatRooms = isReadingMode
     ? allChatRooms.filter((room) => room.chatRoomId === selectedChatRoomId)
     : chatRooms;
