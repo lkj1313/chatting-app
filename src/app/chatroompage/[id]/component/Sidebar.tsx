@@ -1,12 +1,18 @@
 "use client";
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { chatRoomSidebarClose, chatRoomSidebarOpen } from "@/app/store/uiSlice";
 import { RootState, AppDispatch } from "@/app/store/store";
 import { useRouter } from "next/navigation";
 import ImageModal from "./ImageModal";
 import ParticipantModal from "./ParticipantModal";
-import { deleteDoc, doc, getDoc } from "firebase/firestore";
+import {
+  arrayRemove,
+  deleteDoc,
+  doc,
+  getDoc,
+  updateDoc,
+} from "firebase/firestore";
 import { db } from "../../../../../firebase";
 import { Message } from "./type";
 import { participantInfo } from "@/app/store/participantModalSlice";
@@ -166,6 +172,35 @@ const Sidebar: React.FC = () => {
       alert("방장만이 채팅방을 삭제할수 있습니다.");
     }
   };
+  const exitChatRoom = useCallback(async () => {
+    if (!chatRoomInfo.chatRoomId || !currentUser.uid) {
+      console.error("ChatRoom ID or User UID is null");
+      return;
+    }
+
+    try {
+      // 채팅방 문서 참조
+      const chatRoomRef = doc(db, "chatRooms", chatRoomInfo.chatRoomId);
+
+      // 채팅방 참가자 목록에서 사용자 제거
+      await updateDoc(chatRoomRef, {
+        participants: arrayRemove(currentUser.uid),
+      });
+
+      // 사용자 문서 참조
+      const userRef = doc(db, "users", currentUser.uid);
+
+      // 사용자 참여 채팅방 목록에서 현재 채팅방 제거
+      await updateDoc(userRef, {
+        participatingRoom: arrayRemove(chatRoomInfo.chatRoomId),
+      });
+
+      router.push("/");
+      closeSidebar();
+    } catch (error) {
+      console.error("Error removing user from chat room:", error);
+    }
+  }, [chatRoomInfo.chatRoomId, currentUser.uid, router]);
 
   useEffect(() => {
     // 'headerSidebar' 클래스를 가진 요소를 선택
@@ -294,9 +329,13 @@ const Sidebar: React.FC = () => {
               style={{ marginTop: "20px" }}
               onClick={handleDeleteChatRoom}
             >
-              채팅방 삭제
+              대화방 삭제
             </button>
-          ) : null}
+          ) : (
+            <button style={{ marginTop: "20px" }} onClick={exitChatRoom}>
+              대화방 나가기
+            </button>
+          )}
         </>
       </div>
       <ImageModal
