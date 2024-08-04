@@ -93,7 +93,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({
                   style={{
                     padding: "15px",
                     height: "50px",
-                    width: "300px",
+                    width: "80%",
                     borderRadius: "10px",
                   }}
                   placeholder="닉네임을 변경하세요"
@@ -126,7 +126,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({
                 style={{
                   padding: "15px",
                   height: "50px",
-                  width: "100%",
+                  width: "80%",
                   borderRadius: "10px",
                 }}
                 placeholder="상태 메시지를 변경하세요"
