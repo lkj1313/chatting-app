@@ -42,25 +42,27 @@ const FirstPageHeader: React.FC<FirstPageHeaderProps> = ({
             onSelectChatRoom={onSelectChatRoom}
           />
         ) : (
-          <>
-            <button
-              onClick={onClickReadingButton}
-              style={{ backgroundColor: "transparent", border: "none" }}
-            >
-              <img
-                src="/reading.png"
-                style={{ height: "40px" }}
-                alt="Reading Mode"
-              ></img>
-            </button>
-            <Button
-              variant="dark"
-              onClick={() => dispatch(openSidebar())}
-              aria-label="Toggle navigation"
-            >
-              <span className="navbar-toggler-icon"></span>
-            </Button>
-          </>
+          activeComponent === "main" && (
+            <>
+              <button
+                onClick={onClickReadingButton}
+                style={{ backgroundColor: "transparent", border: "none" }}
+              >
+                <img
+                  src="/reading.png"
+                  style={{ height: "40px" }}
+                  alt="Reading Mode"
+                ></img>
+              </button>
+              <Button
+                variant="dark"
+                onClick={() => dispatch(openSidebar())}
+                aria-label="Toggle navigation"
+              >
+                <span className="navbar-toggler-icon"></span>
+              </Button>
+            </>
+          )
         )}
       </Navbar>
     </header>
